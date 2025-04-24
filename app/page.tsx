@@ -1,103 +1,276 @@
-import Image from "next/image";
+import Image from "next/image"
+import Link from "next/link"
+import { ChevronRight, ShoppingBag, Calendar, MapPin, MessageCircle } from "lucide-react"
 
 export default function Home() {
   return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm/6 text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2 tracking-[-.01em]">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-[family-name:var(--font-geist-mono)] font-semibold">
-              app/page.tsx
-            </code>
-            .
-          </li>
-          <li className="tracking-[-.01em]">
-            Save and see your changes instantly.
-          </li>
-        </ol>
-
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
+    <main className="min-h-screen">
+      {/* Hero Section */}
+      <section className="relative h-[80vh] flex items-center justify-center overflow-hidden">
+        <div className="absolute inset-0 z-0">
+          <div className="relative w-full h-full">
             <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
+              src="/images/mall-hero.jpg"
+              alt="Centro Comercial Elite"
+              fill
+              className="object-cover brightness-50"
+              priority
             />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 w-full sm:w-auto md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
+          </div>
         </div>
-      </main>
-      <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
-    </div>
-  );
+        <div className="container relative z-10 mx-auto px-4 text-center">
+          <div className="flex justify-center mb-6">
+            <Image
+              src="/images/logo.png"
+              alt="Logo Centro Comercial Elite"
+              width={150}
+              height={150}
+              className="animate-pulse"
+            />
+          </div>
+          <h1 className="text-5xl md:text-7xl font-bold text-white mb-6">
+            Centro Comercial <span className="text-yellow-400">Elite</span>
+          </h1>
+          <p className="text-xl md:text-2xl text-white mb-8 max-w-3xl mx-auto">
+            Tu destino favorito para compras, gastronomía y entretenimiento
+          </p>
+          <div className="flex flex-wrap gap-4 justify-center">
+            <Link
+              href="/tiendas"
+              className="bg-red-600 hover:bg-red-700 text-white px-8 py-3 rounded-full font-medium flex items-center gap-2 transition-all"
+            >
+              Explorar Tiendas <ChevronRight size={20} />
+            </Link>
+            <Link
+              href="/eventos"
+              className="bg-blue-700 hover:bg-blue-800 text-white px-8 py-3 rounded-full font-medium flex items-center gap-2 transition-all"
+            >
+              Ver Eventos <ChevronRight size={20} />
+            </Link>
+          </div>
+        </div>
+      </section>
+
+      {/* Test Section para verificar estilos */}
+      <section className="py-10 bg-yellow-400">
+        <div className="container mx-auto px-4 text-center">
+          <h2 className="text-3xl font-bold text-blue-700">Sección de prueba</h2>
+          <p className="text-lg text-red-600 mt-4">
+            Esta sección es para verificar si los estilos de Tailwind se están aplicando correctamente.
+          </p>
+          <div className="mt-6 p-4 bg-green-500 text-white rounded-lg inline-block">Este es un botón de prueba</div>
+        </div>
+      </section>
+
+      {/* Tiendas Section */}
+      <section className="py-20 bg-white">
+        <div className="container mx-auto px-4">
+          <div className="text-center mb-12">
+            <h2 className="text-4xl font-bold mb-4 text-gray-800">Nuestras Tiendas</h2>
+            <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+              Descubre una amplia variedad de tiendas y restaurantes para todos los gustos
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {storeCategories.map((category, index) => (
+              <div
+                key={index}
+                className="bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-xl transition-shadow group"
+              >
+                <div className="relative h-64">
+                  <Image
+                    src={category.image || "/placeholder.svg"}
+                    alt={category.name}
+                    fill
+                    className="object-cover group-hover:scale-105 transition-transform duration-300"
+                  />
+                </div>
+                <div className="p-6">
+                  <h3 className="text-2xl font-semibold mb-2 text-gray-800">{category.name}</h3>
+                  <p className="text-gray-600 mb-4">{category.description}</p>
+                  <Link
+                    href={`/tiendas/${category.slug}`}
+                    className="inline-flex items-center text-red-600 font-medium hover:text-red-700"
+                  >
+                    Ver tiendas <ChevronRight size={16} />
+                  </Link>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          <div className="text-center mt-12">
+            <Link
+              href="/tiendas"
+              className="inline-flex items-center gap-2 bg-gradient-to-r from-red-600 to-purple-600 text-white px-8 py-3 rounded-full font-medium hover:from-red-700 hover:to-purple-700 transition-all"
+            >
+              <ShoppingBag size={20} />
+              Ver todas las tiendas
+            </Link>
+          </div>
+        </div>
+      </section>
+
+      {/* Eventos Section */}
+      <section className="py-20 bg-gradient-to-b from-gray-50 to-white">
+        <div className="container mx-auto px-4">
+          <div className="text-center mb-12">
+            <h2 className="text-4xl font-bold mb-4 text-gray-800">Próximos Eventos</h2>
+            <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+              No te pierdas nuestras actividades y celebraciones especiales
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {events.map((event, index) => (
+              <div
+                key={index}
+                className="bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-xl transition-shadow border border-gray-100"
+              >
+                <div className="relative h-48">
+                  <Image src={event.image || "/placeholder.svg"} alt={event.name} fill className="object-cover" />
+                  <div className="absolute top-4 right-4 bg-blue-700 text-white text-sm font-bold px-3 py-1 rounded-full">
+                    {event.date}
+                  </div>
+                </div>
+                <div className="p-6">
+                  <h3 className="text-xl font-semibold mb-2 text-gray-800">{event.name}</h3>
+                  <p className="text-gray-600 mb-4">{event.description}</p>
+                  <Link
+                    href={`/eventos/${event.slug}`}
+                    className="inline-flex items-center text-blue-700 font-medium hover:text-blue-800"
+                  >
+                    Más información <ChevronRight size={16} />
+                  </Link>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          <div className="text-center mt-12">
+            <Link
+              href="/eventos"
+              className="inline-flex items-center gap-2 bg-gradient-to-r from-blue-700 to-green-500 text-white px-8 py-3 rounded-full font-medium hover:from-blue-800 hover:to-green-600 transition-all"
+            >
+              <Calendar size={20} />
+              Ver todos los eventos
+            </Link>
+          </div>
+        </div>
+      </section>
+
+      {/* Quiénes Somos Section */}
+      <section className="py-20 bg-white">
+        <div className="container mx-auto px-4">
+          <div className="flex flex-col lg:flex-row items-center gap-12">
+            <div className="lg:w-1/2">
+              <div className="relative h-[400px] w-full rounded-2xl overflow-hidden shadow-xl">
+                <Image
+                  src="/images/mall-exterior.jpg"
+                  alt="Centro Comercial Elite Exterior"
+                  fill
+                  className="object-cover"
+                />
+              </div>
+            </div>
+            <div className="lg:w-1/2">
+              <h2 className="text-4xl font-bold mb-6 text-gray-800">Quiénes Somos</h2>
+              <p className="text-lg text-gray-600 mb-6">
+                Centro Comercial Elite es el destino preferido para compras, gastronomía y entretenimiento. Ofrecemos
+                una experiencia única con más de 100 tiendas, restaurantes de primera categoría y espacios de
+                entretenimiento para toda la familia.
+              </p>
+              <p className="text-lg text-gray-600 mb-8">
+                Nuestra misión es brindar la mejor experiencia de compra y entretenimiento, en un ambiente seguro,
+                cómodo y moderno para todos nuestros visitantes.
+              </p>
+
+              <div className="flex flex-col sm:flex-row gap-4">
+                <div className="flex items-center gap-3 text-gray-700">
+                  <div className="bg-yellow-400 p-3 rounded-full">
+                    <MapPin size={24} />
+                  </div>
+                  <div>
+                    <h4 className="font-semibold">Ubicación</h4>
+                    <p>Av. Principal #123, Ciudad</p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-3 text-gray-700">
+                  <div className="bg-green-500 p-3 rounded-full text-white">
+                    <MessageCircle size={24} />
+                  </div>
+                  <div>
+                    <h4 className="font-semibold">Contáctanos</h4>
+                    <p>info@ccelite.com</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Chatbot Promo Section */}
+      <section className="py-16 bg-gradient-to-r from-purple-600 to-blue-700 text-white">
+        <div className="container mx-auto px-4 text-center">
+          <h2 className="text-3xl font-bold mb-6">¿Tienes preguntas? Chatea con nuestro asistente virtual</h2>
+          <p className="text-xl mb-8 max-w-2xl mx-auto">
+            Nuestro chatbot con IA está disponible 24/7 para responder todas tus consultas sobre tiendas, eventos,
+            horarios y más.
+          </p>
+          <button className="bg-white text-purple-700 hover:bg-gray-100 px-8 py-3 rounded-full font-medium inline-flex items-center gap-2">
+            <MessageCircle size={20} />
+            Iniciar chat
+          </button>
+        </div>
+      </section>
+    </main>
+  )
 }
+
+// Datos de muestra
+const storeCategories = [
+  {
+    name: "Moda y Accesorios",
+    description: "Las mejores marcas nacionales e internacionales",
+    image: "/images/fashion-stores.jpg",
+    slug: "moda",
+  },
+  {
+    name: "Restaurantes",
+    description: "Gastronomía local e internacional para todos los gustos",
+    image: "/images/restaurants.jpg",
+    slug: "restaurantes",
+  },
+  {
+    name: "Entretenimiento",
+    description: "Cines, juegos y diversión para toda la familia",
+    image: "/images/entertainment.jpg",
+    slug: "entretenimiento",
+  },
+]
+
+const events = [
+  {
+    name: "Día del Niño",
+    description: "Celebra con actividades especiales para los más pequeños",
+    date: "20 Jul",
+    image: "/images/kids-day.jpg",
+    slug: "dia-del-nino",
+  },
+  {
+    name: "Festival Gastronómico",
+    description: "Degusta los mejores platillos de nuestros restaurantes",
+    date: "15 Ago",
+    image: "/images/food-festival.jpg",
+    slug: "festival-gastronomico",
+  },
+  {
+    name: "Desfile de Moda",
+    description: "Conoce las últimas tendencias de la temporada",
+    date: "10 Sep",
+    image: "/images/fashion-show.jpg",
+    slug: "desfile-moda",
+  },
+]
