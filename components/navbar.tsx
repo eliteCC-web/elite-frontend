@@ -5,6 +5,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { Menu, X, ShoppingBag, Calendar, Users, MessageCircle, ChevronDown } from 'lucide-react';
 import { cn } from "@/lib/utils";
+import assets from "@/public/assets";
 
 export default function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -20,7 +21,7 @@ export default function Navbar() {
           {/* Logo */}
           <Link href="/" className="flex items-center gap-2">
             <Image
-              src="/images/logo.png"
+              src={assets.logo_png}
               alt="Centro Comercial Elite"
               width={50}
               height={50}

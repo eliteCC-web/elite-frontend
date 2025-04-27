@@ -1,19 +1,20 @@
 import Image from "next/image"
 import Link from "next/link"
 import { ChevronRight, ShoppingBag, Calendar, MapPin, MessageCircle } from "lucide-react"
+import assets from "@/public/assets"
 
 export default function Home() {
   return (
     <main className="min-h-screen">
       {/* Hero Section */}
-      <section className="relative h-[80vh] flex items-center justify-center overflow-hidden">
-        <div className="absolute inset-0 z-0">
+      <section className="relative h-[88vh] flex items-center justify-center overflow-hidden">
+        <div className="absolute inset-0 z-0 bg-black/100"> {/* Fondo negro semitransparente */}
           <div className="relative w-full h-full">
             <Image
-              src="/images/mall-hero.jpg"
+              src={assets.plazoleta_1}
               alt="Centro Comercial Elite"
               fill
-              className="object-cover brightness-50"
+              className="object-cover brightness-50 opacity-40"
               priority
             />
           </div>
@@ -21,15 +22,15 @@ export default function Home() {
         <div className="container relative z-10 mx-auto px-4 text-center">
           <div className="flex justify-center mb-6">
             <Image
-              src="/images/logo.png"
+              src={assets.logo_png}
               alt="Logo Centro Comercial Elite"
               width={150}
               height={150}
-              className="animate-pulse"
+              //className="animate-pulse"
             />
           </div>
           <h1 className="text-5xl md:text-7xl font-bold text-white mb-6">
-            Centro Comercial <span className="text-yellow-400">Elite</span>
+            Centro Comercial Elite
           </h1>
           <p className="text-xl md:text-2xl text-white mb-8 max-w-3xl mx-auto">
             Tu destino favorito para compras, gastronomía y entretenimiento
@@ -48,17 +49,6 @@ export default function Home() {
               Ver Eventos <ChevronRight size={20} />
             </Link>
           </div>
-        </div>
-      </section>
-
-      {/* Test Section para verificar estilos */}
-      <section className="py-10 bg-yellow-400">
-        <div className="container mx-auto px-4 text-center">
-          <h2 className="text-3xl font-bold text-blue-700">Sección de prueba</h2>
-          <p className="text-lg text-red-600 mt-4">
-            Esta sección es para verificar si los estilos de Tailwind se están aplicando correctamente.
-          </p>
-          <div className="mt-6 p-4 bg-green-500 text-white rounded-lg inline-block">Este es un botón de prueba</div>
         </div>
       </section>
 
