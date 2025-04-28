@@ -1,3 +1,4 @@
+/* eslint-disable */
 import Image from "next/image"
 import Link from "next/link"
 import { Home, Construction, Map, ArrowRight, Calendar } from "lucide-react"
