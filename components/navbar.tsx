@@ -47,7 +47,7 @@ export default function Navbar() {
             </NavLink>
             <NavLink href="/chatbot">
               <MessageCircle size={18} />
-              Chatbot
+              Chatea con Eli
             </NavLink>
           </nav>
 

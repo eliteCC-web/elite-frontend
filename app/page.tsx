@@ -157,7 +157,7 @@ export default function Home() {
             <div className="lg:w-1/2">
               <div className="relative h-[400px] w-full rounded-2xl overflow-hidden shadow-xl">
                 <Image
-                  src="/images/mall-exterior.jpg"
+                  src={assets.hero_img}
                   alt="Centro Comercial Elite Exterior"
                   fill
                   className="object-cover"
@@ -224,43 +224,43 @@ const storeCategories = [
   {
     name: "Moda y Accesorios",
     description: "Las mejores marcas nacionales e internacionales",
-    image: "/images/fashion-stores.jpg",
+    image: `${assets.moda_2}`,
     slug: "moda",
   },
   {
     name: "Restaurantes",
     description: "Gastronomía local e internacional para todos los gustos",
-    image: "/images/restaurants.jpg",
+    image: `${assets.plazoleta_3}`,
     slug: "restaurantes",
   },
   {
     name: "Entretenimiento",
     description: "Cines, juegos y diversión para toda la familia",
-    image: "/images/entertainment.jpg",
+    image: `${assets.entretenimiento_1}`,
     slug: "entretenimiento",
   },
 ]
 
 const events = [
   {
-    name: "Día del Niño",
-    description: "Celebra con actividades especiales para los más pequeños",
-    date: "20 Jul",
-    image: "/images/kids-day.jpg",
-    slug: "dia-del-nino",
+    name: "Fiesta Colores",
+    description: "Celebra con actividades especiales para los más pequeños. Tendremos juegos, payasos, pintacaritas y muchas sorpresas para que los niños disfruten de un día inolvidable.",
+    date: "26 Abr",
+    image: `${assets.dia_nino_1}`,
+    slug: "fiesta-colores",
   },
   {
     name: "Festival Gastronómico",
     description: "Degusta los mejores platillos de nuestros restaurantes",
     date: "15 Ago",
-    image: "/images/food-festival.jpg",
+    image: `${assets.plazoleta_2}`,
     slug: "festival-gastronomico",
   },
   {
     name: "Desfile de Moda",
     description: "Conoce las últimas tendencias de la temporada",
     date: "10 Sep",
-    image: "/images/fashion-show.jpg",
+    image: `${assets.moda_1}`,
     slug: "desfile-moda",
   },
 ]
