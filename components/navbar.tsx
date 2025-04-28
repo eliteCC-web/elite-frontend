@@ -4,15 +4,22 @@
 import { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { Menu, X, ShoppingBag, Calendar, Users, MessageCircle, ChevronDown } from 'lucide-react';
+import { Menu, X, ShoppingBag, Calendar, Users, MessageCircle, ChevronDown, Home } from 'lucide-react';
 import { cn } from "@/lib/utils";
 import assets from "@/public/assets";
+import { useRouter } from "next/navigation";
 
 export default function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const router = useRouter();
 
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
+  };
+
+  const handleHomeClick = () => {
+    setIsMenuOpen(false);
+    router.push('/');
   };
 
   return (
@@ -80,6 +87,25 @@ export default function Navbar() {
           isMenuOpen ? "translate-x-0" : "translate-x-full"
         )}
       >
+        {/* Botón X para volver al inicio */}
+        <div className="absolute top-4 right-4 flex items-center gap-2">
+          <button 
+            onClick={handleHomeClick}
+            className="p-2 bg-red-600 text-white rounded-full hover:bg-red-700 transition-colors flex items-center gap-1"
+            aria-label="Volver al inicio"
+          >
+            <Home size={18} />
+            <span className="text-sm">Inicio</span>
+          </button>
+          <button 
+            onClick={toggleMenu}
+            className="p-2 bg-gray-200 rounded-full hover:bg-gray-300 transition-colors"
+            aria-label="Cerrar menú"
+          >
+            <X size={20} />
+          </button>
+        </div>
+
         <nav className="flex flex-col gap-4">
           <MobileNavLink href="/tiendas" onClick={toggleMenu}>
             <ShoppingBag size={20} />
