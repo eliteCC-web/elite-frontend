@@ -1,9 +1,10 @@
 import type React from "react"
 import "./globals.css"
-import type { Metadata } from "next"
 import { Poppins } from "next/font/google"
 import Navbar from "@/components/navbar"
 import Footer from "@/components/footer"
+// Importamos desde nuestro tipo personalizado
+import { Metadata } from "next"
 
 const poppins = Poppins({
   subsets: ["latin"],
@@ -23,9 +24,6 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="es">
-      <head>
-        <link rel="icon" href="/images/logo.png" />
-      </head>
       <body className={poppins.className}>
         <Navbar />
         {children}

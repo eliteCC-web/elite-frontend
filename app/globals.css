@@ -1,7 +1,11 @@
+/* Archivo globals.css simplificado */
+
+/* Estas directivas deben ser las primeras líneas de tu archivo */
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
+/* Definiciones de variables CSS para temas */
 :root {
   --background: 0 0% 100%;
   --foreground: 222.2 84% 4.9%;
@@ -25,26 +29,37 @@
   --radius: 0.5rem;
 }
 
-.dark {
-  --background: 222.2 84% 4.9%;
-  --foreground: 210 40% 98%;
-  --card: 222.2 84% 4.9%;
-  --card-foreground: 210 40% 98%;
-  --popover: 222.2 84% 4.9%;
-  --popover-foreground: 210 40% 98%;
-  --primary: 358 85% 52%;
-  --primary-foreground: 210 40% 98%;
-  --secondary: 217 71% 53%;
-  --secondary-foreground: 210 40% 98%;
-  --accent: 48 96% 53%;
-  --accent-foreground: 222.2 47.4% 11.2%;
-  --muted: 217.2 32.6% 17.5%;
-  --muted-foreground: 215 20.2% 65.1%;
-  --destructive: 0 62.8% 30.6%;
-  --destructive-foreground: 210 40% 98%;
-  --border: 217.2 32.6% 17.5%;
-  --input: 217.2 32.6% 17.5%;
-  --ring: 212.7 26.8% 83.9%;
+/* Colores explícitos para diagnóstico */
+.tw-bg-red-600 {
+  background-color: #e11d48 !important;
+}
+
+.tw-bg-blue-700 {
+  background-color: #1d4ed8 !important;
+}
+
+.tw-bg-yellow-400 {
+  background-color: #facc15 !important;
+}
+
+.tw-bg-green-500 {
+  background-color: #22c55e !important;
+}
+
+.tw-text-white {
+  color: white !important;
+}
+
+.tw-p-4 {
+  padding: 1rem !important;
+}
+
+.tw-rounded-lg {
+  border-radius: 0.5rem !important;
+}
+
+.tw-mb-2 {
+  margin-bottom: 0.5rem !important;
 }
 
 /* Custom animations */

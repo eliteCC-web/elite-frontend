@@ -1,0 +1,48 @@
+/* styles/test.css */
+/* Archivo con colores forzados para diagnosticar problemas */
+
+.red-forced {
+    background-color: red !important;
+    color: white !important;
+  }
+  
+  .blue-forced {
+    background-color: blue !important;
+    color: white !important;
+  }
+  
+  .green-forced {
+    background-color: green !important;
+    color: white !important;
+  }
+  
+  .yellow-forced {
+    background-color: yellow !important;
+    color: black !important;
+  }
+  
+  .purple-forced {
+    background-color: purple !important;
+    color: white !important;
+  }
+  
+  .fixed-button {
+    display: inline-block !important;
+    padding: 10px 20px !important;
+    background-color: #e11d48 !important; /* Rojo */
+    color: white !important;
+    font-weight: bold !important;
+    border-radius: 8px !important;
+    text-decoration: none !important;
+    margin: 10px !important;
+  }
+  
+  .fixed-button:hover {
+    background-color: #be123c !important;
+  }
+  
+  /* Aplicar estilos en línea a los elementos de link */
+  a {
+    text-decoration: none !important;
+    color: inherit !important;
+  }

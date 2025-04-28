@@ -1,6 +1,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { Facebook, Instagram, Twitter, Youtube, Mail, Phone, MapPin } from 'lucide-react';
+import assets from "@/public/assets";
 
 export default function Footer() {
   return (
@@ -11,7 +12,7 @@ export default function Footer() {
           <div>
             <div className="flex items-center gap-3 mb-4">
               <Image
-                src="/images/logo.png"
+                src={assets.logo_png}
                 alt="Centro Comercial Elite"
                 width={60}
                 height={60}
@@ -36,7 +37,7 @@ export default function Footer() {
               <FooterLink href="/tiendas">Tiendas</FooterLink>
               <FooterLink href="/eventos">Eventos</FooterLink>
               <FooterLink href="/nosotros">Quiénes Somos</FooterLink>
-              <FooterLink href="/chatbot">Chatbot</FooterLink>
+              <FooterLink href="/chatbot">Chatea con Eli</FooterLink>
               <FooterLink href="/mapa">Mapa del Centro Comercial</FooterLink>
             </ul>
           </div>
@@ -47,7 +48,7 @@ export default function Footer() {
             <ul className="space-y-4">
               <li className="flex items-start gap-3">
                 <MapPin className="text-red-500 shrink-0 mt-1" size={20} />
-                <span className="text-gray-400">Av. Principal #123, Ciudad</span>
+                <span className="text-gray-400">Calle 14 con Carrera 7, Cali</span>
               </li>
               <li className="flex items-center gap-3">
                 <Phone className="text-green-500" size={20} />
@@ -65,20 +66,12 @@ export default function Footer() {
             <h3 className="text-lg font-semibold mb-4 text-white">Horarios</h3>
             <ul className="space-y-2">
               <li className="flex justify-between">
-                <span className="text-gray-400">Lunes - Viernes</span>
-                <span className="text-white">10:00 - 21:00</span>
+                <span className="text-gray-400">Lunes - Sábado</span>
+                <span className="text-white">09:00 - 19:00</span>
               </li>
               <li className="flex justify-between">
-                <span className="text-gray-400">Sábados</span>
-                <span className="text-white">10:00 - 22:00</span>
-              </li>
-              <li className="flex justify-between">
-                <span className="text-gray-400">Domingos</span>
-                <span className="text-white">11:00 - 20:00</span>
-              </li>
-              <li className="flex justify-between mt-4">
-                <span className="text-gray-400">Restaurantes</span>
-                <span className="text-white">10:00 - 23:00</span>
+                <span className="text-gray-400">Domingo</span>
+                <span className="text-white">09:00 - 14:00</span>
               </li>
             </ul>
           </div>
