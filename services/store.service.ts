@@ -124,11 +124,6 @@ const StoreService = {
 
   async createStore(storeData: CreateStoreDto): Promise<Store> {
     try {
-        console.log(apiClient.interceptors.request)
-        console.log('DATA TO SEND' + typeof(storeData.storeNumber)); // <-- Agrega esto
-        console.log('DATA TO SEND' + typeof(storeData.phone)); // <-- Agrega esto
-        console.log('DATA TO SEND' + typeof(storeData.name)); // <-- Agrega esto
-        console.log('DATA TO SEND' + typeof(storeData.description)); // <-- Agrega esto
 
       const response = await apiClient.post<Store>('/stores', storeData);
       return response.data;

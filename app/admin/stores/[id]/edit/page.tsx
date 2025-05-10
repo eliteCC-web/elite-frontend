@@ -1,4 +1,3 @@
-/* eslint-disable */
 // app/admin/stores/[id]/edit/page.tsx
 import EditStoreClientPage from '@/components/admin/EditStoreClientPage';
 
