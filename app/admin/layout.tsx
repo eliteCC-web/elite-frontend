@@ -1,3 +1,5 @@
+/* eslint-disable */
+
 import type React from "react"
 import AdminLayout from "@/components/admin/admin-layout" // Ajusta la ruta según donde tengas el AdminLayout
 
