@@ -2,9 +2,13 @@
 import Image from "next/image"
 import Link from "next/link"
 import { Home, Construction, Map, ArrowRight, Calendar } from "lucide-react"
+import Navbar from "@/components/navbar"
+import Footer from "@/components/footer"
 
 export default function NotFound() {
   return (
+    <>
+    <Navbar />
     <main className="min-h-screen bg-gray-50 py-16">
       <div className="container mx-auto px-4 text-center">
 
@@ -65,6 +69,8 @@ export default function NotFound() {
           </Link>
         </div>
       </div>
+      <Footer />
     </main>
+    </>
   )
 }
