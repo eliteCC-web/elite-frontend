@@ -2,9 +2,13 @@ import Image from "next/image"
 import Link from "next/link"
 import { ChevronRight, ShoppingBag, Calendar, MapPin, MessageCircle } from "lucide-react"
 import assets from "@/public/assets"
+import Navbar from "@/components/navbar"
+import Footer from "@/components/footer"
 
 export default function Home() {
   return (
+    <>
+    <Navbar />
     <main className="min-h-screen">
       {/* Hero Section */}
       <section className="relative h-[88vh] flex items-center justify-center overflow-hidden">
@@ -216,6 +220,8 @@ export default function Home() {
         </div>
       </section>
     </main>
+    <Footer/>
+    </>
   )
 }
 
