@@ -59,8 +59,14 @@ export default function Navbar() {
             </NavLink>
           </nav>
 
-          {/* Login/Register Button */}
-          <div className="hidden md:block">
+          {/* Login/Register Buttons */}
+          <div className="hidden md:flex items-center gap-3">
+            <Link 
+              href="/register" 
+              className="text-gray-700 hover:text-red-600 px-4 py-2 rounded-md font-medium transition-colors"
+            >
+              Registrarse
+            </Link>
             <Link 
               href="/login" 
               className="bg-gradient-to-r from-red-600 to-purple-600 hover:from-red-700 hover:to-purple-700 text-white px-6 py-2 rounded-full font-medium transition-all"
@@ -124,7 +130,14 @@ export default function Navbar() {
             Chatbot
           </MobileNavLink>
 
-          <div className="mt-6 pt-6 border-t border-gray-100">
+          <div className="mt-6 pt-6 border-t border-gray-100 space-y-3">
+            <Link 
+              href="/register" 
+              className="w-full flex justify-center py-2.5 px-4 border border-red-300 rounded-md shadow-sm text-sm font-medium text-red-600 bg-white hover:bg-red-50 transition-colors"
+              onClick={toggleMenu}
+            >
+              Crear cuenta
+            </Link>
             <Link 
               href="/login" 
               className="bg-gradient-to-r from-red-600 to-purple-600 hover:from-red-700 hover:to-purple-700 text-white px-6 py-3 rounded-full font-medium transition-all w-full flex justify-center"

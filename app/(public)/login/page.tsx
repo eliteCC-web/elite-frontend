@@ -30,7 +30,7 @@ export default function LoginPage() {
 
     try {
       await AuthService.login(formData);
-      router.push('/admin/dashboard');
+      router.push('/');
     } catch (err: any) {
       console.error('Login error:', err);
       setError(
@@ -168,17 +168,24 @@ export default function LoginPage() {
                 </div>
                 <div className="relative flex justify-center text-sm">
                   <span className="px-2 bg-white text-gray-500">
-                    o volver a
+                    ¿No tienes cuenta?
                   </span>
                 </div>
               </div>
 
-              <div className="mt-6">
+              <div className="mt-6 space-y-3">
+                <Link 
+                  href="/register"
+                  className="w-full flex justify-center py-2.5 px-4 border border-red-300 rounded-md shadow-sm text-sm font-medium text-red-600 bg-white hover:bg-red-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 transition-colors"
+                >
+                  Crear cuenta nueva
+                </Link>
+                
                 <Link 
                   href="/"
                   className="w-full flex justify-center py-2.5 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 transition-colors"
                 >
-                  Página principal
+                  Volver a página principal
                 </Link>
               </div>
             </div>
