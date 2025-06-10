@@ -1,11 +1,54 @@
-/* Archivo globals.css simplificado */
-
-/* Estas directivas deben ser las primeras líneas de tu archivo */
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-/* Definiciones de variables CSS para temas */
+/* Configuración base para escala más pequeña */
+html {
+  font-size: 14px; /* Reducido de 16px a 14px para efecto zoom out */
+}
+
+@media (min-width: 768px) {
+  html {
+    font-size: 15px; /* Un poco más grande en tablets */
+  }
+}
+
+@media (min-width: 1024px) {
+  html {
+    font-size: 16px; /* Tamaño normal en desktop */
+  }
+}
+
+/* Ajustes específicos para contenedores */
+.container {
+  @apply mx-auto px-3 sm:px-4 lg:px-6;
+}
+
+/* Espaciado más compacto */
+.compact-spacing {
+  @apply space-y-4;
+}
+
+.compact-padding {
+  @apply p-4 sm:p-5 lg:p-6;
+}
+
+/* Ajustes para cards y componentes */
+.card-compact {
+  @apply p-4 rounded-lg shadow-sm border border-gray-100;
+}
+
+/* Headers más compactos */
+.header-compact {
+  @apply py-3 px-4;
+}
+
+/* Botones más compactos */
+.btn-compact {
+  @apply px-3 py-2 text-sm;
+}
+
+/* Variables CSS existentes... */
 :root {
   --background: 0 0% 100%;
   --foreground: 222.2 84% 4.9%;
@@ -29,50 +72,11 @@
   --radius: 0.5rem;
 }
 
-/* Colores explícitos para diagnóstico */
-.tw-bg-red-600 {
-  background-color: #e11d48 !important;
-}
-
-.tw-bg-blue-700 {
-  background-color: #1d4ed8 !important;
-}
-
-.tw-bg-yellow-400 {
-  background-color: #facc15 !important;
-}
-
-.tw-bg-green-500 {
-  background-color: #22c55e !important;
-}
-
-.tw-text-white {
-  color: white !important;
-}
-
-.tw-p-4 {
-  padding: 1rem !important;
-}
-
-.tw-rounded-lg {
-  border-radius: 0.5rem !important;
-}
-
-.tw-mb-2 {
-  margin-bottom: 0.5rem !important;
-}
-
 /* Custom animations */
 @keyframes float {
-  0% {
-    transform: translateY(0px);
-  }
-  50% {
-    transform: translateY(-10px);
-  }
-  100% {
-    transform: translateY(0px);
-  }
+  0% { transform: translateY(0px); }
+  50% { transform: translateY(-10px); }
+  100% { transform: translateY(0px); }
 }
 
 .animate-float {
