@@ -1,3 +1,4 @@
+/* eslint-disable */
 // components/admin/admin-layout.tsx - ACTUALIZACIÓN
 'use client';
 

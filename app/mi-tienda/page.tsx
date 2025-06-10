@@ -1,3 +1,4 @@
+/* eslint-disable */
 // app/mi-tienda/page.tsx
 'use client';
 

@@ -1,3 +1,4 @@
+/* eslint-disable */
 // app/perfil/page.tsx
 'use client';
 

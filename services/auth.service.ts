@@ -1,4 +1,5 @@
 // services/auth.service.ts - ACTUALIZADO para mejor manejo de errores
+import { RegisterData, RegisterResponse } from '@/interfaces/auth.interface';
 import apiClient from './api-client';
 
 export interface LoginData {
@@ -49,6 +50,12 @@ const AuthService = {
     }
   },
 
+  async register(data: RegisterData): Promise<RegisterResponse> {
+    console.log(data)
+    const response = await apiClient.post<RegisterResponse>('/auth/register', data);
+    return response.data;
+  },
+
   logout(): void {
     localStorage.removeItem('token');
     localStorage.removeItem('user');
@@ -81,6 +88,11 @@ const AuthService = {
     const isAuth = !!(token && user);
     console.log('Is authenticated:', isAuth);
     return isAuth;
+  },
+
+  async createBulkUsers(users: RegisterData[]): Promise<{ created: number; errors: any[] }> {
+    const response = await apiClient.post('/auth/bulk-create', { users });
+    return response.data;
   },
 
   hasRole(role: string): boolean {

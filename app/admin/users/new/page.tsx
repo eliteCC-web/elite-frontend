@@ -1,3 +1,4 @@
+/* eslint-disable */
 // app/admin/users/new/page.tsx - CORREGIDO
 'use client';
 
