@@ -1,26 +1,30 @@
-/* eslint-disable */
+// app/(public)/login/page.tsx - CORREGIDO
 'use client';
 
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import Link from 'next/link';
-import { User, Lock, AlertCircle } from 'lucide-react';
-import AuthService from '@/services/auth.service';
+import { User, Lock, AlertCircle, Eye, EyeOff } from 'lucide-react';
+import { useAuth } from '@/hooks/useAuth';
 import assets from '@/public/assets';
 
 export default function LoginPage() {
   const router = useRouter();
+  const { login } = useAuth();
   const [formData, setFormData] = useState({
     email: '',
     password: '',
   });
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
+    // Limpiar error al escribir
+    if (error) setError('');
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -29,13 +33,13 @@ export default function LoginPage() {
     setLoading(true);
 
     try {
-      await AuthService.login(formData);
-      router.push('/');
+      await login(formData.email, formData.password);
+      // El AuthContext maneja la redirección
     } catch (err: any) {
       console.error('Login error:', err);
       setError(
         err.response?.data?.message || 
-        'Ocurrió un error al iniciar sesión. Por favor, inténtelo de nuevo.'
+        'Credenciales incorrectas. Por favor, verifica tu email y contraseña.'
       );
     } finally {
       setLoading(false);
@@ -62,8 +66,17 @@ export default function LoginPage() {
                 Iniciar Sesión
               </h1>
               <p className="text-gray-500 mt-2">
-                Accede al panel de administración
+                Accede al sistema del Centro Comercial Elite
               </p>
+            </div>
+
+            {/* Credenciales de prueba */}
+            <div className="mb-6 bg-blue-50 border border-blue-200 rounded-lg p-4">
+              <h3 className="text-sm font-medium text-blue-800 mb-2">Credenciales de prueba:</h3>
+              <div className="text-sm text-blue-700 space-y-1">
+                <p><strong>Admin:</strong> admin@elitecc.com / Admin123</p>
+                <p><strong>Colaborador:</strong> colaborador1@elitecc.com / Elite123</p>
+              </div>
             </div>
 
             {/* Mensaje de error */}
@@ -98,6 +111,7 @@ export default function LoginPage() {
                       onChange={handleChange}
                       className="block w-full pl-10 pr-3 py-2.5 border border-gray-200 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent"
                       placeholder="admin@elitecc.com"
+                      disabled={loading}
                     />
                   </div>
                 </div>
@@ -116,14 +130,27 @@ export default function LoginPage() {
                     <input
                       id="password"
                       name="password"
-                      type="password"
+                      type={showPassword ? 'text' : 'password'}
                       autoComplete="current-password"
                       required
                       value={formData.password}
                       onChange={handleChange}
-                      className="block w-full pl-10 pr-3 py-2.5 border border-gray-200 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent"
+                      className="block w-full pl-10 pr-10 py-2.5 border border-gray-200 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent"
                       placeholder="••••••••"
+                      disabled={loading}
                     />
+                    <button
+                      type="button"
+                      onClick={() => setShowPassword(!showPassword)}
+                      className="absolute inset-y-0 right-0 pr-3 flex items-center"
+                      disabled={loading}
+                    >
+                      {showPassword ? (
+                        <EyeOff className="h-5 w-5 text-gray-400" />
+                      ) : (
+                        <Eye className="h-5 w-5 text-gray-400" />
+                      )}
+                    </button>
                   </div>
                 </div>
 
@@ -154,7 +181,14 @@ export default function LoginPage() {
                     className={`w-full flex justify-center py-2.5 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 transition-colors
                       ${loading ? 'opacity-70 cursor-not-allowed' : ''}`}
                   >
-                    {loading ? 'Iniciando sesión...' : 'Iniciar sesión'}
+                    {loading ? (
+                      <div className="flex items-center gap-2">
+                        <div className="animate-spin rounded-full h-4 w-4 border-t-2 border-b-2 border-white"></div>
+                        <span>Iniciando sesión...</span>
+                      </div>
+                    ) : (
+                      'Iniciar sesión'
+                    )}
                   </button>
                 </div>
               </div>
@@ -168,24 +202,17 @@ export default function LoginPage() {
                 </div>
                 <div className="relative flex justify-center text-sm">
                   <span className="px-2 bg-white text-gray-500">
-                    ¿No tienes cuenta?
+                    o volver a
                   </span>
                 </div>
               </div>
 
-              <div className="mt-6 space-y-3">
-                <Link 
-                  href="/register"
-                  className="w-full flex justify-center py-2.5 px-4 border border-red-300 rounded-md shadow-sm text-sm font-medium text-red-600 bg-white hover:bg-red-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 transition-colors"
-                >
-                  Crear cuenta nueva
-                </Link>
-                
+              <div className="mt-6">
                 <Link 
                   href="/"
                   className="w-full flex justify-center py-2.5 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 transition-colors"
                 >
-                  Volver a página principal
+                  Página principal
                 </Link>
               </div>
             </div>
