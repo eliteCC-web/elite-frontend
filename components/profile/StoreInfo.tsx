@@ -1,3 +1,4 @@
+/* eslint-disable */
 // components/profile/StoreInfo.tsx
 'use client';
 

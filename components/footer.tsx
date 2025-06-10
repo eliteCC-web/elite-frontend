@@ -56,7 +56,7 @@ export default function Footer() {
               </li>
               <li className="flex items-center gap-3">
                 <Mail className="text-blue-500" size={20} />
-                <span className="text-gray-400">info@ccelite.com</span>
+                <span className="text-gray-400">elitecc.soporte@gmail.com</span>
               </li>
             </ul>
           </div>

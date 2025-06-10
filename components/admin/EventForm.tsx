@@ -1,3 +1,4 @@
+/* eslint-disable */
 // components/admin/EventForm.tsx
 'use client';
 

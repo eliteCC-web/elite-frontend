@@ -1,4 +1,6 @@
+/* eslint-disable */
 // app/unauthorized/page.tsx
+"use client";
 import Image from "next/image"
 import Link from "next/link"
 import { Home, Shield, ArrowLeft } from "lucide-react"

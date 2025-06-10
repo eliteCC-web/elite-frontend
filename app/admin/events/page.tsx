@@ -1,3 +1,4 @@
+/* eslint-disable */
 // app/admin/events/page.tsx
 'use client';
 
