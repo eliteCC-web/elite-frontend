@@ -41,7 +41,7 @@ export default function ProfilePage() {
     if (!user) return;
     
     try {
-      const profileData = await ProfileService.getUserProfile(user.id);
+      const profileData = await ProfileService.getCurrentUserProfile();
       setProfile(profileData);
     } catch (err: any) {
       console.error('Error fetching profile:', err);

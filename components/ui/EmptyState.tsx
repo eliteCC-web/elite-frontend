@@ -1,22 +1,37 @@
 // components/ui/EmptyState.tsx
-import { ReactNode } from 'react'
+import { LucideIcon } from 'lucide-react'
 
 interface EmptyStateProps {
-  icon: ReactNode
+  icon?: LucideIcon
   title: string
-  description: string
-  action?: ReactNode
+  description?: string
+  action?: React.ReactNode
+  className?: string
 }
 
-export default function EmptyState({ icon, title, description, action }: EmptyStateProps) {
+export default function EmptyState({ 
+  icon: Icon, 
+  title, 
+  description, 
+  action,
+  className = ''
+}: EmptyStateProps) {
   return (
-    <div className="text-center py-12">
-      <div className="bg-gray-100 rounded-full p-3 w-16 h-16 flex items-center justify-center mx-auto mb-4">
-        {icon}
-      </div>
-      <h3 className="text-lg font-medium text-gray-800 mb-2">{title}</h3>
-      <p className="text-gray-600 mb-4">{description}</p>
-      {action && <div>{action}</div>}
+    <div className={`text-center py-12 ${className}`}>
+      {Icon && (
+        <div className="mx-auto h-12 w-12 text-neutral-400 mb-4">
+          <Icon size={48} />
+        </div>
+      )}
+      <h3 className="text-lg font-semibold text-neutral-900 mb-2">{title}</h3>
+      {description && (
+        <p className="text-neutral-600 mb-6 max-w-sm mx-auto">{description}</p>
+      )}
+      {action && (
+        <div className="flex justify-center">
+          {action}
+        </div>
+      )}
     </div>
   )
 }

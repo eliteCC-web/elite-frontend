@@ -1,28 +1,46 @@
 // components/navbar.tsx - ACTUALIZACIÓN sin paneles para la mayoría de roles
 'use client';
 
-import { useState } from "react";
-import Link from "next/link";
-import Image from "next/image";
-import { Menu, X, ShoppingBag, Calendar, Users, MessageCircle, ChevronDown, Home, Settings, Shield, LogOut, User } from 'lucide-react';
-import { cn } from "@/lib/utils";
-import assets from "@/public/assets";
-import { useRouter } from "next/navigation";
-import { useAuth } from "@/hooks/useAuth";
+import Link from 'next/link';
+import Image from 'next/image';
+import { useState, useEffect } from 'react';
+import { Menu, X, ShoppingBag, Calendar, User, LogOut, Shield, Users, MessageCircle, ChevronDown, Bell } from 'lucide-react';
+import { useAuth } from '@/hooks/useAuth';
+import { cn } from '@/lib/utils';
+import assets from '@/public/assets';
 
 export default function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [userDropdownOpen, setUserDropdownOpen] = useState(false);
-  const router = useRouter();
+  const [isScrolled, setIsScrolled] = useState(false);
   const { user, isAuthenticated, hasRole, logout } = useAuth();
+
+  // Detectar scroll para cambiar el navbar
+  useEffect(() => {
+    let lastScrollY = window.scrollY;
+    let ticking = false;
+
+    const handleScroll = () => {
+      lastScrollY = window.scrollY;
+      if (!ticking) {
+        requestAnimationFrame(() => {
+          const shouldBeScrolled = lastScrollY > 50; // Threshold más bajo para mejor respuesta
+          setIsScrolled(shouldBeScrolled);
+          ticking = false;
+        });
+        ticking = true;
+      }
+    };
+
+    // Ejecutar inmediatamente para verificar el estado inicial
+    handleScroll();
+    
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
-  };
-
-  const handleHomeClick = () => {
-    setIsMenuOpen(false);
-    router.push('/');
   };
 
   const handleLogout = () => {
@@ -31,159 +49,145 @@ export default function Navbar() {
     setIsMenuOpen(false);
   };
 
-  // Solo ADMIN tiene panel administrativo
-  const getAdminPanelInfo = () => {
-    if (!isAuthenticated || !user) return null;
-
-    if (hasRole('ADMIN')) {
-      return {
-        label: 'Panel Administrador',
-        href: '/admin/dashboard',
-        icon: <Shield size={16} />,
-        color: 'from-red-600 to-red-700'
-      };
-    }
-
-    return null; // Solo admin tiene panel
-  };
-
-  const adminPanelInfo = getAdminPanelInfo();
-
   return (
-    <header className="sticky top-0 z-50 bg-white shadow-sm">
-      <div className="container mx-auto px-3">
-        <div className="flex items-center justify-between h-16"> {/* Reducido de h-20 a h-16 */}
+    <header className={cn(
+      "fixed top-0 left-0 right-0 z-[100] transition-all duration-500 ease-in-out",
+      isScrolled 
+        ? "bg-white/95 backdrop-blur-md shadow-lg" 
+        : "bg-transparent"
+    )}>
+      <div className="container-modern">
+        <div className="flex items-center justify-between h-16 lg:h-20">
           
-          {/* Logo */}
-          <Link href="/" className="flex items-center gap-2">
-            <Image
-              src={assets.logo_png}
-              alt="Centro Comercial Elite"
-              width={40} // Reducido de 50
-              height={40}
-            />
-            <span className="font-bold text-lg text-gray-800 hidden sm:inline-block"> {/* Reducido de text-xl */}
-              Centro Comercial Elite
-            </span>
+          {/* Logo - siempre visible */}
+          <Link href="/" className="flex items-center gap-3 group">
+            <div className="relative">
+              <div className={cn(
+                "w-12 h-12 flex items-center justify-center shadow-lg group-hover:shadow-xl transition-all duration-300 group-hover:scale-110",
+                isScrolled 
+                  ? "bg-white rounded-2xl" 
+                  : "bg-white/20 backdrop-blur-sm rounded-2xl border border-white/30"
+              )}>
+                <Image
+                  src={assets.logo_png}
+                  alt="Elite"
+                  width={32}
+                  height={32}
+                  className="drop-shadow-lg"
+                />
+              </div>
+            </div>
+            <div className={cn(
+              "hidden sm:block transition-all duration-500 ease-in-out",
+              isScrolled ? "opacity-100 transform translate-x-0" : "opacity-0 transform -translate-x-4"
+            )}>
+              <span className="text-display text-xl text-neutral-900 font-bold">
+                Elite
+              </span>
+              <span className="block text-xs text-neutral-500 font-medium">
+                Centro Comercial
+              </span>
+            </div>
           </Link>
 
-          {/* Desktop Navigation */}
-          <nav className="hidden md:flex items-center gap-1">
+          {/* Desktop Navigation - siempre visible pero con opacidad */}
+          <nav className={cn(
+            "hidden lg:flex items-center gap-8 transition-all duration-500 ease-in-out",
+            isScrolled ? "opacity-100 transform translate-y-0" : "opacity-0 transform translate-y-2 pointer-events-none"
+          )}>
             <NavLink href="/tiendas">
-              <ShoppingBag size={16} /> {/* Reducido de 18 */}
+              <ShoppingBag size={18} />
               Tiendas
             </NavLink>
             <NavLink href="/eventos">
-              <Calendar size={16} />
+              <Calendar size={18} />
               Eventos
             </NavLink>
             <NavLink href="/nosotros">
-              <Users size={16} />
-              Quiénes Somos
+              <Users size={18} />
+              Nosotros
             </NavLink>
             <NavLink href="/chatbot">
-              <MessageCircle size={16} />
-              Chatea con Eli
+              <MessageCircle size={18} />
+              Eli Chat
             </NavLink>
           </nav>
 
-          {/* Desktop Auth Section */}
-          <div className="hidden md:flex items-center gap-2"> {/* Reducido gap */}
+          {/* Desktop Auth Section - siempre visible pero con opacidad */}
+          <div className={cn(
+            "hidden lg:flex items-center gap-4 transition-all duration-500 ease-in-out",
+            isScrolled ? "opacity-100 transform translate-y-0" : "opacity-0 transform translate-y-2 pointer-events-none"
+          )}>
             {isAuthenticated && user ? (
               <>
-                {/* Panel de administración SOLO para admin */}
-                {adminPanelInfo && (
+                {/* Notificaciones */}
+                <button className="relative p-3 text-neutral-600 hover:text-neutral-900 hover:bg-neutral-100 rounded-2xl transition-all duration-200 group">
+                  <Bell size={20} className="group-hover:scale-110 transition-transform duration-200" />
+                  <span className="absolute -top-1 -right-1 h-3 w-3 bg-primary-500 rounded-full animate-pulse"></span>
+                </button>
+
+                {/* Panel de administración */}
+                {hasRole('ADMIN') && (
                   <Link 
-                    href={adminPanelInfo.href}
-                    className={`bg-gradient-to-r ${adminPanelInfo.color} hover:opacity-90 text-white px-3 py-1.5 rounded-full font-medium transition-all flex items-center gap-1.5 text-sm`}
+                    href="/admin/dashboard"
+                    className="btn-primary btn-sm rounded-2xl"
                   >
-                    {adminPanelInfo.icon}
-                    {adminPanelInfo.label}
+                    <Shield size={16} />
+                    Admin
                   </Link>
                 )}
 
-                {/* Dropdown del usuario */}
+                {/* User Dropdown */}
                 <div className="relative">
                   <button
                     onClick={() => setUserDropdownOpen(!userDropdownOpen)}
-                    className="flex items-center gap-2 px-2 py-1.5 rounded-full hover:bg-gray-100 transition-colors"
+                    className="flex items-center gap-3 p-3 rounded-2xl hover:bg-neutral-100 transition-all duration-200 group"
                   >
-                    <div className="h-7 w-7 rounded-full bg-blue-100 flex items-center justify-center"> {/* Reducido de h-8 w-8 */}
-                      <span className="text-blue-600 font-medium text-xs">
-                        {user.firstName?.charAt(0)}{user.lastName?.charAt(0)}
-                      </span>
+                    <div className="w-10 h-10 rounded-2xl bg-gradient-to-br from-primary-500 to-secondary-500 flex items-center justify-center text-white text-sm font-semibold shadow-lg group-hover:shadow-xl transition-all duration-200">
+                      {user?.firstName?.charAt(0) || 'U'}
                     </div>
-                    <span className="font-medium text-gray-700 text-sm">
-                      {user.firstName}
+                    <span className="hidden md:block text-sm font-medium text-neutral-700">
+                      {user?.firstName || 'Usuario'}
                     </span>
-                    <ChevronDown size={14} className="text-gray-500" />
+                    <ChevronDown size={16} className="text-neutral-500 group-hover:rotate-180 transition-transform duration-200" />
                   </button>
 
-                  {/* Dropdown menu */}
                   {userDropdownOpen && (
-                    <div className="absolute right-0 mt-2 w-52 bg-white rounded-lg shadow-lg border border-gray-200 py-2 z-50">
-                      <div className="px-4 py-2 border-b border-gray-100">
-                        <p className="text-sm font-medium text-gray-900">
-                          {user.firstName} {user.lastName}
+                    <div className="absolute right-0 mt-3 w-64 bg-white rounded-2xl shadow-strong border border-neutral-100 py-3 z-50 animate-in slide-in-from-top-2 duration-200">
+                      <div className="px-4 py-3 border-b border-neutral-100">
+                        <p className="text-sm font-semibold text-neutral-900">
+                          {user?.firstName} {user?.lastName}
                         </p>
-                        <p className="text-xs text-gray-500">{user.email}</p>
-                        <div className="flex flex-wrap gap-1 mt-1">
-                          {user.roles?.map((role) => (
-                            <span key={role.id} className="text-xs bg-blue-100 text-blue-600 px-1.5 py-0.5 rounded">
-                              {role.name}
-                            </span>
-                          ))}
-                        </div>
+                        <p className="text-sm text-neutral-500">{user?.email}</p>
                       </div>
                       
-                      <div className="py-1">
-                        {/* Solo admin ve panel */}
-                        {adminPanelInfo && (
-                          <Link
-                            href={adminPanelInfo.href}
-                            className="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                            onClick={() => setUserDropdownOpen(false)}
-                          >
-                            {adminPanelInfo.icon}
-                            {adminPanelInfo.label}
-                          </Link>
-                        )}
-                        
+                      <div className="py-2">
                         <Link
                           href="/perfil"
-                          className="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                          className="flex items-center gap-3 px-4 py-3 text-sm text-neutral-700 hover:bg-neutral-50 transition-colors rounded-xl mx-2"
                           onClick={() => setUserDropdownOpen(false)}
                         >
                           <User size={16} />
                           Mi Perfil
                         </Link>
-
-                        {/* Solo cliente interno ve 'Mi Tienda' */}
-                        {hasRole('CLIENTE_INTERNO') && (
-                          <Link
-                            href="/mi-tienda"
-                            className="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                            onClick={() => setUserDropdownOpen(false)}
-                          >
-                            <ShoppingBag size={16} />
-                            Mi Tienda
-                          </Link>
-                        )}
                         
                         {hasRole('ADMIN') && (
                           <Link
-                            href="/admin/settings"
-                            className="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                            href="/admin"
+                            className="flex items-center gap-3 px-4 py-3 text-sm text-neutral-700 hover:bg-neutral-50 transition-colors rounded-xl mx-2"
                             onClick={() => setUserDropdownOpen(false)}
                           >
-                            <Settings size={16} />
-                            Configuración
+                            <Shield size={16} />
+                            Panel Admin
                           </Link>
                         )}
                         
                         <button
-                          onClick={handleLogout}
-                          className="flex items-center gap-2 w-full px-4 py-2 text-sm text-red-600 hover:bg-red-50"
+                          onClick={() => {
+                            logout();
+                            setUserDropdownOpen(false);
+                          }}
+                          className="flex items-center gap-3 px-4 py-3 text-sm text-secondary-500 hover:bg-secondary-50 transition-colors rounded-xl mx-2 w-full"
                         >
                           <LogOut size={16} />
                           Cerrar Sesión
@@ -194,178 +198,114 @@ export default function Navbar() {
                 </div>
               </>
             ) : (
-              /* Botones de Login/Register cuando no está autenticado */
-              <div className="flex items-center gap-2">
-                <Link 
-                  href="/login" 
-                  className="text-gray-700 hover:text-red-600 font-medium transition-colors px-3 py-1.5 text-sm"
-                >
+              <div className="flex items-center gap-3">
+                <Link href="/login" className="btn-outline btn-sm rounded-2xl">
                   Iniciar Sesión
                 </Link>
-                <Link 
-                  href="/registro" 
-                  className="bg-gradient-to-r from-red-600 to-purple-600 hover:from-red-700 hover:to-purple-700 text-white px-4 py-1.5 rounded-full font-medium transition-all text-sm"
-                >
+                <Link href="/register" className="btn-primary btn-sm rounded-2xl">
                   Registrarse
                 </Link>
               </div>
             )}
           </div>
 
-          {/* Mobile Menu Button */}
-          <button 
-            className="md:hidden text-gray-700 hover:text-gray-900"
+          {/* Mobile menu button - siempre visible pero con estilo adaptativo */}
+          <button
             onClick={toggleMenu}
-            aria-label={isMenuOpen ? "Cerrar menú" : "Abrir menú"}
+            className={cn(
+              "lg:hidden p-3 rounded-2xl transition-all duration-200",
+              isScrolled 
+                ? "text-neutral-600 hover:text-neutral-900 hover:bg-neutral-100" 
+                : "text-white hover:bg-white/20 backdrop-blur-sm"
+            )}
           >
-            {isMenuOpen ? <X size={22} /> : <Menu size={22} />}
+            {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
           </button>
         </div>
       </div>
 
-      {/* Mobile Navigation - versión compacta */}
-      <div 
-        className={cn(
-          "fixed inset-0 bg-white z-40 pt-16 px-4 md:hidden transition-transform duration-300 ease-in-out",
-          isMenuOpen ? "translate-x-0" : "translate-x-full"
-        )}
-      >
-        {/* Botones superiores más compactos */}
-        <div className="absolute top-3 right-4 flex items-center gap-2">
-          <button 
-            onClick={handleHomeClick}
-            className="p-2 bg-red-600 text-white rounded-full hover:bg-red-700 transition-colors flex items-center gap-1"
-            aria-label="Volver al inicio"
-          >
-            <Home size={16} />
-            <span className="text-sm">Inicio</span>
-          </button>
-          <button 
-            onClick={toggleMenu}
-            className="p-2 bg-gray-200 rounded-full hover:bg-gray-300 transition-colors"
-            aria-label="Cerrar menú"
-          >
-            <X size={18} />
-          </button>
-        </div>
-
-        {/* Mobile Auth Section */}
-        {isAuthenticated && user && (
-          <div className="mb-4 p-3 bg-gray-50 rounded-lg">
-            <div className="flex items-center gap-3 mb-2">
-              <div className="h-10 w-10 rounded-full bg-blue-100 flex items-center justify-center">
-                <span className="text-blue-600 font-medium text-sm">
-                  {user.firstName?.charAt(0)}{user.lastName?.charAt(0)}
-                </span>
-              </div>
-              <div>
-                <p className="font-medium text-gray-900 text-sm">
-                  {user.firstName} {user.lastName}
-                </p>
-                <p className="text-xs text-gray-500">{user.email}</p>
-              </div>
-            </div>
+      {/* Mobile Menu */}
+      {isMenuOpen && (
+        <div className="lg:hidden bg-white/95 backdrop-blur-md border-t border-neutral-100 shadow-lg">
+          <div className="container-modern py-4">
+            <nav className="space-y-2">
+              <MobileNavLink href="/tiendas" onClick={() => setIsMenuOpen(false)}>
+                <ShoppingBag size={18} />
+                Tiendas
+              </MobileNavLink>
+              <MobileNavLink href="/eventos" onClick={() => setIsMenuOpen(false)}>
+                <Calendar size={18} />
+                Eventos
+              </MobileNavLink>
+              <MobileNavLink href="/nosotros" onClick={() => setIsMenuOpen(false)}>
+                <Users size={18} />
+                Nosotros
+              </MobileNavLink>
+              <MobileNavLink href="/chatbot" onClick={() => setIsMenuOpen(false)}>
+                <MessageCircle size={18} />
+                Eli Chat
+              </MobileNavLink>
+            </nav>
             
-            <div className="flex flex-wrap gap-1 mb-2">
-              {user.roles?.map((role) => (
-                <span key={role.id} className="text-xs bg-blue-100 text-blue-600 px-2 py-0.5 rounded">
-                  {role.name}
-                </span>
-              ))}
-            </div>
-
-            {/* Panel de administración en móvil - SOLO admin */}
-            {adminPanelInfo && (
-              <Link 
-                href={adminPanelInfo.href}
-                className={`bg-gradient-to-r ${adminPanelInfo.color} hover:opacity-90 text-white px-3 py-2 rounded-lg font-medium transition-all flex items-center gap-2 justify-center w-full text-sm`}
-                onClick={toggleMenu}
-              >
-                {adminPanelInfo.icon}
-                {adminPanelInfo.label}
-              </Link>
-            )}
-          </div>
-        )}
-
-        <nav className="flex flex-col gap-2"> {/* Reducido gap */}
-          <MobileNavLink href="/tiendas" onClick={toggleMenu}>
-            <ShoppingBag size={18} />
-            Tiendas
-          </MobileNavLink>
-          <MobileNavLink href="/eventos" onClick={toggleMenu}>
-            <Calendar size={18} />
-            Eventos
-          </MobileNavLink>
-          <MobileNavLink href="/nosotros" onClick={toggleMenu}>
-            <Users size={18} />
-            Quiénes Somos
-          </MobileNavLink>
-          <MobileNavLink href="/chatbot" onClick={toggleMenu}>
-            <MessageCircle size={18} />
-            Chatbot
-          </MobileNavLink>
-
-          {/* Sección de autenticación móvil */}
-          <div className="mt-4 pt-4 border-t border-gray-100">
             {isAuthenticated && user ? (
-              <div className="space-y-2">
-                <MobileNavLink href="/perfil" onClick={toggleMenu}>
-                  <User size={18} />
-                  Mi Perfil
-                </MobileNavLink>
-
-                {/* Solo cliente interno ve Mi Tienda */}
-                {hasRole('CLIENTE_INTERNO') && (
-                  <MobileNavLink href="/mi-tienda" onClick={toggleMenu}>
-                    <ShoppingBag size={18} />
-                    Mi Tienda
-                  </MobileNavLink>
-                )}
+              <div className="mt-6 pt-6 border-t border-neutral-100">
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="w-10 h-10 rounded-2xl bg-gradient-to-br from-secondary-500 to-primary-500 flex items-center justify-center text-white text-sm font-semibold">
+                    {user?.firstName?.charAt(0) || 'U'}
+                  </div>
+                  <div>
+                    <p className="text-sm font-semibold text-neutral-900">
+                      {user?.firstName} {user?.lastName}
+                    </p>
+                    <p className="text-xs text-neutral-500">{user?.email}</p>
+                  </div>
+                </div>
                 
-                {hasRole('ADMIN') && (
-                  <MobileNavLink href="/admin/settings" onClick={toggleMenu}>
-                    <Settings size={18} />
-                    Configuración
+                <div className="space-y-2">
+                  <MobileNavLink href="/perfil" onClick={() => setIsMenuOpen(false)}>
+                    <User size={18} />
+                    Mi Perfil
                   </MobileNavLink>
-                )}
-                
-                <button
-                  onClick={handleLogout}
-                  className="flex items-center gap-3 py-3 text-red-600 hover:text-red-700 text-base font-medium border-b border-gray-100 w-full"
-                >
-                  <LogOut size={18} />
-                  Cerrar Sesión
-                </button>
+                  
+                  {hasRole('ADMIN') && (
+                    <MobileNavLink href="/admin" onClick={() => setIsMenuOpen(false)}>
+                      <Shield size={18} />
+                      Panel Admin
+                    </MobileNavLink>
+                  )}
+                  
+                  <button
+                    onClick={() => {
+                      logout();
+                      setIsMenuOpen(false);
+                    }}
+                    className="flex items-center gap-3 w-full px-4 py-3 text-sm text-secondary-500 hover:bg-secondary-50 transition-colors rounded-xl"
+                  >
+                    <LogOut size={18} />
+                    Cerrar Sesión
+                  </button>
+                </div>
               </div>
             ) : (
-              <div className="space-y-2">
+              <div className="mt-6 pt-6 border-t border-neutral-100 space-y-3">
                 <Link 
                   href="/login" 
-                  className="block w-full py-2.5 px-4 text-center bg-gray-100 hover:bg-gray-200 text-gray-800 rounded-lg font-medium transition-colors text-sm"
-                  onClick={toggleMenu}
+                  className="btn-outline w-full justify-center"
+                  onClick={() => setIsMenuOpen(false)}
                 >
                   Iniciar Sesión
                 </Link>
                 <Link 
-                  href="/registro" 
-                  className="block w-full py-2.5 px-4 text-center bg-gradient-to-r from-red-600 to-purple-600 hover:from-red-700 hover:to-purple-700 text-white rounded-lg font-medium transition-all text-sm"
-                  onClick={toggleMenu}
+                  href="/register" 
+                  className="btn-primary w-full justify-center"
+                  onClick={() => setIsMenuOpen(false)}
                 >
                   Registrarse
                 </Link>
               </div>
             )}
           </div>
-        </nav>
-      </div>
-
-      {/* Overlay para cerrar dropdown en desktop */}
-      {userDropdownOpen && (
-        <div 
-          className="fixed inset-0 z-30" 
-          onClick={() => setUserDropdownOpen(false)}
-        />
+        </div>
       )}
     </header>
   );
@@ -373,10 +313,10 @@ export default function Navbar() {
 
 function NavLink({ href, children, className }: { href: string; children: React.ReactNode; className?: string }) {
   return (
-    <Link 
-      href={href} 
+    <Link
+      href={href}
       className={cn(
-        "flex items-center gap-1.5 px-3 py-1.5 text-gray-700 hover:text-red-600 font-medium rounded-md transition-colors text-sm",
+        'nav-link flex items-center gap-2 px-4 py-2 rounded-2xl transition-all duration-200 hover:bg-neutral-100 hover:scale-105',
         className
       )}
     >
@@ -387,10 +327,10 @@ function NavLink({ href, children, className }: { href: string; children: React.
 
 function MobileNavLink({ href, children, onClick }: { href: string; children: React.ReactNode; onClick: () => void }) {
   return (
-    <Link 
-      href={href} 
-      className="flex items-center gap-3 py-3 text-gray-800 hover:text-red-600 text-base font-medium border-b border-gray-100"
+    <Link
+      href={href}
       onClick={onClick}
+      className="flex items-center gap-3 px-4 py-3 text-neutral-700 hover:bg-neutral-50 transition-colors rounded-xl"
     >
       {children}
     </Link>

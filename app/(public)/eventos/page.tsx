@@ -1,156 +1,281 @@
-import Image from "next/image"
-import Link from "next/link"
-import { Calendar, MapPin, ChevronRight, Filter, Search } from 'lucide-react'
-import assets from "@/public/assets"
+'use client';
+
+import { useState } from 'react';
+import Image from "next/image";
+import { Calendar, MapPin, Clock, Users, Filter, Search, Heart, Share2, Phone, Mail } from 'lucide-react';
+import assets from "@/public/assets";
+import { useAuth } from "@/hooks/useAuth";
+
+// Tipos
+interface Evento {
+  id: number;
+  nombre: string;
+  descripcion: string;
+  fechaCorta: string;
+  fecha: string;
+  hora: string;
+  lugar: string;
+  imagen: string;
+  costo: string;
+  precio: number;
+  slug: string;
+  destacado: boolean;
+  categorias: string[];
+  cupos: number;
+  cuposDisponibles: number;
+  requierePago: boolean;
+  contacto: {
+    telefono: string;
+    email: string;
+  };
+}
 
 // Datos de muestra para los eventos
-const eventosData = [
+const eventosData: Evento[] = [
   {
     id: 1,
-    nombre: "Fiesta Colores",
-    descripcion: "Celebra con actividades especiales para los más pequeños. Tendremos juegos, payasos, pintacaritas y muchas sorpresas para que los niños disfruten de un día inolvidable.",
-    fechaCorta: "26 Abr",
-    fecha: "26 de Abril, 2025",
-    hora: "10:30 AM",
-    lugar: "Séptimo Piso",
-    imagen: `${assets.dia_nino_1}`,
-    costo: "$20.000",
-    slug: "fiesta-colores",
+    nombre: "Festival de Gastronomía Elite",
+    descripcion: "Una celebración de sabores con los mejores chefs de la región. Degusta platillos únicos y participa en talleres culinarios.",
+    fechaCorta: "15 Dic",
+    fecha: "15 de Diciembre, 2024",
+    hora: "6:00 PM - 11:00 PM",
+    lugar: "Zona de Restaurantes",
+    imagen: "/placeholder.svg",
+    costo: "$45.000",
+    precio: 45000,
+    slug: "festival-gastronomia",
     destacado: true,
-    categorias: ["Familiar", "Infantil"]
+    categorias: ["Gastronomía", "Cultural"],
+    cupos: 150,
+    cuposDisponibles: 87,
+    requierePago: true,
+    contacto: {
+      telefono: "+57 300 123 4567",
+      email: "eventos@ccelite.com"
+    }
   },
   {
     id: 2,
-    nombre: "Festival Gastronómico",
-    descripcion: "Degusta los mejores platillos de nuestros restaurantes. Un recorrido por la gastronomía local e internacional con los mejores chefs de la ciudad.",
-    fechaCorta: "15 Ago",
-    fecha: "15 de Agosto, 2024",
-    hora: "12:00 PM - 9:00 PM",
-    lugar: "Zona de Restaurantes",
-    imagen: `${assets.plazoleta_2}`,
-    costo: "$25.000",
-    slug: "festival-gastronomico",
+    nombre: "Concierto en Vivo - Noche de Jazz",
+    descripcion: "Disfruta de una noche mágica con los mejores músicos de jazz de la ciudad. Una experiencia musical inolvidable.",
+    fechaCorta: "22 Dic",
+    fecha: "22 de Diciembre, 2024",
+    hora: "8:00 PM - 11:00 PM",
+    lugar: "Terraza Norte",
+    imagen: "/placeholder.svg",
+    costo: "$35.000",
+    precio: 35000,
+    slug: "concierto-jazz",
     destacado: true,
-    categorias: ["Gastronomía", "Cultural"]
+    categorias: ["Música", "Cultural"],
+    cupos: 200,
+    cuposDisponibles: 45,
+    requierePago: true,
+    contacto: {
+      telefono: "+57 300 123 4567",
+      email: "eventos@ccelite.com"
+    }
   },
   {
     id: 3,
-    nombre: "Desfile de Moda",
-    descripcion: "Conoce las últimas tendencias de la temporada. Las mejores marcas presentarán sus colecciones de otoño-invierno en un espectacular desfile.",
-    fechaCorta: "10 Sep",
-    fecha: "10 de Septiembre, 2024",
-    hora: "7:00 PM - 9:00 PM",
-    lugar: "Pasarela Central",
-    imagen: `${assets.moda_1}`,
-    costo: "$15.000",
-    slug: "desfile-moda",
+    nombre: "Feria de Emprendedores",
+    descripcion: "Apoya a emprendedores locales y descubre productos únicos. Una oportunidad para conectar con la comunidad.",
+    fechaCorta: "28 Dic",
+    fecha: "28 de Diciembre, 2024",
+    hora: "10:00 AM - 6:00 PM",
+    lugar: "Plaza Central",
+    imagen: "/placeholder.svg",
+    costo: "Gratis",
+    precio: 0,
+    slug: "feria-emprendedores",
     destacado: false,
-    categorias: ["Moda", "Tendencias"]
+    categorias: ["Comercial", "Comunitario"],
+    cupos: 500,
+    cuposDisponibles: 320,
+    requierePago: false,
+    contacto: {
+      telefono: "+57 300 123 4567",
+      email: "eventos@ccelite.com"
+    }
   },
   {
     id: 4,
-    nombre: "Concierto de Jazz",
-    descripcion: "Disfruta de una noche de jazz con los mejores músicos locales. Una experiencia musical única en un ambiente acogedor.",
-    fechaCorta: "25 Sep",
-    fecha: "25 de Septiembre, 2024",
-    hora: "8:00 PM - 11:00 PM",
-    lugar: "Terraza Norte",
-    imagen: "/images/jazz-concert.jpg",
-    costo: "$30.000",
-    slug: "concierto-jazz",
+    nombre: "Desfile de Moda Primavera-Verano",
+    descripcion: "Conoce las últimas tendencias de la temporada. Las mejores marcas presentarán sus colecciones.",
+    fechaCorta: "5 Ene",
+    fecha: "5 de Enero, 2025",
+    hora: "7:00 PM - 9:00 PM",
+    lugar: "Pasarela Central",
+    imagen: "/placeholder.svg",
+    costo: "$25.000",
+    precio: 25000,
+    slug: "desfile-moda",
     destacado: false,
-    categorias: ["Música", "Cultural"]
+    categorias: ["Moda", "Tendencias"],
+    cupos: 120,
+    cuposDisponibles: 78,
+    requierePago: true,
+    contacto: {
+      telefono: "+57 300 123 4567",
+      email: "eventos@ccelite.com"
+    }
   },
   {
     id: 5,
-    nombre: "Exposición de Arte",
-    descripcion: "Admira las obras de artistas locales en nuestra galería temporal. Pinturas, esculturas y fotografías que te sorprenderán.",
-    fechaCorta: "5 Oct",
-    fecha: "5 de Octubre, 2024",
+    nombre: "Exposición de Arte Contemporáneo",
+    descripcion: "Admira las obras de artistas locales en nuestra galería temporal. Pinturas, esculturas y fotografías.",
+    fechaCorta: "12 Ene",
+    fecha: "12 de Enero, 2025",
     hora: "11:00 AM - 8:00 PM",
     lugar: "Galería Elite",
-    imagen: `${assets.arte_1}`,
-    costo: "$10.000",
+    imagen: "/placeholder.svg",
+    costo: "$15.000",
+    precio: 15000,
     slug: "exposicion-arte",
     destacado: true,
-    categorias: ["Arte", "Cultural"]
+    categorias: ["Arte", "Cultural"],
+    cupos: 300,
+    cuposDisponibles: 156,
+    requierePago: true,
+    contacto: {
+      telefono: "+57 300 123 4567",
+      email: "eventos@ccelite.com"
+    }
   },
   {
     id: 6,
-    nombre: "Taller de Manualidades",
-    descripcion: "Aprende a crear hermosas manualidades con materiales reciclados. Un taller para toda la familia donde podrás desarrollar tu creatividad.",
-    fechaCorta: "12 Oct",
-    fecha: "12 de Octubre, 2024",
+    nombre: "Taller de Manualidades para Niños",
+    descripcion: "Aprende a crear hermosas manualidades con materiales reciclados. Un taller para toda la familia.",
+    fechaCorta: "19 Ene",
+    fecha: "19 de Enero, 2025",
     hora: "3:00 PM - 6:00 PM",
     lugar: "Sala de Eventos",
-    imagen: "/images/crafts-workshop.jpg",
+    imagen: "/placeholder.svg",
     costo: "$20.000",
+    precio: 20000,
     slug: "taller-manualidades",
     destacado: false,
-    categorias: ["Familiar", "Educativo"]
+    categorias: ["Familiar", "Educativo"],
+    cupos: 80,
+    cuposDisponibles: 23,
+    requierePago: true,
+    contacto: {
+      telefono: "+57 300 123 4567",
+      email: "eventos@ccelite.com"
+    }
   }
-]
+];
 
 export default function EventosPage() {
+  const [searchTerm, setSearchTerm] = useState("");
+  const [selectedCategory, setSelectedCategory] = useState("");
+  const [sortBy, setSortBy] = useState("");
+  const [showRegistrationModal, setShowRegistrationModal] = useState(false);
+  const [selectedEvent, setSelectedEvent] = useState<Evento | null>(null);
+  const { isAuthenticated } = useAuth();
+
+  const categories = ["Todas", "Gastronomía", "Cultural", "Música", "Moda", "Arte", "Familiar", "Educativo", "Comercial", "Comunitario"];
+
+  const filteredEvents = eventosData.filter(evento => {
+    const matchesSearch = evento.nombre.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                         evento.descripcion.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesCategory = selectedCategory === "" || selectedCategory === "Todas" || 
+                           evento.categorias.includes(selectedCategory);
+    return matchesSearch && matchesCategory;
+  });
+
+  const sortedEvents = [...filteredEvents].sort((a, b) => {
+    switch (sortBy) {
+      case "fecha":
+        return new Date(a.fecha).getTime() - new Date(b.fecha).getTime();
+      case "precio-asc":
+        return a.precio - b.precio;
+      case "precio-desc":
+        return b.precio - a.precio;
+      case "cupos":
+        return a.cuposDisponibles - b.cuposDisponibles;
+      default:
+        return 0;
+    }
+  });
+
+  const handleRegister = (evento: Evento) => {
+    if (!isAuthenticated) {
+      // Redirigir al login
+      window.location.href = '/login';
+      return;
+    }
+    setSelectedEvent(evento);
+    setShowRegistrationModal(true);
+  };
+
+  const getCuposPercentage = (disponibles: number, total: number): number => {
+    return Math.round((disponibles / total) * 100);
+  };
+
   return (
-    <main className="min-h-screen bg-gray-50">
+    <main className="min-h-screen bg-neutral-50">
       {/* Hero Section */}
-      <section className="relative h-[40vh] flex items-center justify-center overflow-hidden">
-        <div className="absolute inset-0 z-0 bg-black/100">
-          <div className="relative w-full h-full">
-            <Image
-              src={assets.hero_eventos}
-              alt="Eventos Centro Comercial Elite"
-              fill
-              className="object-cover brightness-50 opacity-40"
-              priority
-            />
-          </div>
+      <section className="hero relative h-[50vh] flex items-center justify-center overflow-hidden">
+        <div className="absolute inset-0 z-0">
+          <Image
+            src={assets.hero_eventos}
+            alt="Eventos Centro Comercial Elite"
+            fill
+            className="object-cover"
+            priority
+          />
+          <div className="absolute inset-0 bg-gradient-to-br from-black/60 via-black/40 to-black/60"></div>
         </div>
-        <div className="container relative z-10 mx-auto px-4 text-center">
-          <h1 className="text-4xl md:text-6xl font-bold text-white mb-4">
+        <div className="hero-content text-center">
+          <h1 className="text-display text-4xl md:text-6xl font-bold text-white mb-6">
             Eventos y Actividades
           </h1>
-          <p className="text-xl text-white mb-8 max-w-3xl mx-auto">
+          <p className="text-xl text-neutral-200 max-w-3xl mx-auto">
             Descubre todas las actividades y eventos que tenemos preparados para ti
           </p>
         </div>
       </section>
 
       {/* Filtros y Búsqueda */}
-      <section className="py-8 bg-white shadow-md">
-        <div className="container mx-auto px-4">
-          <div className="flex flex-col md:flex-row justify-between items-center gap-4">
-            <div className="relative w-full md:w-1/3">
+      <section className="bg-white border-b border-neutral-100">
+        <div className="container-modern py-6">
+          <div className="flex flex-col lg:flex-row justify-between items-center gap-4">
+            <div className="relative w-full lg:w-1/3">
               <input
                 type="text"
                 placeholder="Buscar eventos..."
-                className="w-full px-4 py-3 pl-10 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="input pl-10"
               />
-              <Search className="absolute left-3 top-3.5 text-gray-400" size={18} />
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-neutral-400" size={18} />
             </div>
-            <div className="flex items-center gap-4 w-full md:w-auto">
-              <div className="relative w-full md:w-auto">
-                <select className="appearance-none bg-white px-4 py-3 pr-10 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500">
-                  <option value="">Todas las categorías</option>
-                  <option value="familiar">Familiar</option>
-                  <option value="infantil">Infantil</option>
-                  <option value="gastronomia">Gastronomía</option>
-                  <option value="cultural">Cultural</option>
-                  <option value="moda">Moda</option>
-                  <option value="musica">Música</option>
+            <div className="flex items-center gap-4 w-full lg:w-auto">
+              <div className="relative w-full lg:w-auto">
+                <select 
+                  value={selectedCategory}
+                  onChange={(e) => setSelectedCategory(e.target.value)}
+                  className="input pr-10"
+                >
+                  {categories.map(category => (
+                    <option key={category} value={category}>{category}</option>
+                  ))}
                 </select>
-                <Filter className="absolute right-3 top-3.5 text-gray-400" size={18} />
+                <Filter className="absolute right-3 top-1/2 transform -translate-y-1/2 text-neutral-400" size={18} />
               </div>
-              <div className="relative w-full md:w-auto">
-                <select className="appearance-none bg-white px-4 py-3 pr-10 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500">
-                  <option value="">Ordenar por fecha</option>
-                  <option value="reciente">Más reciente</option>
-                  <option value="antiguo">Más antiguo</option>
+              <div className="relative w-full lg:w-auto">
+                <select 
+                  value={sortBy}
+                  onChange={(e) => setSortBy(e.target.value)}
+                  className="input pr-10"
+                >
+                  <option value="">Ordenar por</option>
+                  <option value="fecha">Fecha</option>
                   <option value="precio-asc">Precio: menor a mayor</option>
                   <option value="precio-desc">Precio: mayor a menor</option>
+                  <option value="cupos">Cupos disponibles</option>
                 </select>
-                <ChevronRight className="absolute right-3 top-3.5 text-gray-400 rotate-90" size={18} />
               </div>
             </div>
           </div>
@@ -158,60 +283,118 @@ export default function EventosPage() {
       </section>
 
       {/* Eventos Destacados */}
-      <section className="py-12">
-        <div className="container mx-auto px-4">
-          <h2 className="text-3xl font-bold mb-8 text-gray-800">Eventos Destacados</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {eventosData
+      <section className="section">
+        <div className="container-modern">
+          <div className="text-center mb-16">
+            <h2 className="text-display text-4xl md:text-5xl font-bold text-neutral-900 mb-6">
+              Eventos Destacados
+            </h2>
+            <p className="text-xl text-neutral-600 max-w-3xl mx-auto">
+              No te pierdas nuestras actividades más populares y especiales
+            </p>
+          </div>
+
+          <div className="grid-cards">
+            {sortedEvents
               .filter(evento => evento.destacado)
               .map(evento => (
-                <div
-                  key={evento.id}
-                  className="bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-xl transition-shadow group"
-                >
-                  <div className="relative h-56">
+                <div key={evento.id} className="event-card group">
+                  <div className="relative overflow-hidden">
                     <Image
                       src={evento.imagen || "/placeholder.svg"}
                       alt={evento.nombre}
-                      fill
-                      className="object-cover group-hover:scale-105 transition-transform duration-300"
+                      width={400}
+                      height={250}
+                      className="event-image group-hover:scale-105"
                     />
-                    <div className="absolute top-4 right-4 bg-blue-700 text-white text-sm font-bold px-3 py-1 rounded-full">
+                    <div className="event-badge">
                       {evento.fechaCorta}
                     </div>
-                    <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent p-4">
-                      <div className="flex items-center gap-2 text-white">
+                    {evento.destacado && (
+                      <div className="absolute top-4 right-4 bg-accent-yellow text-neutral-900 px-3 py-1 rounded-2xl text-sm font-semibold">
+                        Destacado
+                      </div>
+                    )}
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                  </div>
+                  <div className="card-body">
+                    <div className="flex justify-between items-start mb-3">
+                      <h3 className="text-xl font-semibold text-neutral-900">
+                        {evento.nombre}
+                      </h3>
+                      <span className={`text-lg font-bold ${evento.precio === 0 ? 'text-success-600' : 'text-secondary-600'}`}>
+                        {evento.costo}
+                      </span>
+                    </div>
+                    
+                    <p className="text-neutral-600 mb-4 leading-relaxed line-clamp-2">
+                      {evento.descripcion}
+                    </p>
+                    
+                    <div className="space-y-3 mb-4">
+                      <div className="flex items-center gap-2 text-sm text-neutral-500">
                         <Calendar size={16} />
-                        <span className="text-sm">{evento.fecha}</span>
+                        <span>{evento.fecha}</span>
+                      </div>
+                      <div className="flex items-center gap-2 text-sm text-neutral-500">
+                        <Clock size={16} />
+                        <span>{evento.hora}</span>
+                      </div>
+                      <div className="flex items-center gap-2 text-sm text-neutral-500">
+                        <MapPin size={16} />
+                        <span>{evento.lugar}</span>
+                      </div>
+                      <div className="flex items-center gap-2 text-sm text-neutral-500">
+                        <Users size={16} />
+                        <span>{evento.cuposDisponibles} de {evento.cupos} cupos disponibles</span>
                       </div>
                     </div>
-                  </div>
-                  <div className="p-6">
-                    <div className="flex justify-between items-start mb-2">
-                      <h3 className="text-xl font-semibold text-gray-800">{evento.nombre}</h3>
-                      <span className="text-sm font-bold text-green-600">{evento.costo}</span>
+
+                    {/* Barra de progreso de cupos */}
+                    <div className="mb-4">
+                      <div className="flex justify-between text-sm text-neutral-600 mb-1">
+                        <span>Cupos disponibles</span>
+                        <span>{getCuposPercentage(evento.cuposDisponibles, evento.cupos)}%</span>
+                      </div>
+                      <div className="w-full bg-neutral-200 rounded-full h-2">
+                        <div 
+                          className={`h-2 rounded-full transition-all ${
+                            getCuposPercentage(evento.cuposDisponibles, evento.cupos) > 50 
+                              ? 'bg-success' 
+                              : getCuposPercentage(evento.cuposDisponibles, evento.cupos) > 20 
+                                ? 'bg-warning' 
+                                : 'bg-error'
+                          }`}
+                          style={{ width: `${getCuposPercentage(evento.cuposDisponibles, evento.cupos)}%` }}
+                        ></div>
+                      </div>
                     </div>
-                    <p className="text-gray-600 mb-4 line-clamp-2">{evento.descripcion}</p>
-                    <div className="flex items-center gap-2 text-gray-500 mb-4">
-                      <MapPin size={16} />
-                      <span className="text-sm">{evento.lugar}</span>
-                    </div>
+
                     <div className="flex flex-wrap gap-2 mb-4">
                       {evento.categorias.map((categoria, index) => (
-                        <span
-                          key={index}
-                          className="text-xs bg-gray-100 text-gray-600 px-2 py-1 rounded-full"
-                        >
+                        <span key={index} className="badge-neutral text-xs">
                           {categoria}
                         </span>
                       ))}
                     </div>
-                    <Link
-                      href={`/eventos/${evento.slug}`}
-                      className="inline-flex items-center text-blue-700 font-medium hover:text-blue-800"
-                    >
-                      Ver detalles <ChevronRight size={16} />
-                    </Link>
+
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-2">
+                        <button className="p-2 text-neutral-400 hover:text-neutral-600 transition-colors">
+                          <Heart size={16} />
+                        </button>
+                        <button className="p-2 text-neutral-400 hover:text-neutral-600 transition-colors">
+                          <Share2 size={16} />
+                        </button>
+                      </div>
+                      <button
+                        onClick={() => handleRegister(evento)}
+                        className="btn-secondary"
+                        disabled={evento.cuposDisponibles === 0}
+                      >
+                        {evento.cuposDisponibles === 0 ? 'Agotado' : 'Registrarse'}
+                      </button>
+                    </div>
                   </div>
                 </div>
               ))}
@@ -220,42 +403,116 @@ export default function EventosPage() {
       </section>
 
       {/* Todos los Eventos */}
-      <section className="py-12 bg-white">
-        <div className="container mx-auto px-4">
-          <h2 className="text-3xl font-bold mb-8 text-gray-800">Todos los Eventos</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {eventosData.map(evento => (
-              <div
-                key={evento.id}
-                className="bg-white rounded-xl shadow-md overflow-hidden hover:shadow-lg transition-shadow border border-gray-100"
-              >
-                <div className="relative h-48">
+      <section className="section bg-white">
+        <div className="container-modern">
+          <div className="text-center mb-16">
+            <h2 className="text-display text-4xl md:text-5xl font-bold text-neutral-900 mb-6">
+              Todos los Eventos
+            </h2>
+            <p className="text-xl text-neutral-600 max-w-3xl mx-auto">
+              Explora nuestra completa agenda de actividades
+            </p>
+          </div>
+
+          <div className="grid-cards">
+            {sortedEvents.map(evento => (
+              <div key={evento.id} className="event-card group">
+                <div className="relative overflow-hidden">
                   <Image
                     src={evento.imagen || "/placeholder.svg"}
                     alt={evento.nombre}
-                    fill
-                    className="object-cover"
+                    width={400}
+                    height={250}
+                    className="event-image group-hover:scale-105"
                   />
-                  <div className="absolute top-4 right-4 bg-blue-700 text-white text-sm font-bold px-3 py-1 rounded-full">
+                  <div className="event-badge">
                     {evento.fechaCorta}
                   </div>
+                  {evento.destacado && (
+                    <div className="absolute top-4 right-4 bg-accent-yellow text-neutral-900 px-3 py-1 rounded-2xl text-sm font-semibold">
+                      Destacado
+                    </div>
+                  )}
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                 </div>
-                <div className="p-6">
-                  <div className="flex justify-between items-start mb-2">
-                    <h3 className="text-xl font-semibold text-gray-800">{evento.nombre}</h3>
-                    <span className="text-sm font-bold text-green-600">{evento.costo}</span>
+                <div className="card-body">
+                  <div className="flex justify-between items-start mb-3">
+                    <h3 className="text-xl font-semibold text-neutral-900">
+                      {evento.nombre}
+                    </h3>
+                    <span className={`text-lg font-bold ${evento.precio === 0 ? 'text-success-600' : 'text-secondary-600'}`}>
+                      {evento.costo}
+                    </span>
                   </div>
-                  <p className="text-gray-600 mb-4 line-clamp-2">{evento.descripcion}</p>
-                  <div className="flex items-center gap-2 text-gray-500 mb-4">
-                    <Calendar size={16} />
-                    <span className="text-sm">{evento.fecha}</span>
+                  
+                  <p className="text-neutral-600 mb-4 leading-relaxed line-clamp-2">
+                    {evento.descripcion}
+                  </p>
+                  
+                  <div className="space-y-3 mb-4">
+                    <div className="flex items-center gap-2 text-sm text-neutral-500">
+                      <Calendar size={16} />
+                      <span>{evento.fecha}</span>
+                    </div>
+                    <div className="flex items-center gap-2 text-sm text-neutral-500">
+                      <Clock size={16} />
+                      <span>{evento.hora}</span>
+                    </div>
+                    <div className="flex items-center gap-2 text-sm text-neutral-500">
+                      <MapPin size={16} />
+                      <span>{evento.lugar}</span>
+                    </div>
+                    <div className="flex items-center gap-2 text-sm text-neutral-500">
+                      <Users size={16} />
+                      <span>{evento.cuposDisponibles} de {evento.cupos} cupos disponibles</span>
+                    </div>
                   </div>
-                  <Link
-                    href={`/eventos/${evento.slug}`}
-                    className="inline-flex items-center text-blue-700 font-medium hover:text-blue-800"
-                  >
-                    Ver detalles <ChevronRight size={16} />
-                  </Link>
+
+                  {/* Barra de progreso de cupos */}
+                  <div className="mb-4">
+                    <div className="flex justify-between text-sm text-neutral-600 mb-1">
+                      <span>Cupos disponibles</span>
+                      <span>{getCuposPercentage(evento.cuposDisponibles, evento.cupos)}%</span>
+                    </div>
+                    <div className="w-full bg-neutral-200 rounded-full h-2">
+                      <div 
+                        className={`h-2 rounded-full transition-all ${
+                          getCuposPercentage(evento.cuposDisponibles, evento.cupos) > 50 
+                            ? 'bg-success' 
+                            : getCuposPercentage(evento.cuposDisponibles, evento.cupos) > 20 
+                              ? 'bg-warning' 
+                              : 'bg-error'
+                        }`}
+                        style={{ width: `${getCuposPercentage(evento.cuposDisponibles, evento.cupos)}%` }}
+                      ></div>
+                    </div>
+                  </div>
+
+                  <div className="flex flex-wrap gap-2 mb-4">
+                    {evento.categorias.map((categoria, index) => (
+                      <span key={index} className="badge-neutral text-xs">
+                        {categoria}
+                      </span>
+                    ))}
+                  </div>
+
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <button className="p-2 text-neutral-400 hover:text-neutral-600 transition-colors">
+                        <Heart size={16} />
+                      </button>
+                      <button className="p-2 text-neutral-400 hover:text-neutral-600 transition-colors">
+                        <Share2 size={16} />
+                      </button>
+                    </div>
+                    <button
+                      onClick={() => handleRegister(evento)}
+                      className="btn-secondary"
+                      disabled={evento.cuposDisponibles === 0}
+                    >
+                      {evento.cuposDisponibles === 0 ? 'Agotado' : 'Registrarse'}
+                    </button>
+                  </div>
                 </div>
               </div>
             ))}
@@ -263,25 +520,86 @@ export default function EventosPage() {
         </div>
       </section>
 
-      {/* Suscripción a Eventos */}
-      <section className="py-16 bg-gradient-to-r from-blue-700 to-purple-600 text-white">
-        <div className="container mx-auto px-4 text-center">
-          <h2 className="text-3xl font-bold mb-6">¿No quieres perderte ningún evento?</h2>
-          <p className="text-xl mb-8 max-w-2xl mx-auto">
-            Suscríbete a nuestro boletín y recibe información sobre los próximos eventos y actividades
-          </p>
-          <div className="max-w-md mx-auto flex flex-col sm:flex-row gap-4">
-            <input
-              type="email"
-              placeholder="Tu correo electrónico"
-              className="px-4 py-3 rounded-full text-gray-800 w-full focus:outline-none focus:ring-2 focus:ring-yellow-400"
-            />
-            <button className="bg-yellow-400 hover:bg-yellow-500 text-gray-900 px-6 py-3 rounded-full font-medium transition-colors">
-              Suscribirme
-            </button>
+      {/* Modal de Registro */}
+      {showRegistrationModal && selectedEvent && (
+        <div className="modal-overlay" onClick={() => setShowRegistrationModal(false)}>
+          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+            <div className="p-6">
+              <h3 className="text-2xl font-bold text-neutral-900 mb-4">
+                Registrarse para: {selectedEvent.nombre}
+              </h3>
+              
+              <div className="space-y-4 mb-6">
+                <div className="flex justify-between">
+                  <span className="text-neutral-600">Fecha:</span>
+                  <span className="font-medium">{selectedEvent.fecha}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-neutral-600">Hora:</span>
+                  <span className="font-medium">{selectedEvent.hora}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-neutral-600">Lugar:</span>
+                  <span className="font-medium">{selectedEvent.lugar}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-neutral-600">Costo:</span>
+                  <span className="font-bold text-secondary-600">{selectedEvent.costo}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-neutral-600">Cupos disponibles:</span>
+                  <span className="font-medium">{selectedEvent.cuposDisponibles}</span>
+                </div>
+              </div>
+
+              {selectedEvent.requierePago ? (
+                <div className="bg-neutral-50 rounded-xl p-4 mb-6">
+                  <h4 className="font-semibold text-neutral-900 mb-2">Información de Pago</h4>
+                  <p className="text-sm text-neutral-600 mb-4">
+                    Este evento requiere pago. Por favor contacta a nuestro equipo para completar tu registro.
+                  </p>
+                  <div className="space-y-2">
+                    <div className="flex items-center gap-2 text-sm">
+                      <Phone size={16} className="text-secondary-600" />
+                      <span>{selectedEvent.contacto.telefono}</span>
+                    </div>
+                    <div className="flex items-center gap-2 text-sm">
+                      <Mail size={16} className="text-secondary-600" />
+                      <span>{selectedEvent.contacto.email}</span>
+                    </div>
+                  </div>
+                </div>
+              ) : (
+                <div className="bg-success/10 rounded-xl p-4 mb-6">
+                  <h4 className="font-semibold text-success mb-2">¡Evento Gratuito!</h4>
+                  <p className="text-sm text-neutral-600">
+                    Este evento es completamente gratuito. Tu registro será confirmado por email.
+                  </p>
+                </div>
+              )}
+
+              <div className="flex gap-3">
+                <button
+                  onClick={() => setShowRegistrationModal(false)}
+                  className="btn-outline flex-1"
+                >
+                  Cancelar
+                </button>
+                <button
+                  onClick={() => {
+                    // Aquí iría la lógica de registro
+                    alert('Registro exitoso! Te contactaremos pronto.');
+                    setShowRegistrationModal(false);
+                  }}
+                  className="btn-primary flex-1"
+                >
+                  Confirmar Registro
+                </button>
+              </div>
+            </div>
           </div>
         </div>
-      </section>
+      )}
     </main>
-  )
+  );
 }

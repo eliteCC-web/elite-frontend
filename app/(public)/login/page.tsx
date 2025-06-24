@@ -6,8 +6,9 @@ import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import Link from 'next/link';
-import { User, Lock, AlertCircle, Eye, EyeOff } from 'lucide-react';
+import { User, Lock, AlertCircle, Eye, EyeOff, Mail } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
+import { EmailVerificationService } from '@/services/email-verification.service';
 import assets from '@/public/assets';
 
 export default function LoginPage() {
@@ -20,30 +21,62 @@ export default function LoginPage() {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+  const [showResendButton, setShowResendButton] = useState(false);
+  const [resending, setResending] = useState(false);
+  const [resendMessage, setResendMessage] = useState('');
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
     // Limpiar error al escribir
     if (error) setError('');
+    if (showResendButton) setShowResendButton(false);
+    if (resendMessage) setResendMessage('');
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
     setLoading(true);
+    setShowResendButton(false);
+    setResendMessage('');
 
     try {
       await login(formData.email, formData.password);
       // El AuthContext maneja la redirección
     } catch (err: any) {
       console.error('Login error:', err);
-      setError(
-        err.response?.data?.message || 
-        'Credenciales incorrectas. Por favor, verifica tu email y contraseña.'
-      );
+      const errorMessage = err.response?.data?.message || 
+        'Credenciales incorrectas. Por favor, verifica tu email y contraseña.';
+      
+      // Si el error es sobre email no verificado, mostrar un mensaje más específico
+      if (errorMessage.includes('verify your email')) {
+        setError('Tu cuenta no ha sido verificada. Por favor revisa tu correo electrónico y haz clic en el enlace de verificación antes de iniciar sesión.');
+        setShowResendButton(true);
+      } else {
+        setError(errorMessage);
+      }
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleResendVerification = async () => {
+    if (!formData.email) {
+      setResendMessage('Por favor ingresa tu email primero');
+      return;
+    }
+
+    setResending(true);
+    setResendMessage('');
+
+    try {
+      await EmailVerificationService.resendVerificationEmail(formData.email);
+      setResendMessage('Email de verificación reenviado exitosamente. Revisa tu bandeja de entrada.');
+    } catch (err: any) {
+      setResendMessage(err.response?.data?.message || 'Error al reenviar el email de verificación');
+    } finally {
+      setResending(false);
     }
   };
 
@@ -85,6 +118,40 @@ export default function LoginPage() {
               <div className="mb-6 bg-red-50 text-red-700 p-3 rounded-md flex items-center gap-2 text-sm">
                 <AlertCircle size={18} />
                 <span>{error}</span>
+              </div>
+            )}
+
+            {/* Botón de reenvío de verificación */}
+            {showResendButton && (
+              <div className="mb-6 space-y-3">
+                <button
+                  type="button"
+                  onClick={handleResendVerification}
+                  disabled={resending}
+                  className="w-full flex justify-center items-center gap-2 py-2 px-4 border border-red-300 rounded-md shadow-sm text-sm font-medium text-red-700 bg-red-50 hover:bg-red-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 transition-colors disabled:opacity-50"
+                >
+                  {resending ? (
+                    <>
+                      <div className="animate-spin rounded-full h-4 w-4 border-t-2 border-b-2 border-red-600"></div>
+                      <span>Reenviando...</span>
+                    </>
+                  ) : (
+                    <>
+                      <Mail size={16} />
+                      <span>Reenviar email de verificación</span>
+                    </>
+                  )}
+                </button>
+                
+                {resendMessage && (
+                  <div className={`p-3 rounded-md text-sm ${
+                    resendMessage.includes('exitosamente') 
+                      ? 'bg-green-50 text-green-700 border border-green-200' 
+                      : 'bg-red-50 text-red-700 border border-red-200'
+                  }`}>
+                    {resendMessage}
+                  </div>
+                )}
               </div>
             )}
 

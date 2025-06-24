@@ -1,84 +1,476 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@400;500;600;700&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-/* Configuración base para escala más pequeña */
-html {
-  font-size: 14px; /* Reducido de 16px a 14px para efecto zoom out */
-}
-
-@media (min-width: 768px) {
+@layer base {
   html {
-    font-size: 15px; /* Un poco más grande en tablets */
+    font-family: 'Inter', system-ui, sans-serif;
+    scroll-behavior: smooth;
+  }
+  
+  body {
+    @apply antialiased bg-white text-neutral-900;
+    overflow-x: hidden;
+  }
+
+  * {
+    @apply border-neutral-200;
+  }
+
+  /* Mejorar scrollbar */
+  ::-webkit-scrollbar {
+    width: 8px;
+  }
+
+  ::-webkit-scrollbar-track {
+    @apply bg-neutral-100;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    @apply bg-neutral-300 rounded-full;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    @apply bg-neutral-400;
   }
 }
 
-@media (min-width: 1024px) {
-  html {
-    font-size: 16px; /* Tamaño normal en desktop */
+@layer components {
+  /* Container moderno mejorado */
+  .container-modern {
+    @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8;
+  }
+
+  /* Sistema de botones mejorado */
+  .btn {
+    @apply inline-flex items-center justify-center gap-2 font-semibold transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed;
+  }
+
+  .btn-primary {
+    @apply btn bg-primary-500 hover:bg-primary-600 text-white py-3 px-6 rounded-2xl shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 focus:ring-primary-500 active:scale-95;
+  }
+
+  .btn-secondary {
+    @apply btn bg-secondary-500 hover:bg-secondary-600 text-white py-3 px-6 rounded-2xl shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 focus:ring-secondary-500 active:scale-95;
+  }
+
+  .btn-outline {
+    @apply btn bg-white hover:bg-neutral-50 text-neutral-900 py-3 px-6 rounded-2xl shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 focus:ring-primary-500 active:scale-95 border-2 border-neutral-200 hover:border-neutral-300;
+  }
+
+  .btn-danger {
+    @apply btn bg-red-500 hover:bg-red-600 text-white py-3 px-6 rounded-2xl shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 focus:ring-red-500 active:scale-95;
+  }
+
+  .btn-ghost {
+    @apply btn bg-transparent hover:bg-neutral-100 text-neutral-700 py-3 px-6 rounded-2xl transition-all duration-200 focus:ring-neutral-500;
+  }
+
+  /* Tamaños de botones */
+  .btn-sm {
+    @apply py-2 px-4 text-sm;
+  }
+
+  .btn-lg {
+    @apply py-4 px-8 text-lg;
+  }
+
+  /* Inputs mejorados */
+  .input {
+    @apply w-full px-4 py-3 rounded-2xl border-2 border-neutral-200 focus:border-primary-500 focus:outline-none focus:ring-2 focus:ring-primary-500/20 transition-all duration-200 bg-white placeholder-neutral-400;
+  }
+
+  .input-error {
+    @apply border-red-300 focus:border-red-500 focus:ring-red-500/20;
+  }
+
+  .input-success {
+    @apply border-green-300 focus:border-green-500 focus:ring-green-500/20;
+  }
+
+  /* Select mejorado */
+  .select {
+    @apply appearance-none w-full px-4 py-3 rounded-2xl border-2 border-neutral-200 focus:border-primary-500 focus:outline-none focus:ring-2 focus:ring-primary-500/20 transition-all duration-200 bg-white bg-no-repeat bg-right pr-10;
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='m6 8 4 4 4-4'/%3e%3c/svg%3e");
+    background-position: right 0.75rem center;
+    background-size: 1.5em 1.5em;
+  }
+
+  /* Textarea mejorado */
+  .textarea {
+    @apply w-full px-4 py-3 rounded-2xl border-2 border-neutral-200 focus:border-primary-500 focus:outline-none focus:ring-2 focus:ring-primary-500/20 transition-all duration-200 bg-white placeholder-neutral-400 min-h-[120px];
+    resize: vertical;
+  }
+
+  /* Sombras mejoradas */
+  .shadow-soft {
+    @apply shadow-[0_2px_15px_-3px_rgba(0,0,0,0.07),0_10px_20px_-2px_rgba(0,0,0,0.04)];
+  }
+
+  .shadow-medium {
+    @apply shadow-[0_4px_25px_-5px_rgba(0,0,0,0.1),0_10px_10px_-5px_rgba(0,0,0,0.04)];
+  }
+
+  .shadow-strong {
+    @apply shadow-[0_10px_40px_-10px_rgba(0,0,0,0.15),0_20px_25px_-5px_rgba(0,0,0,0.1)];
+  }
+
+  /* Tipografía mejorada */
+  .text-display {
+    @apply font-bold tracking-tight;
+  }
+
+  .text-heading {
+    @apply font-semibold text-neutral-900;
+  }
+
+  .text-body {
+    @apply text-neutral-700 leading-relaxed;
+  }
+
+  /* Grid de tarjetas mejorado */
+  .grid-cards {
+    @apply grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6;
+  }
+
+  .grid-cards-compact {
+    @apply grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4;
+  }
+
+  /* Tarjetas mejoradas */
+  .card {
+    @apply bg-white rounded-3xl shadow-soft border border-neutral-200 overflow-hidden transition-all duration-300 hover:shadow-medium hover:-translate-y-1;
+  }
+
+  .card-body {
+    @apply p-6;
+  }
+
+  .card-header {
+    @apply p-6 pb-0;
+  }
+
+  .card-footer {
+    @apply p-6 pt-0;
+  }
+
+  /* Tarjetas de tienda mejoradas */
+  .store-card {
+    @apply card cursor-pointer;
+  }
+
+  .store-image {
+    @apply w-full h-48 object-cover transition-transform duration-300;
+  }
+
+  /* Tarjetas de evento mejoradas */
+  .event-card {
+    @apply card cursor-pointer;
+  }
+
+  .event-image {
+    @apply w-full h-48 object-cover transition-transform duration-300;
+  }
+
+  .event-badge {
+    @apply absolute top-4 left-4 bg-primary-500 text-white px-3 py-1 rounded-full text-sm font-semibold shadow-lg;
+  }
+
+  /* Secciones mejoradas */
+  .section {
+    @apply py-16 sm:py-20;
+  }
+
+  .section-sm {
+    @apply py-8 sm:py-12;
+  }
+
+  /* Overlay para imágenes mejorado */
+  .image-overlay {
+    @apply absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent;
+  }
+
+  /* Line clamp mejorado */
+  .line-clamp-1 {
+    display: -webkit-box;
+    -webkit-line-clamp: 1;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  .line-clamp-2 {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  .line-clamp-3 {
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  /* Animaciones mejoradas */
+  .animate-in {
+    animation: animateIn 0.3s ease-out;
+  }
+
+  .slide-in-from-top-2 {
+    animation: slideInFromTop 0.3s ease-out;
+  }
+
+  .fade-in {
+    animation: fadeIn 0.3s ease-out;
+  }
+
+  /* Estados de carga */
+  .loading-skeleton {
+    @apply animate-pulse bg-neutral-200 rounded;
+  }
+
+  /* Dropdown mejorado */
+  .dropdown {
+    @apply absolute right-0 mt-3 w-64 bg-white rounded-2xl shadow-strong border border-neutral-100 py-3 z-50 animate-in slide-in-from-top-2;
+  }
+
+  .dropdown-item {
+    @apply flex items-center gap-3 px-4 py-3 text-sm text-neutral-700 hover:bg-neutral-50 transition-colors rounded-xl mx-2;
+  }
+
+  /* Modal mejorado */
+  .modal-overlay {
+    @apply fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4;
+  }
+
+  .modal-content {
+    @apply bg-white rounded-3xl shadow-strong max-w-md w-full max-h-[90vh] overflow-y-auto;
+  }
+
+  /* Formularios mejorados */
+  .form-group {
+    @apply space-y-2;
+  }
+
+  .form-label {
+    @apply block text-sm font-medium text-neutral-700;
+  }
+
+  .form-error {
+    @apply text-sm text-red-600 mt-1;
+  }
+
+  .form-help {
+    @apply text-sm text-neutral-500 mt-1;
+  }
+
+  /* Navegación mejorada */
+  .nav-link {
+    @apply flex items-center gap-2 px-4 py-2 rounded-2xl transition-all duration-200 hover:bg-neutral-100 hover:scale-105 text-neutral-700 hover:text-neutral-900;
+  }
+
+  .nav-link-active {
+    @apply bg-primary-50 text-primary-700;
+  }
+
+  /* Paginación mejorada */
+  .pagination {
+    @apply flex items-center justify-center gap-2;
+  }
+
+  .pagination-item {
+    @apply px-3 py-2 rounded-lg text-sm font-medium transition-colors;
+  }
+
+  .pagination-item-active {
+    @apply bg-primary-500 text-white;
+  }
+
+  .pagination-item-inactive {
+    @apply text-neutral-600 hover:text-neutral-900 hover:bg-neutral-100;
+  }
+
+  /* Badges mejorados */
+  .badge {
+    @apply inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium;
+  }
+
+  .badge-primary {
+    @apply bg-primary-100 text-primary-800;
+  }
+
+  .badge-secondary {
+    @apply bg-secondary-100 text-secondary-800;
+  }
+
+  .badge-success {
+    @apply bg-green-100 text-green-800;
+  }
+
+  .badge-warning {
+    @apply bg-yellow-100 text-yellow-800;
+  }
+
+  .badge-danger {
+    @apply bg-red-100 text-red-800;
+  }
+
+  /* Alertas mejoradas */
+  .alert {
+    @apply p-4 rounded-2xl border-2;
+  }
+
+  .alert-success {
+    @apply bg-green-50 border-green-200 text-green-800;
+  }
+
+  .alert-error {
+    @apply bg-red-50 border-red-200 text-red-800;
+  }
+
+  .alert-warning {
+    @apply bg-yellow-50 border-yellow-200 text-yellow-800;
+  }
+
+  .alert-info {
+    @apply bg-blue-50 border-blue-200 text-blue-800;
+  }
+
+  /* Responsive utilities */
+  .mobile-only {
+    @apply block sm:hidden;
+  }
+
+  .desktop-only {
+    @apply hidden sm:block;
+  }
+
+  .tablet-only {
+    @apply hidden md:block lg:hidden;
+  }
+
+  /* Hero section mejorado */
+  .hero {
+    @apply relative min-h-[60vh] flex items-center justify-center overflow-hidden;
+    margin-top: 0;
+    z-index: 1;
+  }
+
+  .hero-content {
+    @apply relative z-10 text-center px-4;
+  }
+
+  /* Sidebar mejorado */
+  .sidebar {
+    @apply fixed inset-y-0 left-0 bg-white border-r border-neutral-200 z-40 w-64 transform transition-transform duration-300 ease-in-out;
+  }
+
+  .sidebar-mobile {
+    @apply md:translate-x-0 -translate-x-full;
+  }
+
+  .sidebar-open {
+    @apply translate-x-0;
+  }
+
+  /* Layout mejorado */
+  .main-layout {
+    @apply min-h-screen bg-neutral-50;
+  }
+
+  .content-layout {
+    @apply md:ml-64;
+  }
+
+  /* Spinner mejorado */
+  .spinner {
+    @apply animate-spin rounded-full border-2 border-neutral-200 border-t-primary-500;
   }
 }
 
-/* Ajustes específicos para contenedores */
-.container {
-  @apply mx-auto px-3 sm:px-4 lg:px-6;
+@keyframes animateIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
 }
 
-/* Espaciado más compacto */
-.compact-spacing {
-  @apply space-y-4;
+@keyframes slideInFromTop {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
-.compact-padding {
-  @apply p-4 sm:p-5 lg:p-6;
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 }
 
-/* Ajustes para cards y componentes */
-.card-compact {
-  @apply p-4 rounded-lg shadow-sm border border-gray-100;
+/* Mejoras específicas para móviles */
+@media (max-width: 640px) {
+  .container-modern {
+    @apply px-4;
+  }
+  
+  .btn {
+    @apply w-full justify-center;
+  }
+  
+  .card-body {
+    @apply p-4;
+  }
+  
+  .hero {
+    @apply min-h-[50vh];
+  }
 }
 
-/* Headers más compactos */
-.header-compact {
-  @apply py-3 px-4;
+/* Mejoras para tablets */
+@media (min-width: 641px) and (max-width: 1024px) {
+  .grid-cards {
+    @apply grid-cols-2;
+  }
 }
 
-/* Botones más compactos */
-.btn-compact {
-  @apply px-3 py-2 text-sm;
+/* Mejoras para pantallas grandes */
+@media (min-width: 1025px) {
+  .container-modern {
+    @apply px-8;
+  }
 }
 
-/* Variables CSS existentes... */
-:root {
-  --background: 0 0% 100%;
-  --foreground: 222.2 84% 4.9%;
-  --card: 0 0% 100%;
-  --card-foreground: 222.2 84% 4.9%;
-  --popover: 0 0% 100%;
-  --popover-foreground: 222.2 84% 4.9%;
-  --primary: 358 85% 52%;
-  --primary-foreground: 210 40% 98%;
-  --secondary: 217 71% 53%;
-  --secondary-foreground: 210 40% 98%;
-  --accent: 48 96% 53%;
-  --accent-foreground: 222.2 47.4% 11.2%;
-  --muted: 210 40% 96.1%;
-  --muted-foreground: 215.4 16.3% 46.9%;
-  --destructive: 0 84.2% 60.2%;
-  --destructive-foreground: 210 40% 98%;
-  --border: 214.3 31.8% 91.4%;
-  --input: 214.3 31.8% 91.4%;
-  --ring: 222.2 84% 4.9%;
-  --radius: 0.5rem;
+/* Efectos hover para tarjetas con group */
+.store-card:hover .store-image {
+  transform: scale(1.05);
 }
 
-/* Custom animations */
-@keyframes float {
-  0% { transform: translateY(0px); }
-  50% { transform: translateY(-10px); }
-  100% { transform: translateY(0px); }
+.event-card:hover .event-image {
+  transform: scale(1.05);
 }
 
-.animate-float {
-  animation: float 3s ease-in-out infinite;
+/* Asegurar que el navbar esté siempre por encima */
+header {
+  z-index: 100 !important;
+}
+
+/* Asegurar que el hero no se superponga al navbar */
+main {
+  position: relative;
+  z-index: 1;
 }

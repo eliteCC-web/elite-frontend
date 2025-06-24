@@ -12,6 +12,8 @@ export interface UserProfile {
   createdAt: string;
   schedules?: Schedule[];
   ownedStore?: Store;
+  emailVerified?: boolean;
+  emailVerifiedAt?: string;
 }
 
 export interface Schedule {
@@ -54,6 +56,16 @@ const ProfileService = {
       return response.data;
     } catch (error) {
       console.error("Error fetching user profile:", error);
+      throw error;
+    }
+  },
+
+  async getCurrentUserProfile(): Promise<UserProfile> {
+    try {
+      const response = await apiClient.get<UserProfile>('/users/profile');
+      return response.data;
+    } catch (error) {
+      console.error("Error fetching current user profile:", error);
       throw error;
     }
   },

@@ -63,3 +63,9 @@ export function validatePhone(phone: string): boolean {
   const phoneRegex = /^\d{7,15}$/
   return phoneRegex.test(phone.replace(/\D/g, ''))
 }
+
+// Función para obtener URLs públicas de Supabase Storage
+export const getPublicUrl = (path: string) => {
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  return `${supabaseUrl}/storage/v1/object/public/${path}`;
+};

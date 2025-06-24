@@ -91,12 +91,12 @@ export default function RegisterPage() {
 
     try {
       const response = await AuthService.register(formData);
-      setSuccess('Registro exitoso. Pronto recibirás un correo de confirmación.');
+      setSuccess('Registro exitoso. Por favor revisa tu correo electrónico para verificar tu cuenta antes de iniciar sesión.');
       
-      // Redirigir después de 2 segundos
+      // Redirigir después de 3 segundos para dar tiempo a leer el mensaje
       setTimeout(() => {
         router.push('/login');
-      }, 2000);
+      }, 3000);
     } catch (err: any) {
       console.error('Register error:', err);
       setError(

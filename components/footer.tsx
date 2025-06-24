@@ -1,26 +1,32 @@
 import Link from "next/link";
 import Image from "next/image";
-import { Facebook, Instagram, Twitter, Youtube, Mail, Phone, MapPin } from 'lucide-react';
+import { Facebook, Instagram, Twitter, Youtube, Mail, Phone, MapPin, Clock, ArrowRight, Heart } from 'lucide-react';
 import assets from "@/public/assets";
 
 export default function Footer() {
   return (
-    <footer className="bg-gray-900 text-white pt-16 pb-8">
-      <div className="container mx-auto px-4">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-12">
+    <footer className="bg-white text-neutral-900 border-t border-neutral-200">
+      {/* Main Footer */}
+      <div className="container-modern py-16">
+        <div className="grid grid-cols-1 lg:grid-cols-4 gap-12">
           {/* Logo and About */}
-          <div>
-            <div className="flex items-center gap-3 mb-4">
+          <div className="lg:col-span-2">
+            <div className="flex items-center gap-3 mb-6">
               <Image
                 src={assets.logo_png}
-                alt="Centro Comercial Elite"
-                width={60}
-                height={60}
+                alt="Elite"
+                width={50}
+                height={50}
+                className="drop-shadow-lg"
               />
-              <span className="font-bold text-xl">Centro Comercial Elite</span>
+              <div>
+                <span className="text-display text-2xl font-bold text-neutral-900">Elite</span>
+                <span className="block text-sm text-neutral-500">Centro Comercial</span>
+              </div>
             </div>
-            <p className="text-gray-400 mb-6">
-              Tu destino favorito para compras, gastronomía y entretenimiento.
+            <p className="text-neutral-600 mb-8 leading-relaxed max-w-md">
+              Tu destino favorito para compras, gastronomía y entretenimiento. 
+              Ofrecemos una experiencia única con las mejores marcas y servicios.
             </p>
             <div className="flex gap-4">
               <SocialLink href="https://facebook.com" icon={<Facebook size={20} />} />
@@ -30,59 +36,110 @@ export default function Footer() {
             </div>
           </div>
 
-          {/* Links */}
+          {/* Quick Links */}
           <div>
-            <h3 className="text-lg font-semibold mb-4 text-white">Enlaces Rápidos</h3>
-            <ul className="space-y-3">
+            <h3 className="text-lg font-semibold mb-6 text-neutral-900">Enlaces Rápidos</h3>
+            <ul className="space-y-4">
               <FooterLink href="/tiendas">Tiendas</FooterLink>
               <FooterLink href="/eventos">Eventos</FooterLink>
-              <FooterLink href="/nosotros">Quiénes Somos</FooterLink>
-              <FooterLink href="/chatbot">Chatea con Eli</FooterLink>
-              <FooterLink href="/mapa">Mapa del Centro Comercial</FooterLink>
+              <FooterLink href="/nosotros">Nosotros</FooterLink>
+              <FooterLink href="/chatbot">Eli Chat</FooterLink>
+              <FooterLink href="/mapa">Mapa del CC</FooterLink>
+              <FooterLink href="/contacto">Contacto</FooterLink>
             </ul>
           </div>
 
-          {/* Contact */}
+          {/* Contact & Hours */}
           <div>
-            <h3 className="text-lg font-semibold mb-4 text-white">Contacto</h3>
-            <ul className="space-y-4">
-              <li className="flex items-start gap-3">
-                <MapPin className="text-red-500 shrink-0 mt-1" size={20} />
-                <span className="text-gray-400">Calle 14 con Carrera 7, Cali</span>
-              </li>
-              <li className="flex items-center gap-3">
-                <Phone className="text-green-500" size={20} />
-                <span className="text-gray-400">(123) 456-7890</span>
-              </li>
-              <li className="flex items-center gap-3">
-                <Mail className="text-blue-500" size={20} />
-                <span className="text-gray-400">elitecc.soporte@gmail.com</span>
-              </li>
-            </ul>
-          </div>
+            <h3 className="text-lg font-semibold mb-6 text-neutral-900">Información</h3>
+            <div className="space-y-6">
+              {/* Contact */}
+              <div className="space-y-4">
+                <div className="flex items-start gap-3">
+                  <MapPin className="text-secondary-500 shrink-0 mt-1" size={18} />
+                  <span className="text-neutral-600 text-sm">Calle 14 con Carrera 7, Cali</span>
+                </div>
+                <div className="flex items-center gap-3">
+                  <Phone className="text-secondary-500" size={18} />
+                  <span className="text-neutral-600 text-sm">(123) 456-7890</span>
+                </div>
+                <div className="flex items-center gap-3">
+                  <Mail className="text-secondary-500" size={18} />
+                  <span className="text-neutral-600 text-sm">elitecc.soporte@gmail.com</span>
+                </div>
+              </div>
 
-          {/* Hours */}
-          <div>
-            <h3 className="text-lg font-semibold mb-4 text-white">Horarios</h3>
-            <ul className="space-y-2">
-              <li className="flex justify-between">
-                <span className="text-gray-400">Lunes - Sábado</span>
-                <span className="text-white">09:00 - 19:00</span>
-              </li>
-              <li className="flex justify-between">
-                <span className="text-gray-400">Domingo</span>
-                <span className="text-white">09:00 - 14:00</span>
-              </li>
-            </ul>
+              {/* Hours */}
+              <div>
+                <div className="flex items-center gap-2 mb-3">
+                  <Clock className="text-neutral-500" size={18} />
+                  <span className="text-neutral-900 font-medium text-sm">Horarios</span>
+                </div>
+                <div className="space-y-2 text-sm">
+                  <div className="flex justify-between">
+                    <span className="text-neutral-500">Lunes - Sábado</span>
+                    <span className="text-neutral-700">09:00 - 21:00</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-neutral-500">Domingo</span>
+                    <span className="text-neutral-700">10:00 - 20:00</span>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
+      </div>
 
-        {/* Bottom */}
-        <div className="pt-8 border-t border-gray-800 text-center text-gray-500 text-sm">
-          <p>© {new Date().getFullYear()} Centro Comercial Elite. Todos los derechos reservados.</p>
-          <div className="flex justify-center gap-6 mt-4">
-            <Link href="/privacidad" className="hover:text-white transition-colors">Política de Privacidad</Link>
-            <Link href="/terminos" className="hover:text-white transition-colors">Términos y Condiciones</Link>
+      {/* Newsletter */}
+      <div className="border-t border-neutral-200">
+        <div className="container-modern py-8">
+          <div className="flex flex-col lg:flex-row items-center justify-between gap-6">
+            <div>
+              <h3 className="text-lg font-semibold text-neutral-900 mb-2">
+                ¿No quieres perderte nada?
+              </h3>
+              <p className="text-neutral-600 text-sm">
+                Suscríbete a nuestro boletín y recibe las últimas novedades
+              </p>
+            </div>
+            <div className="flex w-full lg:w-auto gap-3">
+              <input
+                type="email"
+                placeholder="Tu correo electrónico"
+                className="input bg-neutral-50 border-neutral-300 text-neutral-900 placeholder-neutral-500 flex-1 lg:w-80"
+              />
+              <button className="btn-primary btn-sm whitespace-nowrap">
+                Suscribirse
+                <ArrowRight size={16} />
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Bottom */}
+      <div className="border-t border-neutral-200">
+        <div className="container-modern py-6">
+          <div className="flex flex-col lg:flex-row items-center justify-between gap-4">
+            <div className="text-center lg:text-left">
+              <p className="text-neutral-500 text-sm">
+                © {new Date().getFullYear()} Centro Comercial Elite. Todos los derechos reservados.
+              </p>
+            </div>
+            <div className="flex items-center gap-6 text-sm">
+              <Link href="/privacidad" className="text-neutral-500 hover:text-neutral-900 transition-colors">
+                Política de Privacidad
+              </Link>
+              <Link href="/terminos" className="text-neutral-500 hover:text-neutral-900 transition-colors">
+                Términos y Condiciones
+              </Link>
+              <div className="flex items-center gap-2 text-neutral-500">
+                <span>Hecho con</span>
+                <Heart size={14} className="text-secondary-500 fill-current" />
+                <span>en Cali</span>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -96,7 +153,7 @@ function SocialLink({ href, icon }: { href: string; icon: React.ReactNode }) {
       href={href} 
       target="_blank" 
       rel="noopener noreferrer"
-      className="bg-gray-800 hover:bg-gray-700 w-10 h-10 rounded-full flex items-center justify-center transition-colors"
+      className="bg-neutral-100 hover:bg-neutral-200 w-10 h-10 rounded-xl flex items-center justify-center transition-all duration-200 hover:scale-110 text-neutral-600 hover:text-neutral-900"
     >
       {icon}
     </a>
@@ -106,9 +163,13 @@ function SocialLink({ href, icon }: { href: string; icon: React.ReactNode }) {
 function FooterLink({ href, children }: { href: string; children: React.ReactNode }) {
   return (
     <li>
-      <Link href={href} className="text-gray-400 hover:text-white transition-colors">
+      <Link 
+        href={href} 
+        className="text-neutral-500 hover:text-neutral-900 transition-colors duration-200 flex items-center gap-2 group"
+      >
+        <ArrowRight size={14} className="opacity-0 group-hover:opacity-100 transition-opacity duration-200" />
         {children}
       </Link>
     </li>
   );
-}
+} 
