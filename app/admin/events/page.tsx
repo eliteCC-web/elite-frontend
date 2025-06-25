@@ -409,12 +409,13 @@ export default function AdminEventsPage() {
         isOpen={deleteDialogOpen}
         title="Eliminar Evento"
         message={`¿Estás seguro de que deseas eliminar el evento "${eventToDelete?.name}"? Esta acción no se puede deshacer.`}
-        confirmLabel="Eliminar"
-        cancelLabel="Cancelar"
+        confirmText="Eliminar"
+        cancelText="Cancelar"
         onConfirm={handleDelete}
         onCancel={closeDeleteDialog}
-        isLoading={isDeleting}
-        type="danger"
+        onClose={closeDeleteDialog}
+        loading={isDeleting}
+        variant="danger"
       />
     </div>
   );

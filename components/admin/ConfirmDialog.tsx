@@ -10,6 +10,7 @@ interface ConfirmDialogProps {
   isOpen: boolean;
   onClose: () => void;
   onConfirm: () => void;
+  onCancel?: () => void;
   title: string;
   message: string;
   confirmText?: string;
@@ -22,6 +23,7 @@ export default function ConfirmDialog({
   isOpen,
   onClose,
   onConfirm,
+  onCancel,
   title,
   message,
   confirmText = 'Confirmar',
@@ -68,7 +70,7 @@ export default function ConfirmDialog({
         <div className="flex gap-3 justify-center">
           <Button
             variant="outline"
-            onClick={onClose}
+            onClick={onCancel ? onCancel : onClose}
             disabled={loading}
           >
             {cancelText}

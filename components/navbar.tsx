@@ -4,7 +4,7 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import { useState, useEffect } from 'react';
-import { Menu, X, ShoppingBag, Calendar, User, LogOut, Shield, Users, MessageCircle, ChevronDown, Bell } from 'lucide-react';
+import { Menu, X, ShoppingBag, Calendar, User, LogOut, Shield, Users, MessageCircle, ChevronDown } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 import { cn } from '@/lib/utils';
 import assets from '@/public/assets';
@@ -13,7 +13,7 @@ export default function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [userDropdownOpen, setUserDropdownOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
-  const { user, isAuthenticated, hasRole, logout } = useAuth();
+  const { user, isAuthenticated, hasRole } = useAuth();
 
   // Detectar scroll para cambiar el navbar
   useEffect(() => {
@@ -41,12 +41,6 @@ export default function Navbar() {
 
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
-  };
-
-  const handleLogout = () => {
-    logout();
-    setUserDropdownOpen(false);
-    setIsMenuOpen(false);
   };
 
   return (
@@ -120,12 +114,6 @@ export default function Navbar() {
           )}>
             {isAuthenticated && user ? (
               <>
-                {/* Notificaciones 
-                <button className="relative p-3 text-neutral-600 hover:text-neutral-900 hover:bg-neutral-100 rounded-2xl transition-all duration-200 group">
-                  <Bell size={20} className="group-hover:scale-110 transition-transform duration-200" />
-                  <span className="absolute -top-1 -right-1 h-3 w-3 bg-primary-500 rounded-full animate-pulse"></span>
-                </button>*/}
-
                 {/* Panel de administración */}
                 {hasRole('ADMIN') && (
                   <Link 
@@ -184,7 +172,6 @@ export default function Navbar() {
                         
                         <button
                           onClick={() => {
-                            logout();
                             setUserDropdownOpen(false);
                           }}
                           className="flex items-center gap-3 px-4 py-3 text-sm text-secondary-500 hover:bg-secondary-50 transition-colors rounded-xl mx-2 w-full"
@@ -276,7 +263,6 @@ export default function Navbar() {
                   
                   <button
                     onClick={() => {
-                      logout();
                       setIsMenuOpen(false);
                     }}
                     className="flex items-center gap-3 w-full px-4 py-3 text-sm text-secondary-500 hover:bg-secondary-50 transition-colors rounded-xl"

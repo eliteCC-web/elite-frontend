@@ -506,12 +506,13 @@ export default function StoresPage() {
         isOpen={deleteDialogOpen}
         title="Eliminar Local"
         message={`¿Estás seguro de que deseas eliminar el local "${storeToDelete?.name}"? Esta acción no se puede deshacer.`}
-        confirmLabel="Eliminar"
-        cancelLabel="Cancelar"
+        confirmText="Eliminar"
+        cancelText="Cancelar"
         onConfirm={handleDelete}
         onCancel={closeDeleteDialog}
-        isLoading={isDeleting}
-        type="danger"
+        onClose={closeDeleteDialog}
+        loading={isDeleting}
+        variant="danger"
       />
     </main>
   )

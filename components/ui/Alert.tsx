@@ -1,5 +1,5 @@
 import React from 'react'
-import { LucideIcon, AlertCircle, CheckCircle, Info, AlertTriangle } from 'lucide-react'
+import { AlertCircle, CheckCircle, Info, AlertTriangle } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
 interface AlertProps {

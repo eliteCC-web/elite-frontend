@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { Calendar, Clock, User, CalendarDays, TrendingUp, AlertCircle } from 'lucide-react';
-import { ScheduleService, Schedule, ThreeWeeksSchedule } from '../../services/schedule.service';
+import { ScheduleService, ThreeWeeksSchedule } from '../../services/schedule.service';
 import { useAuth } from '../../hooks/useAuth';
 import WeeklyCalendar from '../../components/schedule/WeeklyCalendar';
 

@@ -1,13 +1,13 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { Calendar, Users, Clock, Plus, RefreshCw, Settings, ChevronLeft, ChevronRight } from 'lucide-react';
+import { Calendar, Clock, Plus, RefreshCw, Settings, ChevronLeft, ChevronRight } from 'lucide-react';
 import { ScheduleService, Schedule, AssignRandomShiftsDto } from '../../../services/schedule.service';
-import { UserService } from '../../../services/user.service';
+import { User } from '../../../services/user.service';
 
 export default function SchedulesPage() {
   const [schedules, setSchedules] = useState<Schedule[]>([]);
-  const [colaboradores, setColaboradores] = useState<any[]>([]);
+  const [colaboradores, setColaboradores] = useState<User[]>([]);
   const [selectedWeek, setSelectedWeek] = useState<Date>(new Date());
   const [loading, setLoading] = useState(true);
   const [assigning, setAssigning] = useState(false);
@@ -15,7 +15,6 @@ export default function SchedulesPage() {
   const [shiftPattern, setShiftPattern] = useState<'ROTATING' | 'FIXED' | 'CUSTOM'>('ROTATING');
 
   const weekStart = ScheduleService.getWeekStart(selectedWeek);
-  const weekEnd = ScheduleService.getWeekEnd(selectedWeek);
 
   const daysOfWeek = ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'];
 
@@ -188,7 +187,7 @@ export default function SchedulesPage() {
                 </label>
                 <select
                   value={shiftPattern}
-                  onChange={(e) => setShiftPattern(e.target.value as any)}
+                  onChange={(e) => setShiftPattern(e.target.value as 'ROTATING' | 'FIXED' | 'CUSTOM')}
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500"
                 >
                   <option value="ROTATING">Rotativo</option>

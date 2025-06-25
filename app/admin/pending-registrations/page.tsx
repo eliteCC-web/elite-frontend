@@ -16,7 +16,7 @@ interface PendingRegistration {
   emailVerified: boolean;
   createdAt: string;
   roleType: string;
-  status?: 'PENDING' | 'APPROVED' | 'REJECTED';
+  status?: 'PENDING' | 'APPROVED' | 'REJECTED' | 'ACTIVE';
   storeInfo?: any;
 }
 

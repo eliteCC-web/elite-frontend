@@ -39,9 +39,9 @@ export default function VerifyEmailPage() {
         }
         setMessage(response.message);
       }
-    } catch (error: any) {
+    } catch (error: unknown) {
       setStatus('error');
-      setMessage(error.response?.data?.message || 'Error al verificar el email');
+      setMessage((error as { response?: { data?: { message?: string } } }).response?.data?.message || 'Error al verificar el email');
     }
   };
 
@@ -55,8 +55,8 @@ export default function VerifyEmailPage() {
     try {
       await EmailVerificationService.resendVerificationEmail(email);
       setMessage('Email de verificación reenviado exitosamente. Revisa tu bandeja de entrada.');
-    } catch (error: any) {
-      setMessage(error.response?.data?.message || 'Error al reenviar el email de verificación');
+    } catch (error: unknown) {
+      setMessage((error as { response?: { data?: { message?: string } } }).response?.data?.message || 'Error al reenviar el email de verificación');
     } finally {
       setIsResending(false);
     }

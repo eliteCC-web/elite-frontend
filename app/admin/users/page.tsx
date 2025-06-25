@@ -246,12 +246,13 @@ export default function UsersPage() {
           isOpen={deleteDialogOpen}
           title="Eliminar Usuario"
           message={`¿Estás seguro de que deseas eliminar al usuario "${userToDelete?.firstName} ${userToDelete?.lastName}"? Esta acción no se puede deshacer.`}
-          confirmLabel="Eliminar"
-          cancelLabel="Cancelar"
+          confirmText="Eliminar"
+          cancelText="Cancelar"
           onConfirm={handleDelete}
           onCancel={closeDeleteDialog}
-          isLoading={isDeleting}
-          type="danger"
+          onClose={closeDeleteDialog}
+          loading={isDeleting}
+          variant="danger"
         />
       </div>
     </RoleGuard>
