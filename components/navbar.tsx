@@ -120,11 +120,11 @@ export default function Navbar() {
           )}>
             {isAuthenticated && user ? (
               <>
-                {/* Notificaciones */}
+                {/* Notificaciones 
                 <button className="relative p-3 text-neutral-600 hover:text-neutral-900 hover:bg-neutral-100 rounded-2xl transition-all duration-200 group">
                   <Bell size={20} className="group-hover:scale-110 transition-transform duration-200" />
                   <span className="absolute -top-1 -right-1 h-3 w-3 bg-primary-500 rounded-full animate-pulse"></span>
-                </button>
+                </button>*/}
 
                 {/* Panel de administración */}
                 {hasRole('ADMIN') && (

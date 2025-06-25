@@ -66,6 +66,13 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
       roles: ['ADMIN']
     },
     { 
+      name: 'Registros Pendientes', 
+      href: '/admin/pending-registrations', 
+      icon: <Bell size={20} />,
+      active: pathname.startsWith('/admin/pending-registrations'),
+      roles: ['ADMIN']
+    },
+    { 
       name: 'Roles y Permisos', 
       href: '/admin/roles', 
       icon: <Shield size={20} />,
@@ -307,8 +314,4 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
       </div>
     </ProtectedRoute>
   );
-}
-
-function cn(...classes: (string | undefined | null | false)[]): string {
-  return classes.filter(Boolean).join(' ');
 }

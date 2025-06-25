@@ -1,36 +1,119 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Elite Frontend
 
-## Getting Started
+Este es un proyecto [Next.js](https://nextjs.org) para el frontend de Elite Centro Comercial.
 
-First, run the development server:
+## 🚀 Comandos de Desarrollo
 
+### Comandos Básicos
 ```bash
+# Desarrollo normal
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+
+# Desarrollo con limpieza de caché automática
+npm run dev:clean
+
+# Construcción normal
+npm run build
+
+# Construcción con limpieza de caché automática
+npm run build:clean
+
+# Iniciar servidor de producción
+npm run start
+
+# Linting
+npm run lint
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### Comandos de Limpieza
+```bash
+# Limpiar caché básica
+npm run clean
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+# Limpieza completa (incluye reinstalación de dependencias)
+npm run clean:all
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+### Scripts de Windows
+Si estás en Windows y tienes problemas de caché, puedes usar:
 
-## Learn More
+```powershell
+# PowerShell
+.\clean-cache.ps1
 
-To learn more about Next.js, take a look at the following resources:
+# O Batch
+clean-cache.bat
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## 🔧 Solución de Problemas
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+### Problema: Error de compilación o caché corrupta
+Si encuentras errores de compilación o problemas con la caché:
 
-## Deploy on Vercel
+1. **Solución rápida**: Usa `npm run dev:clean`
+2. **Limpieza manual**: Ejecuta `npm run clean`
+3. **Limpieza completa**: Ejecuta `npm run clean:all`
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+### Problema: Cambios no se reflejan
+Si los cambios en el código no se reflejan en el navegador:
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+1. Detén el servidor (Ctrl+C)
+2. Ejecuta `npm run clean`
+3. Reinicia con `npm run dev`
+
+## 📁 Estructura del Proyecto
+
+```
+elite-frontend/
+├── app/                    # App Router de Next.js 13+
+├── components/             # Componentes reutilizables
+├── services/              # Servicios de API
+├── hooks/                 # Custom hooks
+├── contexts/              # Contextos de React
+├── lib/                   # Utilidades y configuraciones
+├── public/                # Archivos estáticos
+└── styles/                # Estilos globales
+```
+
+## 🛠️ Tecnologías
+
+- **Next.js 15.3.1** - Framework de React
+- **React 19** - Biblioteca de UI
+- **TypeScript** - Tipado estático
+- **Tailwind CSS** - Framework de CSS
+- **Framer Motion** - Animaciones
+- **Axios** - Cliente HTTP
+- **Next Cloudinary** - Integración con Cloudinary
+
+## 🌐 Variables de Entorno
+
+Crea un archivo `.env.local` con las siguientes variables:
+
+```env
+NEXT_PUBLIC_API_URL=http://localhost:3001/api
+NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME=your_cloud_name
+NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET=your_upload_preset
+```
+
+## 📝 Notas de Desarrollo
+
+- El proyecto usa el App Router de Next.js 13+
+- Los componentes están organizados por funcionalidad
+- Se usa TypeScript para mejor desarrollo
+- Tailwind CSS para estilos
+- Framer Motion para animaciones suaves
+
+## 🚀 Despliegue
+
+El proyecto está configurado para desplegarse fácilmente en Vercel:
+
+1. Conecta tu repositorio a Vercel
+2. Configura las variables de entorno
+3. ¡Listo! Se desplegará automáticamente
+
+## 📚 Recursos
+
+- [Next.js Documentation](https://nextjs.org/docs)
+- [React Documentation](https://react.dev)
+- [Tailwind CSS](https://tailwindcss.com)
+- [Framer Motion](https://www.framer.com/motion/)

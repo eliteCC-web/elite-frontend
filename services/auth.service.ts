@@ -7,6 +7,28 @@ export interface LoginData {
   password: string;
 }
 
+export interface RegisterInternalData {
+  firstName: string;
+  lastName: string;
+  email: string;
+  password: string;
+  phone: string;
+  roleType: 'COLABORADOR' | 'CLIENTE_INTERNO';
+  store?: {
+    name: string;
+    description: string;
+    address: string;
+    phone: string;
+    schedule: Array<{
+      day: string;
+      openTime: string;
+      closeTime: string;
+      isOpen: boolean;
+    }>;
+    images: string[];
+  };
+}
+
 export interface User {
   id: number;
   email: string;
@@ -53,6 +75,12 @@ const AuthService = {
   async register(data: RegisterData): Promise<RegisterResponse> {
     console.log(data)
     const response = await apiClient.post<RegisterResponse>('/auth/register', data);
+    return response.data;
+  },
+
+  async registerInternal(data: RegisterInternalData): Promise<RegisterResponse> {
+    console.log('Registering internal user:', data);
+    const response = await apiClient.post<RegisterResponse>('/auth/register-internal', data);
     return response.data;
   },
 

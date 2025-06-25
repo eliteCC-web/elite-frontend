@@ -123,7 +123,7 @@ export default function ProfilePage() {
               
               {/* Foto de perfil */}
               <div className="relative">
-                <div className="h-24 w-24 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white text-2xl font-bold">
+                <div className="h-24 w-24 rounded-full bg-gradient-to-br from-primary-500 to-secondary-500 flex items-center justify-center text-white text-2xl font-bold">
                   {profile.profileImage ? (
                     <img 
                       src={profile.profileImage} 
@@ -148,7 +148,7 @@ export default function ProfilePage() {
                     </h1>
                     <p className="text-gray-600 mb-2">Miembro desde {new Date(profile.createdAt).toLocaleDateString('es-ES', { month: 'long', year: 'numeric' })}</p>
                   </div>
-                  <button className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition-colors">
+                  <button className="flex items-center gap-2 bg-secondary-500 hover:bg-secondary-600 text-white px-4 py-2 rounded-lg transition-colors">
                     <Edit size={16} />
                     Editar Perfil
                   </button>
