@@ -10,6 +10,8 @@ import ProfileService, { UserProfile, ThreeWeeksSchedule } from '@/services/prof
 import LoadingSpinner from '@/components/ui/LoadingSpinner';
 import ScheduleCalendar from '@/components/profile/ScheduleCalendar';
 import StoreInfo from '@/components/profile/StoreInfo';
+import EditProfileModal from '@/components/profile/EditProfileModal';
+import EditStoreModal from '@/components/profile/EditStoreModal';
 import Navbar from '@/components/navbar';
 import Footer from '@/components/footer';
 
@@ -20,6 +22,8 @@ export default function ProfilePage() {
   const [schedule, setSchedule] = useState<ThreeWeeksSchedule | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [editProfileModalOpen, setEditProfileModalOpen] = useState(false);
+  const [editStoreModalOpen, setEditStoreModalOpen] = useState(false);
 
   useEffect(() => {
     if (!isAuthenticated) {
@@ -62,6 +66,19 @@ export default function ProfilePage() {
     }
   };
 
+  const handleProfileUpdate = (updatedProfile: UserProfile) => {
+    setProfile(updatedProfile);
+  };
+
+  const handleStoreUpdate = (updatedStore: any) => {
+    if (profile) {
+      setProfile({
+        ...profile,
+        ownedStores: [updatedStore]
+      });
+    }
+  };
+
   const getRoleBadgeColor = (roleName: string) => {
     const colors = {
       'ADMIN': 'bg-red-100 text-red-800',
@@ -88,7 +105,7 @@ export default function ProfilePage() {
     return (
       <>
         <Navbar />
-        <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="min-h-screen bg-gray-50 flex items-center justify-center pt-20 lg:pt-24">
           <LoadingSpinner size="lg" text="Cargando perfil..." />
         </div>
         <Footer />
@@ -100,7 +117,7 @@ export default function ProfilePage() {
     return (
       <>
         <Navbar />
-        <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="min-h-screen bg-gray-50 flex items-center justify-center pt-20 lg:pt-24">
           <div className="text-center">
             <h2 className="text-2xl font-bold text-gray-800 mb-2">Error al cargar perfil</h2>
             <p className="text-gray-600">{error || 'No se pudo cargar la información del perfil'}</p>
@@ -114,7 +131,7 @@ export default function ProfilePage() {
   return (
     <>
       <Navbar />
-      <main className="min-h-screen bg-gray-50 py-8">
+      <main className="min-h-screen bg-gray-50 py-8 pt-20 lg:pt-24">
         <div className="container mx-auto px-4 max-w-6xl">
           
           {/* Header del perfil */}
@@ -148,7 +165,10 @@ export default function ProfilePage() {
                     </h1>
                     <p className="text-gray-600 mb-2">Miembro desde {new Date(profile.createdAt).toLocaleDateString('es-ES', { month: 'long', year: 'numeric' })}</p>
                   </div>
-                  <button className="flex items-center gap-2 bg-secondary-500 hover:bg-secondary-600 text-white px-4 py-2 rounded-lg transition-colors">
+                  <button 
+                    onClick={() => setEditProfileModalOpen(true)}
+                    className="flex items-center gap-2 bg-secondary-500 hover:bg-secondary-600 text-white px-4 py-2 rounded-lg transition-colors"
+                  >
                     <Edit size={16} />
                     Editar Perfil
                   </button>
@@ -168,13 +188,13 @@ export default function ProfilePage() {
 
                 {/* Información de contacto */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div className="flex items-center gap-2 text-gray-600">
-                    <Mail size={16} />
-                    <span>{profile.email}</span>
+                  <div className="flex items-center gap-2 text-gray-600 min-w-0">
+                    <Mail size={16} className="flex-shrink-0" />
+                    <span className="truncate">{profile.email}</span>
                   </div>
-                  <div className="flex items-center gap-2 text-gray-600">
-                    <Phone size={16} />
-                    <span>{profile.phone}</span>
+                  <div className="flex items-center gap-2 text-gray-600 min-w-0">
+                    <Phone size={16} className="flex-shrink-0" />
+                    <span className="truncate">{profile.phone}</span>
                   </div>
                 </div>
               </div>
@@ -200,7 +220,7 @@ export default function ProfilePage() {
                   
                   <div>
                     <label className="text-sm font-medium text-gray-500">Correo Electrónico</label>
-                    <p className="text-gray-800">{profile.email}</p>
+                    <p className="text-gray-800 truncate">{profile.email}</p>
                   </div>
                   
                   <div>
@@ -247,13 +267,16 @@ export default function ProfilePage() {
               )}
 
               {/* CLIENTE_INTERNO - Información del Local */}
-              {hasRole('CLIENTE_INTERNO') && profile.ownedStore && (
+              {hasRole('CLIENTE_INTERNO') && profile.ownedStores && profile.ownedStores.length > 0 && (
                 <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6 mb-6">
                   <h2 className="text-lg font-semibold text-gray-800 mb-4 flex items-center gap-2">
                     <StoreIcon size={20} />
                     Mi Local
                   </h2>
-                  <StoreInfo store={profile.ownedStore} />
+                  <StoreInfo 
+                    store={profile.ownedStores[0]} 
+                    onEdit={() => setEditStoreModalOpen(true)}
+                  />
                 </div>
               )}
 
@@ -264,13 +287,13 @@ export default function ProfilePage() {
                 </h2>
                 
                 <div className="space-y-4">
-                  <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
+                  {/*<div className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
                     <Calendar size={16} className="text-blue-500" />
                     <div>
                       <p className="text-sm font-medium text-gray-800">Última conexión</p>
                       <p className="text-xs text-gray-500">Hace 2 horas</p>
                     </div>
-                  </div>
+                  </div>*/}
                   
                   {hasRole('COLABORADOR') && (
                     <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
@@ -297,6 +320,28 @@ export default function ProfilePage() {
           </div>
         </div>
       </main>
+      
+      {/* Modales */}
+      {profile && (
+        <>
+          <EditProfileModal
+            profile={profile}
+            isOpen={editProfileModalOpen}
+            onClose={() => setEditProfileModalOpen(false)}
+            onUpdate={handleProfileUpdate}
+          />
+          
+          {profile.ownedStores && (
+            <EditStoreModal
+              store={profile.ownedStores[0]}
+              isOpen={editStoreModalOpen}
+              onClose={() => setEditStoreModalOpen(false)}
+              onUpdate={handleStoreUpdate}
+            />
+          )}
+        </>
+      )}
+      
       <Footer />
     </>
   );

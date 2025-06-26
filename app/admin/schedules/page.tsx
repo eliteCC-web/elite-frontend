@@ -98,33 +98,29 @@ export default function SchedulesPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      {/* Header */}
-      <div className="bg-white border-b border-gray-200">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-16">
-            <div className="flex items-center space-x-4">
-              <Calendar className="h-8 w-8 text-red-600" />
-              <div>
-                <h1 className="text-2xl font-bold text-gray-900">Gestión de Turnos</h1>
-                <p className="text-sm text-gray-600">Administra los horarios de los colaboradores</p>
-              </div>
-            </div>
-            
-            <div className="flex items-center space-x-3">
-              <button
-                onClick={() => loadData()}
-                className="inline-flex items-center px-3 py-2 border border-gray-300 shadow-sm text-sm leading-4 font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
-              >
-                <RefreshCw className="h-4 w-4 mr-2" />
-                Actualizar
-              </button>
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        {/* Header */}
+        <div className="flex items-center justify-between mb-6">
+          <div className="flex items-center space-x-4">
+            <Calendar className="h-8 w-8 text-red-600" />
+            <div>
+              <h1 className="text-3xl font-bold text-gray-900 mb-2">Gestión de Turnos</h1>
+              <p className="text-gray-600">Administra los horarios de los colaboradores</p>
             </div>
           </div>
+          
+          <div className="flex items-center space-x-3">
+            <button
+              onClick={() => loadData()}
+              className="inline-flex items-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-lg text-gray-700 bg-white hover:bg-gray-50 transition-colors"
+            >
+              <RefreshCw className="h-4 w-4 mr-2" />
+              Actualizar
+            </button>
+          </div>
         </div>
-      </div>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Controles de semana */}
         <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 mb-6">
           <div className="flex items-center justify-between mb-4">

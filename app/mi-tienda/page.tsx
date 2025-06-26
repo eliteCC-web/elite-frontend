@@ -59,7 +59,7 @@ export default function MyStorePage() {
     return (
       <>
         <Navbar />
-        <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="min-h-screen bg-gray-50 flex items-center justify-center pt-20 lg:pt-24">
           <LoadingSpinner size="lg" text="Cargando tu tienda..." />
         </div>
         <Footer />
@@ -71,7 +71,7 @@ export default function MyStorePage() {
     return (
       <>
         <Navbar />
-        <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="min-h-screen bg-gray-50 flex items-center justify-center pt-20 lg:pt-24">
           <div className="text-center">
             <h2 className="text-xl font-bold text-gray-800 mb-2">Error al cargar tienda</h2>
             <p className="text-gray-600 mb-4">{error}</p>
@@ -89,7 +89,7 @@ export default function MyStorePage() {
     return (
       <>
         <Navbar />
-        <div className="min-h-screen bg-gray-50 py-6">
+        <div className="min-h-screen bg-gray-50 py-6 pt-20 lg:pt-24">
           <div className="container mx-auto px-4 max-w-4xl">
             
             {/* Header */}
@@ -137,7 +137,7 @@ export default function MyStorePage() {
   return (
     <>
       <Navbar />
-      <main className="min-h-screen bg-gray-50 py-6">
+      <main className="min-h-screen bg-gray-50 py-6 pt-20 lg:pt-24">
         <div className="container mx-auto px-4 max-w-6xl">
           
           {/* Header */}
@@ -179,10 +179,10 @@ export default function MyStorePage() {
             <div className="lg:col-span-1">
               <div className="card-compact bg-white">
                 <div className="relative">
-                  {store.imageUrl ? (
+                  {store.images && store.images.length > 0 ? (
                     <div className="relative h-48 rounded-lg overflow-hidden mb-4">
                       <img 
-                        src={store.imageUrl} 
+                        src={store.images[0]} 
                         alt={store.name}
                         className="w-full h-full object-cover"
                       />
@@ -227,7 +227,7 @@ export default function MyStorePage() {
                           if (e.target.files && e.target.files[0]) {
                             try {
                               const newImageUrl = await StoreOwnerService.uploadStoreImage(e.target.files[0]);
-                              setStore((prev) => prev ? { ...prev, imageUrl: newImageUrl } : prev);
+                              setStore((prev) => prev ? { ...prev, images: [...(prev.images || []), newImageUrl] } : prev);
                             } catch (err) {
                               console.error(err);
                               alert('Error al subir la imagen');

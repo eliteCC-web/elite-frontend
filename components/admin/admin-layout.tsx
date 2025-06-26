@@ -14,7 +14,6 @@ import { useAuth } from '@/hooks/useAuth';
 import RoleGuard from '@/components/RoleGuard';
 import ProtectedRoute from '@/components/ProtectedRoute';
 import assets from '@/public/assets';
-import Navbar from '../navbar';
 import { cn } from '@/lib/utils';
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
@@ -35,13 +34,6 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
       href: '/admin/dashboard', 
       icon: <LayoutDashboard size={20} />,
       active: pathname === '/admin/dashboard',
-      roles: ['ADMIN', 'COLABORADOR']
-    },
-    { 
-      name: 'Tiendas', 
-      href: '/admin/stores', 
-      icon: <Store size={20} />,
-      active: pathname.startsWith('/admin/stores'),
       roles: ['ADMIN', 'COLABORADOR']
     },
     { 
@@ -72,6 +64,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
       active: pathname.startsWith('/admin/pending-registrations'),
       roles: ['ADMIN']
     },
+    /*
     { 
       name: 'Roles y Permisos', 
       href: '/admin/roles', 
@@ -85,7 +78,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
       icon: <FileText size={20} />,
       active: pathname.startsWith('/admin/documents'),
       roles: ['ADMIN', 'COLABORADOR', 'CLIENTE_INTERNO']
-    }
+    }*/
   ];
 
   // Filtrar elementos de navegación según roles del usuario
@@ -95,7 +88,6 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
 
   return (
     <ProtectedRoute requiredRoles={['ADMIN', 'COLABORADOR']}>
-      <Navbar/>
       <div className="main-layout">
         {/* Sidebar para pantallas grandes */}
         <aside 
@@ -123,7 +115,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                 width={36}
                 height={36}
               />
-              <span className="font-semibold text-neutral-800">Elite Admin</span>
+              <span className="font-semibold text-neutral-900">Elite Admin</span>
             </Link>
           </div>
 
@@ -173,6 +165,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                   Acceso Rápido
                 </h4>
                 <div className="space-y-1">
+                  {/*
                   <RoleGuard roles={['ADMIN']}>
                     <Link
                       href="/admin/settings"
@@ -192,7 +185,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                       Reportes
                     </Link>
                   </RoleGuard>
-
+                  */}
                   <RoleGuard roles={['COLABORADOR']}>
                     <Link
                       href="/mi-horario"
@@ -219,7 +212,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
               </Link>
               <button
                 onClick={handleLogout}
-                className="nav-link text-secondary-500 hover:text-secondary-600 hover:bg-secondary-50 w-full"
+                className="nav-link text-red-500 hover:text-red-600 hover:bg-red-50 w-full"
               >
                 <LogOut size={20} />
                 <span className="font-medium">Cerrar sesión</span>
@@ -293,7 +286,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                             handleLogout();
                             setDropdownOpen(false);
                           }}
-                          className="dropdown-item text-secondary-500 hover:bg-secondary-50 w-full"
+                          className="dropdown-item text-red-500 hover:bg-red-50 w-full"
                         >
                           <LogOut size={16} />
                           Cerrar sesión

@@ -11,7 +11,7 @@ export default function UnauthorizedPage() {
   return (
     <>
       <Navbar />
-      <main className="min-h-screen bg-gray-50 py-16">
+      <main className="min-h-screen bg-gray-50 py-16 pt-20 lg:pt-24">
         <div className="container mx-auto px-4 text-center">
           {/* Número 403 */}
           <h1 className="text-9xl font-bold text-red-600 mb-6">

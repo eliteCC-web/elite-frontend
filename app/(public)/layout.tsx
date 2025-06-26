@@ -3,6 +3,7 @@
 import type React from "react"
 import Navbar from "@/components/navbar"
 import Footer from "@/components/footer"
+import HomePageWrapper from "@/components/HomePageWrapper"
 
 export default function PublicLayout({
   children,
@@ -12,7 +13,9 @@ export default function PublicLayout({
   return (
     <>
       <Navbar />
+      <HomePageWrapper>
       {children}
+      </HomePageWrapper>
       <Footer />
     </>
   )

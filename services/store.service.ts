@@ -6,7 +6,13 @@ export interface Store {
   name: string;
   phone: string;
   description?: string;
-  imageUrl?: string;
+  images?: string[];
+  schedule?: any;
+  category?: string;
+  floor?: string;
+  monthlyRent?: number;
+  isActive: boolean;
+  ownerId?: number;
   createdAt?: Date;
   updatedAt?: Date;
 }
@@ -17,7 +23,11 @@ export interface CreateStoreDto {
   name: string;
   phone: string;
   description?: string;
-  imageUrl?: string;
+  images?: string[];
+  schedule?: any;
+  category?: string;
+  floor?: string;
+  monthlyRent?: number;
 }
 
 // La actualización permite campos opcionales
@@ -26,7 +36,12 @@ export interface UpdateStoreDto {
   name?: string;
   phone?: string;
   description?: string;
-  imageUrl?: string;
+  images?: string[];
+  schedule?: any;
+  category?: string;
+  floor?: string;
+  monthlyRent?: number;
+  isActive?: boolean;
 }
 
 export interface PaginationMeta {
@@ -46,56 +61,53 @@ export interface PaginatedResponse<T> {
 const StoreService = {
   async getAllStores(page = 1, limit = 10): Promise<PaginatedResponse<Store>> {
     try {
-      const response = await apiClient.get<PaginatedResponse<Store>>(`/stores?page=${page}&limit=${limit}`);
+      const response = await apiClient.get<PaginatedResponse<Store>>('/stores', {
+        params: { page, limit }
+      });
       return response.data;
     } catch (error) {
-      // Para propósitos de desarrollo, simulamos datos
-      // En producción, deberías lanzar el error para que se maneje apropiadamente
-      console.error("Error fetching stores, using mock data:", error);
+      console.error("Error fetching stores, using sample data:", error);
       
-      // Datos de muestra para desarrollo
-      const mockStores: Store[] = [
+      // Datos de ejemplo cuando la API no está disponible
+      const sampleStores: Store[] = [
         {
           id: 1,
-          storeNumber: "A-101",
-          name: "Nike Store",
-          phone: "3001234567",
-          description: "Tienda oficial de Nike",
-          imageUrl: "https://images.unsplash.com/photo-1542291026-7eec264c27ff",
-          createdAt: new Date(),
-          updatedAt: new Date()
-        },
-        {
-          id: 2,
-          storeNumber: "B-201",
-          name: "Adidas",
-          phone: "3009876543",
-          description: "Todo para deportistas",
-          imageUrl: "https://images.unsplash.com/photo-1518002171953-a080ee817e1f",
-          createdAt: new Date(),
-          updatedAt: new Date()
-        },
-        {
-          id: 3,
-          storeNumber: "C-301",
-          name: "Starbucks",
-          phone: "3007654321",
-          description: "Café premium",
-          imageUrl: "https://images.unsplash.com/photo-1575844264771-892081089af5",
+          storeNumber: "JOY-1234",
+          name: "JOYERÍA Y COMPRAVENTA LA DINASTÍA",
+          phone: "1111111111",
+          description: "Nos dedicamos a la venta de joyas de oro de 18 kilates, también compramos tus joyas y hacemos empeños por ellas también una de la cosas que más nos identifica es que manejamos garantía de la calidad del producto y del peso comprobando que nuestras joyas son de 18 kilates y donde al mismo tiempo recibes una excelente atención a la hora de consultar por una joya.",
+          images: ["https://pmulriauzstmyeslfvpn.supabase.co/storage/v1/object/public/elitecc-web/store-images/1750819665937-ez2bdhjczca.jpeg"],
+          schedule: [
+            {
+              day: "monday",
+              isOpen: true,
+              openTime: "09:00",
+              closeTime: "18:00"
+            }
+          ],
+          category: "Joyería",
+          floor: "1",
+          monthlyRent: 2500000,
+          isActive: true,
           createdAt: new Date(),
           updatedAt: new Date()
         }
       ];
       
+      // Simular paginación
+      const startIndex = (page - 1) * limit;
+      const endIndex = startIndex + limit;
+      const paginatedStores = sampleStores.slice(startIndex, endIndex);
+      
       return {
-        data: mockStores,
+        data: paginatedStores,
         meta: {
-          total: mockStores.length,
+          total: sampleStores.length,
           page: page,
           limit: limit,
-          totalPages: 1,
-          hasNextPage: false,
-          hasPrevPage: false
+          totalPages: Math.ceil(sampleStores.length / limit),
+          hasNextPage: endIndex < sampleStores.length,
+          hasPrevPage: page > 1,
         }
       };
     }
@@ -106,37 +118,50 @@ const StoreService = {
       const response = await apiClient.get<Store>(`/stores/${id}`);
       return response.data;
     } catch (error) {
-      console.error("Error fetching store, using mock data:", error);
+      console.error("Error fetching store, using sample data:", error);
       
-      // Datos de muestra para desarrollo
-      return {
-        id: id,
-        storeNumber: "A-101",
-        name: "Nike Store",
-        phone: "3001234567",
-        description: "Tienda oficial de Nike",
-        imageUrl: "https://images.unsplash.com/photo-1542291026-7eec264c27ff",
+      // Datos de ejemplo cuando la API no está disponible
+      const sampleStores: Store[] = [
+        {
+          id: 1,
+          storeNumber: "JOY-1234",
+          name: "JOYERÍA Y COMPRAVENTA LA DINASTÍA",
+          phone: "1111111111",
+          description: "Nos dedicamos a la venta de joyas de oro de 18 kilates, también compramos tus joyas y hacemos empeños por ellas también una de la cosas que más nos identifica es que manejamos garantía de la calidad del producto y del peso comprobando que nuestras joyas son de 18 kilates y donde al mismo tiempo recibes una excelente atención a la hora de consultar por una joya.",
+          images: ["https://pmulriauzstmyeslfvpn.supabase.co/storage/v1/object/public/elitecc-web/store-images/1750819665937-ez2bdhjczca.jpeg"],
+          schedule: [
+            {
+              day: "monday",
+              isOpen: true,
+              openTime: "09:00",
+              closeTime: "18:00"
+            }
+          ],
+          category: "Joyería",
+          floor: "1",
+          monthlyRent: 2500000,
+          isActive: true,
         createdAt: new Date(),
         updatedAt: new Date()
-      };
+        }
+      ];
+      
+      const store = sampleStores.find(s => s.id === id);
+      if (!store) {
+        throw new Error(`Store with ID ${id} not found`);
+      }
+      
+      return store;
     }
   },
 
   async createStore(storeData: CreateStoreDto): Promise<Store> {
     try {
-
       const response = await apiClient.post<Store>('/stores', storeData);
       return response.data;
     } catch (error) {
-      console.error("Error creating store, simulating success:", error);
-      
-      // Para desarrollo, simular una respuesta exitosa
-      return {
-        id: Math.floor(Math.random() * 1000), // ID aleatorio
-        ...storeData,
-        createdAt: new Date(),
-        updatedAt: new Date()
-      };
+      console.error("Error creating store:", error);
+      throw error;
     }
   },
 
@@ -145,18 +170,8 @@ const StoreService = {
       const response = await apiClient.put<Store>(`/stores/${id}`, storeData);
       return response.data;
     } catch (error) {
-      console.error("Error updating store, simulating success:", error);
-      
-      // Para desarrollo, simular una respuesta exitosa
-      return {
-        id: id,
-        storeNumber: storeData.storeNumber || "A-101",
-        name: storeData.name || "Store Name",
-        phone: storeData.phone || "3001234567",
-        description: storeData.description,
-        imageUrl: storeData.imageUrl,
-        updatedAt: new Date()
-      };
+      console.error("Error updating store:", error);
+      throw error;
     }
   },
 
@@ -164,9 +179,8 @@ const StoreService = {
     try {
       await apiClient.delete(`/stores/${id}`);
     } catch (error) {
-      console.error("Error deleting store, simulating success:", error);
-      // En desarrollo, simplemente devolvemos sin error
-      return;
+      console.error("Error deleting store:", error);
+      throw error;
     }
   }
 };

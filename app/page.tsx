@@ -1,3 +1,4 @@
+/* eslint-disable */
 'use client';
 
 import Link from 'next/link';
@@ -8,203 +9,41 @@ import Footer from '@/components/footer';
 import assets from '@/public/assets';
 import { getPublicUrl } from '@/lib/utils';
 import { TextGenerateEffect } from '@/components/ui/text-generate-effect';
-
-// Tipos para los datos
-interface Event {
-  id: number;
-  title: string;
-  description: string;
-  date: string;
-  time: string;
-  location: string;
-  image: string;
-  category: string;
-  isFree: boolean;
-  price?: number;
-  attendees: number;
-}
-
-interface Store {
-  id: number;
-  name: string;
-  description: string;
-  category: string;
-  rating: number;
-  reviews: number;
-  image: string;
-  isOpen: boolean;
-  location: string;
-}
-
-// Datos de ejemplo para eventos
-const featuredEvents: Event[] = [
-  {
-    id: 1,
-    title: "Noche de Jazz",
-    description: "Disfruta de una velada inolvidable con los mejores músicos de jazz de la ciudad.",
-    date: "2024-02-15",
-    time: "20:00",
-    location: "Plaza Central",
-    image: assets.hero_eventos,
-    category: "Música",
-    isFree: true,
-    attendees: 150
-  },
-  {
-    id: 2,
-    title: "Feria Gastronómica",
-    description: "Descubre los sabores más exquisitos de la región en nuestra feria gastronómica anual.",
-    date: "2024-02-20",
-    time: "18:00",
-    location: "Zona Gastronómica",
-    image: assets.arte_1,
-    category: "Gastronomía",
-    isFree: false,
-    price: 25000,
-    attendees: 300
-  },
-  {
-    id: 3,
-    title: "Exposición de Arte",
-    description: "Admira las obras de artistas locales en esta exposición única y gratuita.",
-    date: "2024-02-25",
-    time: "19:00",
-    location: "Galería Elite",
-    image: assets.plazoleta_2,
-    category: "Arte",
-    isFree: true,
-    attendees: 80
-  }
-];
-
-// Datos de ejemplo para tiendas
-const featuredStores: Store[] = [
-  {
-    id: 1,
-    name: "Gourmet Elite",
-    description: "Los mejores productos gourmet y delicatessen de la ciudad.",
-    category: "Gastronomía",
-    rating: 4.8,
-    reviews: 156,
-    image: assets.plazoleta_1,
-    isOpen: true,
-    location: "Nivel 1, Local 15"
-  },
-  {
-    id: 2,
-    name: "TechZone",
-    description: "La tecnología más avanzada al mejor precio del mercado.",
-    category: "Tecnología",
-    rating: 4.6,
-    reviews: 89,
-    image: assets.moda_1,
-    isOpen: true,
-    location: "Nivel 2, Local 8"
-  },
-  {
-    id: 3,
-    name: "Fashion Forward",
-    description: "Las últimas tendencias en moda y accesorios de lujo.",
-    category: "Moda",
-    rating: 4.9,
-    reviews: 234,
-    image: assets.moda_2,
-    isOpen: true,
-    location: "Nivel 1, Local 22"
-  }
-];
-
-// Componente EventCard simple
-function EventCard({ event }: { event: Event }) {
-  return (
-    <div className="bg-white rounded-3xl shadow-soft border border-neutral-200 overflow-hidden group hover:shadow-medium transition-all duration-300">
-      <div className="relative overflow-hidden">
-        <Image
-          src={event.image}
-          alt={event.title}
-          width={400}
-          height={250}
-          className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300"
-        />
-        <div className="absolute top-4 left-4 bg-secondary-500 text-white px-3 py-1 rounded-full text-sm font-semibold">
-          {event.category}
-        </div>
-        <div className="absolute top-4 right-4 bg-white/90 backdrop-blur-sm text-neutral-900 px-3 py-1 rounded-full text-sm font-semibold">
-          {event.isFree ? 'Gratis' : `$${event.price?.toLocaleString()}`}
-        </div>
-      </div>
-      <div className="p-6">
-        <h3 className="text-xl font-semibold text-neutral-900 mb-3">{event.title}</h3>
-        <p className="text-neutral-600 mb-4 line-clamp-2">{event.description}</p>
-        
-        <div className="space-y-2 mb-4">
-          <div className="flex items-center gap-2 text-sm text-neutral-500">
-            <Calendar size={16} />
-            <span>{new Date(event.date).toLocaleDateString('es-ES', { day: 'numeric', month: 'short' })}</span>
-          </div>
-          <div className="flex items-center gap-2 text-sm text-neutral-500">
-            <Clock size={16} />
-            <span>{event.time}</span>
-          </div>
-          <div className="flex items-center gap-2 text-sm text-neutral-500">
-            <MapPin size={16} />
-            <span>{event.location}</span>
-          </div>
-        </div>
-        
-        <Link href="/eventos" className="btn-outline btn-sm w-full rounded-2xl">
-          Registrarse
-        </Link>
-      </div>
-    </div>
-  );
-}
-
-// Componente StoreCard simple
-function StoreCard({ store }: { store: Store }) {
-  return (
-    <div className="bg-white rounded-3xl shadow-soft border border-neutral-200 overflow-hidden group hover:shadow-medium transition-all duration-300">
-      <div className="relative overflow-hidden">
-        <Image
-          src={store.image}
-          alt={store.name}
-          width={400}
-          height={300}
-          className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300"
-        />
-        <div className="absolute top-4 left-4 bg-secondary-500 text-white px-3 py-1 rounded-full text-sm font-semibold">
-          {store.category}
-        </div>
-        <div className="absolute top-4 right-4 bg-white/90 backdrop-blur-sm text-neutral-900 px-3 py-1 rounded-full text-sm font-semibold">
-          {store.isOpen ? 'Abierto' : 'Cerrado'}
-        </div>
-      </div>
-      <div className="p-6">
-        <h3 className="text-xl font-semibold text-neutral-900 mb-3">{store.name}</h3>
-        <p className="text-neutral-600 mb-4 line-clamp-2">{store.description}</p>
-        
-        <div className="flex items-center gap-2 mb-4">
-          <div className="flex items-center gap-1">
-            <Star size={16} className="text-yellow-500 fill-current" />
-            <span className="text-sm font-semibold text-neutral-900">{store.rating}</span>
-          </div>
-          <span className="text-sm text-neutral-500">({store.reviews} reseñas)</span>
-        </div>
-        
-        <div className="flex items-center gap-2 text-sm text-neutral-500 mb-4">
-          <MapPin size={16} />
-          <span>{store.location}</span>
-        </div>
-        
-        <Link href="/tiendas" className="btn-outline btn-sm w-full rounded-2xl">
-          Ver Detalles
-        </Link>
-      </div>
-    </div>
-  );
-}
+import type React from "react"
+import { useEffect, useState } from "react"
+import StoreService, { type Store } from "@/services/store.service"
+import StoreCard from '@/components/StoreCard';
+import EventService, { type Event as EventType } from "@/services/event.service"
+import { default as EventCardComponent } from '@/components/EventCard';
 
 export default function HomePage() {
+  const [featuredStores, setFeaturedStores] = useState<Store[]>([]);
+  const [featuredEvents, setFeaturedEvents] = useState<EventType[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        setLoading(true);
+        const [storesResponse, eventsResponse] = await Promise.all([
+          StoreService.getAllStores(1, 3),
+          EventService.getAllEvents(1, 6)
+        ]);
+        setFeaturedStores(storesResponse.data);
+        const featuredEvents = eventsResponse.data.filter(event => event.isFeatured).slice(0, 3);
+        setFeaturedEvents(featuredEvents);
+      } catch (err: any) {
+        console.error("Error fetching data:", err);
+        setError("Error al cargar los datos");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, []);
+
   return (
     <div className="min-h-screen bg-white">
       {/* Navbar - fuera del hero para evitar superposición */}
@@ -300,9 +139,26 @@ export default function HomePage() {
               </p>
             </div>
 
+            {loading ? (
+              <div className="text-center py-12">
+                <div className="spinner w-8 h-8 mx-auto mb-4"></div>
+                <p className="text-neutral-600">Cargando eventos destacados...</p>
+              </div>
+            ) : error ? (
+              <div className="text-center py-12">
+                <div className="bg-error/10 text-error p-4 rounded-xl border border-error/20 max-w-md mx-auto">
+                  {error}
+                </div>
+              </div>
+            ) : featuredEvents.length === 0 ? (
+              <div className="text-center py-12">
+                <p className="text-neutral-600">No hay eventos disponibles en este momento.</p>
+              </div>
+            ) : (
+              <>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
               {featuredEvents.map((event) => (
-                <EventCard key={event.id} event={event} />
+                    <EventCardComponent key={event.id} event={event} isFeatured={event.isFeatured} />
               ))}
             </div>
 
@@ -315,6 +171,8 @@ export default function HomePage() {
                 <ChevronRight size={20} className="group-hover:translate-x-1 transition-transform duration-200" />
               </Link>
             </div>
+              </>
+            )}
           </div>
         </section>
 
@@ -330,8 +188,25 @@ export default function HomePage() {
               </p>
             </div>
 
+            {loading ? (
+              <div className="text-center py-12">
+                <div className="spinner w-8 h-8 mx-auto mb-4"></div>
+                <p className="text-neutral-600">Cargando tiendas destacadas...</p>
+              </div>
+            ) : error ? (
+              <div className="text-center py-12">
+                <div className="bg-error/10 text-error p-4 rounded-xl border border-error/20 max-w-md mx-auto">
+                  {error}
+                </div>
+              </div>
+            ) : featuredStores.length === 0 ? (
+              <div className="text-center py-12">
+                <p className="text-neutral-600">No hay tiendas disponibles en este momento.</p>
+              </div>
+            ) : (
+              <>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
-              {featuredStores.map((store) => (
+                  {featuredStores.slice(0, 3).map((store) => (
                 <StoreCard key={store.id} store={store} />
               ))}
             </div>
@@ -345,6 +220,8 @@ export default function HomePage() {
                 <ChevronRight size={20} className="group-hover:translate-x-1 transition-transform duration-200" />
               </Link>
             </div>
+              </>
+            )}
           </div>
         </section>
 

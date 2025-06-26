@@ -90,8 +90,7 @@ export default function Footer() {
           </div>
         </div>
       </div>
-
-      {/* Newsletter */}
+{/*
       <div className="border-t border-neutral-200">
         <div className="container-modern py-8">
           <div className="flex flex-col lg:flex-row items-center justify-between gap-6">
@@ -116,7 +115,7 @@ export default function Footer() {
             </div>
           </div>
         </div>
-      </div>
+      </div>*/}
 
       {/* Bottom */}
       <div className="border-t border-neutral-200">

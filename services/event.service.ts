@@ -14,7 +14,6 @@ export interface Event {
   registeredCount: number;
   imageUrl?: string;
   images?: string[];
-  categories?: string[];
   organizer: string;
   contactEmail?: string;
   isActive: boolean;
@@ -36,12 +35,11 @@ export interface CreateEventDto {
   capacity?: number;
   imageUrl?: string;
   images?: string[];
-  categories?: string[];
   organizer: string;
   contactEmail?: string;
   isActive?: boolean;
   isFeatured?: boolean;
-  slug: string;
+  slug?: string;
 }
 
 export interface UpdateEventDto {
@@ -55,7 +53,6 @@ export interface UpdateEventDto {
   capacity?: number;
   imageUrl?: string;
   images?: string[];
-  categories?: string[];
   organizer?: string;
   contactEmail?: string;
   isActive?: boolean;
@@ -113,7 +110,6 @@ const EventService = {
           capacity: 25,
           registeredCount: 15,
           imageUrl: "/images/dia-nino-1.jpg",
-          categories: ["Familiar", "Infantil"],
           organizer: "Centro Comercial Elite",
           contactEmail: "eventos@ccelite.com",
           isActive: true,
@@ -130,7 +126,6 @@ const EventService = {
           price: 25000,
           capacity: 500,
           registeredCount: 250,
-          categories: ["Gastronomía", "Cultural"],
           organizer: "Asociación de Restaurantes CC Elite",
           contactEmail: "gastronomia@ccelite.com",
           isActive: true,
@@ -170,7 +165,6 @@ const EventService = {
         price: 20000,
         capacity: 25,
         registeredCount: 15,
-        categories: ["Familiar"],
         organizer: "Centro Comercial Elite",
         isActive: true,
         isFeatured: false,
@@ -184,7 +178,7 @@ const EventService = {
       const response = await apiClient.get<Event>(`/events/slug/${slug}`);
       return response.data;
     } catch (error) {
-      console.error("Error fetching event by slug, using mock data:", error);
+      console.error("Error fetching event by slug:", error);
       throw error;
     }
   },
@@ -218,12 +212,14 @@ const EventService = {
     }
   },
 
-  async registerForEvent(eventId: number, userId: number): Promise<Event> {
+  async registerForEvent(eventId: number, registrationData: {
+    eventId: number;
+    name: string;
+    phone: string;
+    email?: string;
+  }): Promise<Event> {
     try {
-      const response = await apiClient.post<Event>('/events/register', {
-        eventId,
-        userId
-      });
+      const response = await apiClient.post<Event>('/events/register', registrationData);
       return response.data;
     } catch (error) {
       console.error("Error registering for event:", error);

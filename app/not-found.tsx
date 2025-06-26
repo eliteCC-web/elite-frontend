@@ -9,11 +9,11 @@ export default function NotFound() {
   return (
     <>
     <Navbar />
-    <main className="min-h-screen bg-gray-50 py-16">
+    <main className="min-h-screen bg-gray-50 pt-20 lg:pt-30">
       <div className="container mx-auto px-4 text-center">
 
         {/* Número 404 */}
-        <h1 className="text-9xl font-bold text-gray-700 mb-6">
+        <h1 className="text-9xl font-bold pt-5 lg:pt-10 text-gray-700 mb-6">
           404
         </h1>
 

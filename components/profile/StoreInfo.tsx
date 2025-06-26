@@ -4,13 +4,14 @@
 
 import React from 'react';
 import { Store } from '@/services/profile.service';
-import { MapPin, Phone, DollarSign, Tag, Building, Calendar, CheckCircle, XCircle } from 'lucide-react';
+import { MapPin, Phone, DollarSign, Tag, Building, Calendar, CheckCircle, XCircle, Edit } from 'lucide-react';
 
 interface StoreInfoProps {
   store: Store;
+  onEdit?: () => void;
 }
 
-export default function StoreInfo({ store }: StoreInfoProps) {
+export default function StoreInfo({ store, onEdit }: StoreInfoProps) {
   const formatCurrency = (amount: number) => {
     return new Intl.NumberFormat('es-CO', {
       style: 'currency',
@@ -26,10 +27,10 @@ export default function StoreInfo({ store }: StoreInfoProps) {
         
         {/* Imagen del local */}
         <div className="space-y-4">
-          {store.imageUrl ? (
+          {store.images && store.images.length > 0 ? (
             <div className="relative h-48 rounded-lg overflow-hidden">
               <img 
-                src={store.imageUrl} 
+                src={store.images[0]} 
                 alt={store.name}
                 className="w-full h-full object-cover"
               />
@@ -40,6 +41,11 @@ export default function StoreInfo({ store }: StoreInfoProps) {
               }`}>
                 {store.isActive ? 'Activo' : 'Inactivo'}
               </div>
+              {store.images.length > 1 && (
+                <div className="absolute bottom-2 left-2 bg-black/50 text-white px-2 py-1 rounded-full text-xs">
+                  +{store.images.length - 1} más
+                </div>
+              )}
             </div>
           ) : (
             <div className="h-48 bg-gray-100 rounded-lg flex items-center justify-center">
@@ -50,9 +56,20 @@ export default function StoreInfo({ store }: StoreInfoProps) {
 
         {/* Detalles del local */}
         <div className="space-y-4">
-          <div>
-            <h3 className="text-xl font-semibold text-gray-800 mb-2">{store.name}</h3>
-            <p className="text-gray-600">{store.description || 'Sin descripción disponible'}</p>
+          <div className="flex items-start justify-between">
+            <div>
+              <h3 className="text-xl font-semibold text-gray-800 mb-2">{store.name}</h3>
+              <p className="text-gray-600">{store.description || 'Sin descripción disponible'}</p>
+            </div>
+            {onEdit && (
+              <button
+                onClick={onEdit}
+                className="flex items-center gap-2 bg-primary-500 hover:bg-primary-600 text-white px-3 py-2 rounded-lg transition-colors text-sm"
+              >
+                <Edit size={16} />
+                Editar
+              </button>
+            )}
           </div>
 
           <div className="space-y-3">
@@ -125,7 +142,7 @@ export default function StoreInfo({ store }: StoreInfoProps) {
         </div>
       )}
 
-      {/* Acciones rápidas */}
+      {/* Acciones rápidas 
       <div className="border-t pt-4">
         <h4 className="font-medium text-gray-800 mb-3">Acciones Rápidas</h4>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
@@ -149,7 +166,7 @@ export default function StoreInfo({ store }: StoreInfoProps) {
             <span className="text-sm text-orange-800">Contacto</span>
           </button>
         </div>
-      </div>
+      </div>*/}
     </div>
   );
 }

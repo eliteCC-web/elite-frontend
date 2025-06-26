@@ -42,13 +42,13 @@ export default function NewEventPage() {
         <div className="flex items-center gap-2 mb-2">
           <Link 
             href="/admin/events" 
-            className="text-gray-500 hover:text-gray-700 transition-colors"
+            className="text-neutral-500 hover:text-neutral-700 transition-colors"
           >
             <ArrowLeft size={18} />
           </Link>
-          <h1 className="text-2xl font-bold text-gray-800">Nuevo Evento</h1>
+          <h1 className="text-2xl font-bold text-neutral-900">Nuevo Evento</h1>
         </div>
-        <p className="text-gray-600">Crea un nuevo evento o actividad</p>
+        <p className="text-neutral-600">Crea un nuevo evento o actividad</p>
       </div>
 
       {/* Mensaje de error */}
@@ -59,7 +59,7 @@ export default function NewEventPage() {
       )}
 
       {/* Formulario */}
-      <div className="bg-white rounded-lg shadow-sm border border-gray-100 p-6">
+      <div className="bg-white rounded-lg shadow-sm border border-neutral-200 p-6">
         <EventForm
           onSubmit={handleSubmit}
           onCancel={handleCancel}

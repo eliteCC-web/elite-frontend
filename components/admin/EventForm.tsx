@@ -5,7 +5,7 @@
 import React, { useState } from 'react';
 import { Event, CreateEventDto } from '@/services/event.service';
 import { X, Upload, Check, AlertCircle, Loader2, Calendar, MapPin, Users, DollarSign } from 'lucide-react';
-import CloudinaryService from '@/services/cloudinary.service';
+import SupabaseService from '@/services/supabase.service';
 
 interface EventFormProps {
   initialData?: Event;
@@ -31,27 +31,24 @@ export default function EventForm({
     capacity: initialData?.capacity || 0,
     imageUrl: initialData?.imageUrl || '',
     images: initialData?.images || [],
-    categories: initialData?.categories || [],
     organizer: initialData?.organizer || '',
     contactEmail: initialData?.contactEmail || '',
     isActive: initialData?.isActive ?? true,
     isFeatured: initialData?.isFeatured ?? false,
-    slug: initialData?.slug || '',
   });
   
   const [imagePreview, setImagePreview] = useState<string | null>(
     initialData?.imageUrl || null
   );
   
+  const [imagesPreview, setImagesPreview] = useState<string[]>(
+    initialData?.images || []
+  );
+  
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [isUploadingImage, setIsUploadingImage] = useState(false);
+  const [isUploadingImages, setIsUploadingImages] = useState(false);
   const [imageError, setImageError] = useState<string | null>(null);
-  const [newCategory, setNewCategory] = useState('');
-
-  const predefinedCategories = [
-    'Familiar', 'Infantil', 'Gastronomía', 'Cultural', 'Moda', 
-    'Música', 'Arte', 'Deportes', 'Tecnología', 'Educativo'
-  ];
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
@@ -67,17 +64,6 @@ export default function EventForm({
     }
     
     setFormData((prev: any) => ({ ...prev, [name]: finalValue }));
-    
-    // Generar slug automáticamente si es el campo name
-    if (name === 'name') {
-      const slug = value
-        .toLowerCase()
-        .replace(/[^a-z0-9\s-]/g, '')
-        .replace(/\s+/g, '-')
-        .replace(/-+/g, '-')
-        .trim();
-      setFormData((prev: any) => ({ ...prev, slug }));
-    }
     
     // Limpiar error al editar
     if (errors[name]) {
@@ -116,8 +102,8 @@ export default function EventForm({
       };
       reader.readAsDataURL(file);
       
-      const result = await CloudinaryService.uploadImage(file);
-      setFormData((prev: any) => ({ ...prev, imageUrl: result.secure_url }));
+      const result = await SupabaseService.uploadImage(file, 'event-images');
+      setFormData((prev: any) => ({ ...prev, imageUrl: result.url }));
       
     } catch (error) {
       console.error('Error al subir la imagen:', error);
@@ -132,23 +118,53 @@ export default function EventForm({
     setFormData((prev: any) => ({ ...prev, imageUrl: '' }));
   };
 
-  const addCategory = (category: string) => {
-    if (formData.categories) {
-        if (category && !formData.categories.includes(category)) {
-            setFormData((prev: any) => ({
-              ...prev,
-              categories: [...prev.categories, category]
-            }));
-          }
-          setNewCategory('');
+  const handleMultipleImagesChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (!e.target.files || e.target.files.length === 0) {
+      return;
+    }
+
+    const files = Array.from(e.target.files);
+    
+    // Validar archivos
+    for (const file of files) {
+      if (!file.type.match(/image\/(jpeg|jpg|png|gif)/i)) {
+        setImageError('Todos los archivos deben ser imágenes (JPEG, PNG o GIF)');
+        return;
+      }
+      
+      if (file.size > 5 * 1024 * 1024) {
+        setImageError('Las imágenes no deben superar los 5MB');
+        return;
+      }
+    }
+
+    try {
+      setIsUploadingImages(true);
+      setImageError(null);
+      
+      const uploadedUrls: string[] = [];
+      
+      for (const file of files) {
+        const result = await SupabaseService.uploadImage(file, 'event-images');
+        uploadedUrls.push(result.url);
+      }
+      
+      const newImages = [...imagesPreview, ...uploadedUrls];
+      setImagesPreview(newImages);
+      setFormData((prev: any) => ({ ...prev, images: newImages }));
+      
+    } catch (error) {
+      console.error('Error al subir las imágenes:', error);
+      setImageError('Error al subir las imágenes. Inténtalo de nuevo.');
+    } finally {
+      setIsUploadingImages(false);
     }
   };
 
-  const removeCategory = (categoryToRemove: string) => {
-    setFormData((prev: any) => ({
-      ...prev,
-      categories: prev.categories.filter((cat: string) => cat !== categoryToRemove)
-    }));
+  const removeMultipleImage = (index: number) => {
+    const newImages = imagesPreview.filter((_, i) => i !== index);
+    setImagesPreview(newImages);
+    setFormData((prev: any) => ({ ...prev, images: newImages }));
   };
 
   const validateForm = (): boolean => {
@@ -182,10 +198,6 @@ export default function EventForm({
       newErrors.organizer = 'El organizador es requerido';
     }
     
-    if (!formData.slug.trim()) {
-      newErrors.slug = 'El slug es requerido';
-    }
-    
     if (formData.contactEmail && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.contactEmail)) {
       newErrors.contactEmail = 'El email de contacto no es válido';
     }
@@ -207,15 +219,15 @@ export default function EventForm({
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
       {/* Información básica */}
-      <div className="bg-gray-50 p-4 rounded-lg">
-        <h3 className="text-lg font-medium text-gray-800 mb-4 flex items-center gap-2">
-          <Calendar size={20} />
+      <div className="bg-neutral-50 p-4 rounded-lg">
+        <h3 className="text-lg font-medium text-neutral-900 mb-4 flex items-center gap-2">
+          <Calendar size={20} className="text-primary-500" />
           Información Básica
         </h3>
         
         <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
           <div className="md:col-span-2">
-            <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-1">
+            <label htmlFor="name" className="block text-sm font-medium text-neutral-700 mb-1">
               Nombre del Evento *
             </label>
             <input
@@ -225,7 +237,7 @@ export default function EventForm({
               value={formData.name}
               onChange={handleChange}
               className={`block w-full px-4 py-2.5 border ${
-                errors.name ? 'border-red-500 focus:ring-red-500' : 'border-gray-300 focus:ring-blue-500'
+                errors.name ? 'border-red-500 focus:ring-red-500' : 'border-neutral-300 focus:ring-primary-500'
               } rounded-md shadow-sm focus:outline-none focus:ring-2 focus:border-transparent`}
               placeholder="Nombre del evento"
             />
@@ -235,27 +247,7 @@ export default function EventForm({
           </div>
 
           <div>
-            <label htmlFor="slug" className="block text-sm font-medium text-gray-700 mb-1">
-              Slug (URL) *
-            </label>
-            <input
-              id="slug"
-              name="slug"
-              type="text"
-              value={formData.slug}
-              onChange={handleChange}
-              className={`block w-full px-4 py-2.5 border ${
-                errors.slug ? 'border-red-500 focus:ring-red-500' : 'border-gray-300 focus:ring-blue-500'
-              } rounded-md shadow-sm focus:outline-none focus:ring-2 focus:border-transparent`}
-              placeholder="evento-ejemplo"
-            />
-            {errors.slug && (
-              <p className="mt-1 text-sm text-red-600">{errors.slug}</p>
-            )}
-          </div>
-
-          <div>
-            <label htmlFor="organizer" className="block text-sm font-medium text-gray-700 mb-1">
+            <label htmlFor="organizer" className="block text-sm font-medium text-neutral-700 mb-1">
               Organizador *
             </label>
             <input
@@ -265,7 +257,7 @@ export default function EventForm({
               value={formData.organizer}
               onChange={handleChange}
               className={`block w-full px-4 py-2.5 border ${
-                errors.organizer ? 'border-red-500 focus:ring-red-500' : 'border-gray-300 focus:ring-blue-500'
+                errors.organizer ? 'border-red-500 focus:ring-red-500' : 'border-neutral-300 focus:ring-primary-500'
               } rounded-md shadow-sm focus:outline-none focus:ring-2 focus:border-transparent`}
               placeholder="Nombre del organizador"
             />
@@ -275,7 +267,7 @@ export default function EventForm({
           </div>
 
           <div className="md:col-span-2">
-            <label htmlFor="description" className="block text-sm font-medium text-gray-700 mb-1">
+            <label htmlFor="description" className="block text-sm font-medium text-neutral-700 mb-1">
               Descripción Corta *
             </label>
             <textarea
@@ -285,7 +277,7 @@ export default function EventForm({
               value={formData.description}
               onChange={handleChange}
               className={`block w-full px-4 py-2.5 border ${
-                errors.description ? 'border-red-500 focus:ring-red-500' : 'border-gray-300 focus:ring-blue-500'
+                errors.description ? 'border-red-500 focus:ring-red-500' : 'border-neutral-300 focus:ring-primary-500'
               } rounded-md shadow-sm focus:outline-none focus:ring-2 focus:border-transparent resize-none`}
               placeholder="Descripción breve del evento"
             />
@@ -295,7 +287,7 @@ export default function EventForm({
           </div>
 
           <div className="md:col-span-2">
-            <label htmlFor="longDescription" className="block text-sm font-medium text-gray-700 mb-1">
+            <label htmlFor="longDescription" className="block text-sm font-medium text-neutral-700 mb-1">
               Descripción Detallada
             </label>
             <textarea
@@ -304,7 +296,7 @@ export default function EventForm({
               rows={6}
               value={formData.longDescription || ''}
               onChange={handleChange}
-              className="block w-full px-4 py-2.5 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"
+              className="block w-full px-4 py-2.5 border border-neutral-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent resize-none"
               placeholder="Descripción detallada del evento"
             />
           </div>
@@ -312,15 +304,15 @@ export default function EventForm({
       </div>
 
       {/* Fecha, hora y ubicación */}
-      <div className="bg-gray-50 p-4 rounded-lg">
-        <h3 className="text-lg font-medium text-gray-800 mb-4 flex items-center gap-2">
-          <MapPin size={20} />
+      <div className="bg-neutral-50 p-4 rounded-lg">
+        <h3 className="text-lg font-medium text-neutral-900 mb-4 flex items-center gap-2">
+          <MapPin size={20} className="text-secondary-500" />
           Fecha, Hora y Ubicación
         </h3>
         
         <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
           <div>
-            <label htmlFor="startDate" className="block text-sm font-medium text-gray-700 mb-1">
+            <label htmlFor="startDate" className="block text-sm font-medium text-neutral-700 mb-1">
               Fecha y Hora de Inicio *
             </label>
             <input
@@ -330,7 +322,7 @@ export default function EventForm({
               value={formData.startDate}
               onChange={handleChange}
               className={`block w-full px-4 py-2.5 border ${
-                errors.startDate ? 'border-red-500 focus:ring-red-500' : 'border-gray-300 focus:ring-blue-500'
+                errors.startDate ? 'border-red-500 focus:ring-red-500' : 'border-neutral-300 focus:ring-primary-500'
               } rounded-md shadow-sm focus:outline-none focus:ring-2 focus:border-transparent`}
             />
             {errors.startDate && (
@@ -339,7 +331,7 @@ export default function EventForm({
           </div>
 
           <div>
-            <label htmlFor="endDate" className="block text-sm font-medium text-gray-700 mb-1">
+            <label htmlFor="endDate" className="block text-sm font-medium text-neutral-700 mb-1">
               Fecha y Hora de Fin *
             </label>
             <input
@@ -349,7 +341,7 @@ export default function EventForm({
               value={formData.endDate}
               onChange={handleChange}
               className={`block w-full px-4 py-2.5 border ${
-                errors.endDate ? 'border-red-500 focus:ring-red-500' : 'border-gray-300 focus:ring-blue-500'
+                errors.endDate ? 'border-red-500 focus:ring-red-500' : 'border-neutral-300 focus:ring-primary-500'
               } rounded-md shadow-sm focus:outline-none focus:ring-2 focus:border-transparent`}
             />
             {errors.endDate && (
@@ -358,7 +350,7 @@ export default function EventForm({
           </div>
 
           <div className="md:col-span-2">
-            <label htmlFor="location" className="block text-sm font-medium text-gray-700 mb-1">
+            <label htmlFor="location" className="block text-sm font-medium text-neutral-700 mb-1">
               Ubicación *
             </label>
             <input
@@ -368,7 +360,7 @@ export default function EventForm({
               value={formData.location}
               onChange={handleChange}
               className={`block w-full px-4 py-2.5 border ${
-                errors.location ? 'border-red-500 focus:ring-red-500' : 'border-gray-300 focus:ring-blue-500'
+                errors.location ? 'border-red-500 focus:ring-red-500' : 'border-neutral-300 focus:ring-primary-500'
               } rounded-md shadow-sm focus:outline-none focus:ring-2 focus:border-transparent`}
               placeholder="Ej: Plaza Central, Auditorio Principal"
             />
@@ -380,15 +372,15 @@ export default function EventForm({
       </div>
 
       {/* Precio y capacidad */}
-      <div className="bg-gray-50 p-4 rounded-lg">
-        <h3 className="text-lg font-medium text-gray-800 mb-4 flex items-center gap-2">
-          <DollarSign size={20} />
+      <div className="bg-neutral-50 p-4 rounded-lg">
+        <h3 className="text-lg font-medium text-neutral-900 mb-4 flex items-center gap-2">
+          <DollarSign size={20} className="text-primary-500" />
           Precio y Capacidad
         </h3>
         
         <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
           <div>
-            <label htmlFor="price" className="block text-sm font-medium text-gray-700 mb-1">
+            <label htmlFor="price" className="block text-sm font-medium text-neutral-700 mb-1">
               Precio (COP)
             </label>
             <input
@@ -399,14 +391,14 @@ export default function EventForm({
               step="1000"
               value={formData.price}
               onChange={handleChange}
-              className="block w-full px-4 py-2.5 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="block w-full px-4 py-2.5 border border-neutral-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent"
               placeholder="0"
             />
-            <p className="mt-1 text-xs text-gray-500">Deja en 0 si el evento es gratuito</p>
+            <p className="mt-1 text-xs text-neutral-500">Deja en 0 si el evento es gratuito</p>
           </div>
 
           <div>
-            <label htmlFor="capacity" className="block text-sm font-medium text-gray-700 mb-1">
+            <label htmlFor="capacity" className="block text-sm font-medium text-neutral-700 mb-1">
               Capacidad Máxima
             </label>
             <input
@@ -416,23 +408,23 @@ export default function EventForm({
               min="0"
               value={formData.capacity}
               onChange={handleChange}
-              className="block w-full px-4 py-2.5 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="block w-full px-4 py-2.5 border border-neutral-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent"
               placeholder="0"
             />
-            <p className="mt-1 text-xs text-gray-500">Deja en 0 para capacidad ilimitada</p>
+            <p className="mt-1 text-xs text-neutral-500">Deja en 0 para capacidad ilimitada</p>
           </div>
         </div>
       </div>
 
       {/* Contacto */}
-      <div className="bg-gray-50 p-4 rounded-lg">
-        <h3 className="text-lg font-medium text-gray-800 mb-4 flex items-center gap-2">
-          <Users size={20} />
+      <div className="bg-neutral-50 p-4 rounded-lg">
+        <h3 className="text-lg font-medium text-neutral-900 mb-4 flex items-center gap-2">
+          <Users size={20} className="text-secondary-500" />
           Información de Contacto
         </h3>
         
         <div>
-          <label htmlFor="contactEmail" className="block text-sm font-medium text-gray-700 mb-1">
+          <label htmlFor="contactEmail" className="block text-sm font-medium text-neutral-700 mb-1">
             Email de Contacto
           </label>
           <input
@@ -442,7 +434,7 @@ export default function EventForm({
             value={formData.contactEmail || ''}
             onChange={handleChange}
             className={`block w-full px-4 py-2.5 border ${
-              errors.contactEmail ? 'border-red-500 focus:ring-red-500' : 'border-gray-300 focus:ring-blue-500'
+              errors.contactEmail ? 'border-red-500 focus:ring-red-500' : 'border-neutral-300 focus:ring-primary-500'
             } rounded-md shadow-sm focus:outline-none focus:ring-2 focus:border-transparent`}
             placeholder="contacto@evento.com"
           />
@@ -452,95 +444,9 @@ export default function EventForm({
         </div>
       </div>
 
-      {/* Categorías */}
-      <div className="bg-gray-50 p-4 rounded-lg">
-        <h3 className="text-lg font-medium text-gray-800 mb-4">
-          Categorías
-        </h3>
-        
-        {/* Categorías predefinidas */}
-        <div className="mb-4">
-          <label className="block text-sm font-medium text-gray-700 mb-2">
-            Seleccionar categorías
-          </label>
-          <div className="flex flex-wrap gap-2">
-            {predefinedCategories.map((category) => (
-              <button
-                key={category}
-                type="button"
-                onClick={() => addCategory(category)}
-                disabled={formData.categories?.includes(category)}
-                className={`px-3 py-1 text-sm rounded-full border ${
-                  formData.categories?.includes(category)
-                    ? 'bg-blue-100 text-blue-700 border-blue-300 cursor-not-allowed'
-                    : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-50'
-                } transition-colors`}
-              >
-                {category}
-              </button>
-            ))}
-          </div>
-        </div>
-
-        {/* Categoría personalizada */}
-        <div className="mb-4">
-          <label className="block text-sm font-medium text-gray-700 mb-2">
-            Agregar categoría personalizada
-          </label>
-          <div className="flex gap-2">
-            <input
-              type="text"
-              value={newCategory}
-              onChange={(e) => setNewCategory(e.target.value)}
-              className="flex-1 px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-1 focus:ring-blue-500"
-              placeholder="Nueva categoría"
-              onKeyPress={(e) => {
-                if (e.key === 'Enter') {
-                  e.preventDefault();
-                  addCategory(newCategory);
-                }
-              }}
-            />
-            <button
-              type="button"
-              onClick={() => addCategory(newCategory)}
-              className="px-4 py-2 bg-blue-600 text-white text-sm rounded-md hover:bg-blue-700 transition-colors"
-            >
-              Agregar
-            </button>
-          </div>
-        </div>
-
-        {/* Categorías seleccionadas */}
-        {formData.categories? formData.categories.length > 0 && (
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Categorías seleccionadas
-            </label>
-            <div className="flex flex-wrap gap-2">
-              {formData.categories.map((category, index) => (
-                <div
-                  key={index}
-                  className="flex items-center gap-1 bg-blue-100 text-blue-700 px-3 py-1 rounded-full text-sm"
-                >
-                  <span>{category}</span>
-                  <button
-                    type="button"
-                    onClick={() => removeCategory(category)}
-                    className="hover:bg-blue-200 rounded-full p-0.5"
-                  >
-                    <X size={14} />
-                  </button>
-                </div>
-              ))}
-            </div>
-          </div>
-        ):<></>}
-      </div>
-
       {/* Imagen */}
-      <div className="bg-gray-50 p-4 rounded-lg">
-        <h3 className="text-lg font-medium text-gray-800 mb-4">
+      <div className="bg-neutral-50 p-4 rounded-lg">
+        <h3 className="text-lg font-medium text-neutral-900 mb-4">
           Imagen Principal
         </h3>
         
@@ -552,10 +458,10 @@ export default function EventForm({
         )}
         
         {isUploadingImage ? (
-          <div className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center">
+          <div className="border-2 border-dashed border-neutral-300 rounded-lg p-8 text-center">
             <div className="flex flex-col items-center justify-center">
-              <Loader2 size={40} className="text-blue-500 animate-spin mb-3" />
-              <p className="text-gray-600">Subiendo imagen...</p>
+              <Loader2 size={40} className="text-primary-500 animate-spin mb-3" />
+              <p className="text-neutral-600">Subiendo imagen...</p>
             </div>
           </div>
         ) : imagePreview ? (
@@ -570,20 +476,20 @@ export default function EventForm({
             <button
               type="button"
               onClick={removeImage}
-              className="absolute top-2 right-2 bg-white rounded-full p-1 shadow hover:bg-gray-100 transition-colors"
+              className="absolute top-2 right-2 bg-white rounded-full p-1 shadow hover:bg-neutral-100 transition-colors"
             >
-              <X size={16} className="text-gray-700" />
+              <X size={16} className="text-neutral-700" />
             </button>
           </div>
         ) : (
-          <div className="border-2 border-dashed border-gray-300 rounded-lg p-4 text-center">
+          <div className="border-2 border-dashed border-neutral-300 rounded-lg p-4 text-center">
             <label className="cursor-pointer block">
               <div className="flex flex-col items-center justify-center py-4">
-                <Upload size={36} className="text-gray-400 mb-2" />
-                <span className="text-sm font-medium text-gray-700">
+                <Upload size={36} className="text-neutral-400 mb-2" />
+                <span className="text-sm font-medium text-neutral-700">
                   Haz clic para seleccionar una imagen
                 </span>
-                <span className="text-xs text-gray-500 mt-1">
+                <span className="text-xs text-neutral-500 mt-1">
                   PNG, JPG, GIF hasta 5MB
                 </span>
               </div>
@@ -599,9 +505,74 @@ export default function EventForm({
         )}
       </div>
 
+      {/* Imágenes Adicionales */}
+      <div className="bg-neutral-50 p-4 rounded-lg">
+        <h3 className="text-lg font-medium text-neutral-900 mb-4">
+          Imágenes Adicionales
+        </h3>
+        
+        {isUploadingImages ? (
+          <div className="border-2 border-dashed border-neutral-300 rounded-lg p-8 text-center">
+            <div className="flex flex-col items-center justify-center">
+              <Loader2 size={40} className="text-primary-500 animate-spin mb-3" />
+              <p className="text-neutral-600">Subiendo imágenes...</p>
+            </div>
+          </div>
+        ) : (
+          <>
+            {/* Imágenes existentes */}
+            {imagesPreview.length > 0 && (
+              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 mb-4">
+                {imagesPreview.map((image, index) => (
+                  <div key={index} className="relative group">
+                    <div className="relative rounded-lg overflow-hidden h-32 w-full">
+                      <img
+                        src={image}
+                        alt={`Imagen ${index + 1}`}
+                        className="h-full w-full object-cover"
+                      />
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => removeMultipleImage(index)}
+                      className="absolute top-2 right-2 bg-white rounded-full p-1 shadow hover:bg-neutral-100 transition-colors opacity-0 group-hover:opacity-100"
+                    >
+                      <X size={16} className="text-neutral-700" />
+                    </button>
+                  </div>
+                ))}
+              </div>
+            )}
+            
+            {/* Botón para agregar más imágenes */}
+            <div className="border-2 border-dashed border-neutral-300 rounded-lg p-4 text-center">
+              <label className="cursor-pointer block">
+                <div className="flex flex-col items-center justify-center py-4">
+                  <Upload size={36} className="text-neutral-400 mb-2" />
+                  <span className="text-sm font-medium text-neutral-700">
+                    Agregar más imágenes
+                  </span>
+                  <span className="text-xs text-neutral-500 mt-1">
+                    PNG, JPG, GIF hasta 5MB cada una
+                  </span>
+                </div>
+                <input
+                  type="file"
+                  className="hidden"
+                  accept="image/jpeg,image/png,image/gif"
+                  multiple
+                  onChange={handleMultipleImagesChange}
+                  disabled={isUploadingImages}
+                />
+              </label>
+            </div>
+          </>
+        )}
+      </div>
+
       {/* Estado del evento */}
-      <div className="bg-gray-50 p-4 rounded-lg">
-        <h3 className="text-lg font-medium text-gray-800 mb-4">
+      <div className="bg-neutral-50 p-4 rounded-lg">
+        <h3 className="text-lg font-medium text-neutral-900 mb-4">
           Estado del Evento
         </h3>
         
@@ -613,9 +584,9 @@ export default function EventForm({
               type="checkbox"
               checked={formData.isActive}
               onChange={handleChange}
-              className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+              className="h-4 w-4 text-primary-600 focus:ring-primary-500 border-neutral-300 rounded"
             />
-            <label htmlFor="isActive" className="ml-2 block text-sm text-gray-700">
+            <label htmlFor="isActive" className="ml-2 block text-sm text-neutral-700">
               Evento activo
             </label>
           </div>
@@ -627,9 +598,9 @@ export default function EventForm({
               type="checkbox"
               checked={formData.isFeatured}
               onChange={handleChange}
-              className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+              className="h-4 w-4 text-secondary-600 focus:ring-secondary-500 border-neutral-300 rounded"
             />
-            <label htmlFor="isFeatured" className="ml-2 block text-sm text-gray-700">
+            <label htmlFor="isFeatured" className="ml-2 block text-sm text-neutral-700">
               Evento destacado
             </label>
           </div>
@@ -637,30 +608,27 @@ export default function EventForm({
       </div>
 
       {/* Botones de acción */}
-      <div className="flex justify-end gap-3 pt-4 border-t border-gray-200">
+      <div className="flex justify-end gap-3 pt-4 border-t border-neutral-200">
         <button
           type="button"
           onClick={onCancel}
-          className="px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
-          disabled={isSubmitting || isUploadingImage}
+          className="px-4 py-2 border border-neutral-300 rounded-md shadow-sm text-sm font-medium text-neutral-700 bg-white hover:bg-neutral-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500"
+          disabled={isSubmitting || isUploadingImage || isUploadingImages}
         >
           Cancelar
         </button>
         <button
           type="submit"
-          className="px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 flex items-center gap-1"
-          disabled={isSubmitting || isUploadingImage}
+          className="px-4 py-2 bg-primary-600 border border-transparent rounded-md shadow-sm text-sm font-medium text-white hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 disabled:opacity-50 disabled:cursor-not-allowed"
+          disabled={isSubmitting || isUploadingImage || isUploadingImages}
         >
           {isSubmitting ? (
-            <>
-              <span className="animate-spin rounded-full h-4 w-4 border-t-2 border-l-2 border-white"></span>
-              <span>Guardando...</span>
-            </>
+            <div className="flex items-center gap-2">
+              <Loader2 size={16} className="animate-spin" />
+              Guardando...
+            </div>
           ) : (
-            <>
-              <Check size={16} />
-              <span>{initialData ? 'Actualizar' : 'Crear'} Evento</span>
-            </>
+            'Guardar Evento'
           )}
         </button>
       </div>

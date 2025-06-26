@@ -11,7 +11,7 @@ export interface UserProfile {
   roles: Role[];
   createdAt: string;
   schedules?: Schedule[];
-  ownedStore?: Store;
+  ownedStores?: Store[];
   emailVerified?: boolean;
   emailVerifiedAt?: string;
 }
@@ -31,7 +31,7 @@ export interface Store {
   name: string;
   phone: string;
   description?: string;
-  imageUrl?: string;
+  images?: string[];
   category?: string;
   floor?: string;
   monthlyRent?: number;
@@ -114,6 +114,26 @@ const ProfileService = {
         ],
         nextWeek: []
       };
+    }
+  },
+
+  async getMyStore(): Promise<Store> {
+    try {
+      const response = await apiClient.get<Store>('/stores/my-store');
+      return response.data;
+    } catch (error) {
+      console.error("Error fetching my store:", error);
+      throw error;
+    }
+  },
+
+  async updateMyStore(data: Partial<Store>): Promise<Store> {
+    try {
+      const response = await apiClient.put<Store>('/stores/my-store', data);
+      return response.data;
+    } catch (error) {
+      console.error("Error updating my store:", error);
+      throw error;
     }
   }
 };

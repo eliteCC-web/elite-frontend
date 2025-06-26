@@ -7,7 +7,7 @@ import { useEffect, useState } from "react"
 import Image from "next/image"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
-import { ChevronRight, Filter, Search, Plus, Edit, Trash2, StoreIcon, Phone, Building, MapPin, Clock, Star, Heart, Share2, ArrowRight } from "lucide-react"
+import { ChevronRight, Search, Plus, Edit, Trash2, StoreIcon, Phone, Building, MapPin, Clock, Star, Heart, Share2, ArrowRight } from "lucide-react"
 import StoreService from "@/services/store.service"
 import type { Store } from "@/services/store.service"
 import ConfirmDialog from "@/components/admin/ConfirmDialog"
@@ -27,7 +27,6 @@ export default function StoresPage() {
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
   const [storeToDelete, setStoreToDelete] = useState<Store | null>(null)
   const [isDeleting, setIsDeleting] = useState(false)
-  const [categoryFilter, setCategoryFilter] = useState("")
   const [sortOrder, setSortOrder] = useState("")
 
   const fetchStores = async (page = 1, limit = 12) => {
@@ -61,9 +60,7 @@ export default function StoresPage() {
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault()
-    // En un caso real, enviaríamos el término de búsqueda a la API
     console.log("Searching for:", searchTerm)
-    // Por ahora solo recargamos la primera página
     fetchStores(1, pagination.limit)
   }
 
@@ -83,7 +80,6 @@ export default function StoresPage() {
     try {
       setIsDeleting(true)
       await StoreService.deleteStore(storeToDelete.id)
-      // Recargar la lista de tiendas después de eliminar
       fetchStores(pagination.page, pagination.limit)
       closeDeleteDialog()
     } catch (err: any) {
@@ -94,15 +90,11 @@ export default function StoresPage() {
     }
   }
 
-  const categories = ["Todas", "Moda", "Tecnología", "Hogar", "Alimentos", "Servicios", "Entretenimiento", "Salud", "Belleza"]
-
   const filteredStores = stores.filter(store => {
     const matchesSearch = store.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
                          store.storeNumber.toLowerCase().includes(searchTerm.toLowerCase()) ||
                          store.description?.toLowerCase().includes(searchTerm.toLowerCase())
-    const matchesCategory = categoryFilter === "" || categoryFilter === "Todas" || 
-                           getStoreCategories(store.id).includes(categoryFilter)
-    return matchesSearch && matchesCategory
+    return matchesSearch
   })
 
   const sortedStores = [...filteredStores].sort((a, b) => {
@@ -119,31 +111,88 @@ export default function StoresPage() {
   })
 
   // Función para obtener una imagen de placeholder para las tiendas
-  const getStoreImage = (storeId: string | number) => {
-    const idString = storeId.toString();
-    const imageNumber = (parseInt(idString.substring(0, 8), 16) % 5) + 1;
-    return `/placeholder.svg?height=300&width=400`;
+  const getStoreImage = (store: Store) => {
+    console.log('Store images:', store.images);
+    console.log('Store name:', store.name);
+    
+    // Verificar si store.images existe y tiene contenido
+    if (store.images) {
+      // Si es un array
+      if (Array.isArray(store.images) && store.images.length > 0) {
+        const firstImage = store.images[0];
+        console.log('First image from array:', firstImage);
+        
+        if (typeof firstImage === 'string') {
+          const cleanUrl = firstImage.replace(/^"|"$/g, '');
+          console.log('Clean URL from array:', cleanUrl);
+          if (cleanUrl && cleanUrl.startsWith('http')) {
+            return cleanUrl;
+          }
+        }
+      }
+      // Si es un string (caso donde llegó como string en lugar de array)
+      else if (typeof store.images === 'string') {
+        console.log('Images as string:', store.images);
+        try {
+          const parsedImages = JSON.parse(store.images);
+          if (Array.isArray(parsedImages) && parsedImages.length > 0) {
+            const cleanUrl = parsedImages[0].replace(/^"|"$/g, '');
+            console.log('Clean URL from parsed string:', cleanUrl);
+            if (cleanUrl && cleanUrl.startsWith('http')) {
+              return cleanUrl;
+            }
+          }
+        } catch (e) {
+          console.log('Error parsing images string:', e);
+        }
+      }
+    }
+    
+    // Si no hay imágenes válidas, usar placeholder
+    const placeholderUrl = `https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=400&h=300&fit=crop&crop=center&auto=format&q=80`;
+    console.log('Using placeholder:', placeholderUrl);
+    return placeholderUrl;
   };
 
-  // Categorías de ejemplo para las tiendas
-  const getStoreCategories = (storeId: string | number) => {
-    const categories = ["Moda", "Tecnología", "Hogar", "Alimentos", "Servicios", "Entretenimiento", "Salud", "Belleza"];
-    const idString = storeId.toString();
-    const hash = parseInt(idString.substring(0, 8), 16);
-    return [categories[hash % categories.length], categories[(hash + 2) % categories.length]];
-  };
-
-  // Generar datos de ejemplo para las tiendas
+  // Generar datos adicionales para las tiendas basados en datos reales
   const getStoreDetails = (store: Store) => {
     const idString = store.id.toString();
     const hash = parseInt(idString.substring(0, 8), 16);
+    
+    // Usar datos reales de la tienda
+    const phone = store.phone || `+57 300 ${100 + (hash % 900)} ${1000 + (hash % 9000)}`;
+    const location = store.storeNumber || (store.floor ? `Nivel ${store.floor}, Local ${store.storeNumber}` : `Local ${store.storeNumber}`);
+    
+    // Determinar horario basado en el schedule
+    let hours = "Horario no disponible";
+    
+    if (store.schedule && Array.isArray(store.schedule)) {
+      // Obtener el día actual
+      const today = new Date().getDay(); // 0 = domingo, 1 = lunes, etc.
+      const dayNames = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
+      const todayName = dayNames[today];
+      
+      const todaySchedule = store.schedule.find((day: any) => day.day === todayName);
+      
+      if (todaySchedule) {
+        if (todaySchedule.isOpen) {
+          hours = `${todaySchedule.openTime} - ${todaySchedule.closeTime}`;
+        } else {
+          hours = "Cerrado hoy";
+        }
+      } else {
+        // Si no encuentra el día, mostrar horario general
+        const openDays = store.schedule.filter((day: any) => day.isOpen);
+        if (openDays.length > 0) {
+          hours = `${openDays[0].openTime} - ${openDays[0].closeTime}`;
+        }
+      }
+    }
+    
     return {
-      rating: 4 + (hash % 2) * 0.5,
-      reviews: 50 + (hash % 100),
-      isOpen: hash % 3 !== 0,
-      phone: `+57 300 ${100 + (hash % 900)} ${1000 + (hash % 9000)}`,
-      location: `Nivel ${(hash % 3) + 1}, Local ${store.storeNumber}`,
-      hours: "9:00 AM - 9:00 PM",
+      phone: phone,
+      location: location,
+      hours: hours,
       description: store.description || "Tienda especializada en productos de calidad para satisfacer todas tus necesidades."
     };
   };
@@ -202,18 +251,6 @@ export default function StoresPage() {
             <div className="flex items-center gap-4 w-full lg:w-auto">
               <div className="relative w-full lg:w-auto">
                 <select
-                  value={categoryFilter}
-                  onChange={(e) => setCategoryFilter(e.target.value)}
-                  className="input pr-10"
-                >
-                  {categories.map(category => (
-                    <option key={category} value={category}>{category}</option>
-                  ))}
-                </select>
-                <Filter className="absolute right-3 top-1/2 transform -translate-y-1/2 text-neutral-400" size={18} />
-              </div>
-              <div className="relative w-full lg:w-auto">
-                <select
                   value={sortOrder}
                   onChange={(e) => setSortOrder(e.target.value)}
                   className="input pr-10"
@@ -253,15 +290,14 @@ export default function StoresPage() {
 
           <div className="grid-cards">
             {sortedStores
-              .filter(store => getStoreDetails(store).rating >= 4.5)
-              .slice(0, 6)
+              .slice(0, 3)
               .map(store => {
                 const details = getStoreDetails(store)
                 return (
                   <div key={store.id} className="store-card group">
                     <div className="relative overflow-hidden">
                       <Image
-                        src={getStoreImage(store.id)}
+                        src={getStoreImage(store)}
                         alt={store.name}
                         width={400}
                         height={300}
@@ -275,10 +311,10 @@ export default function StoresPage() {
                     </div>
                     <div className="card-body">
                       <div className="flex justify-between items-start mb-3">
-                        <h3 className="text-xl font-semibold text-neutral-900">
+                        <h3 className="text-xl font-semibold text-neutral-900 line-clamp-2 min-h-[3rem] flex-1 mr-2">
                           {store.name}
                         </h3>
-                        <span className="text-sm font-medium text-secondary-600">
+                        <span className="text-sm font-medium text-secondary-600 flex-shrink-0">
                           Local {store.storeNumber}
                         </span>
                       </div>
@@ -300,28 +336,6 @@ export default function StoresPage() {
                           <Phone size={16} />
                           <span>{details.phone}</span>
                         </div>
-                        <div className="flex items-center gap-2 text-sm">
-                          <div className="flex items-center gap-1">
-                            <Star size={16} className="text-accent-yellow fill-current" />
-                            <span className="font-medium text-neutral-900">{details.rating}</span>
-                            <span className="text-neutral-500">({details.reviews})</span>
-                          </div>
-                          <span className={`px-2 py-1 rounded-2xl text-xs font-medium ${
-                            details.isOpen 
-                              ? 'bg-success-50 text-success-600' 
-                              : 'bg-error-50 text-error-600'
-                          }`}>
-                            {details.isOpen ? 'Abierto' : 'Cerrado'}
-                          </span>
-                        </div>
-                      </div>
-
-                      <div className="flex flex-wrap gap-2 mb-4">
-                        {getStoreCategories(store.id).map((categoria, index) => (
-                          <span key={index} className="badge-neutral text-xs">
-                            {categoria}
-                          </span>
-                        ))}
                       </div>
 
                       <div className="flex items-center justify-between">
@@ -335,7 +349,7 @@ export default function StoresPage() {
                         </div>
                         <Link
                           href={`/tiendas/${store.id}`}
-                          className="btn-card"
+                          className="btn-outline btn-sm"
                         >
                           Ver Detalles
                         </Link>
@@ -367,7 +381,7 @@ export default function StoresPage() {
                 <div key={store.id} className="store-card group">
                   <div className="relative overflow-hidden">
                     <Image
-                      src={getStoreImage(store.id)}
+                      src={getStoreImage(store)}
                       alt={store.name}
                       width={400}
                       height={300}
@@ -377,10 +391,10 @@ export default function StoresPage() {
                   </div>
                   <div className="card-body">
                     <div className="flex justify-between items-start mb-3">
-                      <h3 className="text-xl font-semibold text-neutral-900">
+                      <h3 className="text-xl font-semibold text-neutral-900 line-clamp-2 min-h-[3rem] flex-1 mr-2">
                         {store.name}
                       </h3>
-                      <span className="text-sm font-medium text-secondary-600">
+                      <span className="text-sm font-medium text-secondary-600 flex-shrink-0">
                         Local {store.storeNumber}
                       </span>
                     </div>
@@ -402,28 +416,6 @@ export default function StoresPage() {
                         <Phone size={16} />
                         <span>{details.phone}</span>
                       </div>
-                      <div className="flex items-center gap-2 text-sm">
-                        <div className="flex items-center gap-1">
-                          <Star size={16} className="text-accent-yellow fill-current" />
-                          <span className="font-medium text-neutral-900">{details.rating}</span>
-                          <span className="text-neutral-500">({details.reviews})</span>
-                        </div>
-                        <span className={`px-2 py-1 rounded-2xl text-xs font-medium ${
-                          details.isOpen 
-                            ? 'bg-success-50 text-success-600' 
-                            : 'bg-error-50 text-error-600'
-                        }`}>
-                          {details.isOpen ? 'Abierto' : 'Cerrado'}
-                        </span>
-                      </div>
-                    </div>
-
-                    <div className="flex flex-wrap gap-2 mb-4">
-                      {getStoreCategories(store.id).map((categoria, index) => (
-                        <span key={index} className="badge-neutral text-xs">
-                          {categoria}
-                        </span>
-                      ))}
                     </div>
 
                     <div className="flex justify-between items-center mt-4">
@@ -432,7 +424,7 @@ export default function StoresPage() {
                       </span>
                       <Link
                         href={`/tiendas/${store.id}`}
-                        className="btn-card"
+                        className="btn-outline btn-sm"
                       >
                         Ver Detalles
                       </Link>
