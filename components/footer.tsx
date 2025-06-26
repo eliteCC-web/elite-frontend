@@ -1,6 +1,6 @@
 import Link from "next/link";
 import Image from "next/image";
-import { Facebook, Instagram, Twitter, Youtube, Mail, Phone, MapPin, Clock, ArrowRight, Heart } from 'lucide-react';
+import { Facebook, Instagram, Mail, Phone, MapPin, Clock, ArrowRight, Heart } from 'lucide-react';
 import assets from "@/public/assets";
 
 export default function Footer() {
@@ -29,10 +29,8 @@ export default function Footer() {
               Ofrecemos una experiencia única con las mejores marcas y servicios.
             </p>
             <div className="flex gap-4">
-              <SocialLink href="https://facebook.com" icon={<Facebook size={20} />} />
-              <SocialLink href="https://instagram.com" icon={<Instagram size={20} />} />
-              <SocialLink href="https://twitter.com" icon={<Twitter size={20} />} />
-              <SocialLink href="https://youtube.com" icon={<Youtube size={20} />} />
+              <SocialLink href="https://www.facebook.com/CentroComercialElite" icon={<Facebook size={20} />} />
+              <SocialLink href="https://www.instagram.com/centrocomercialelite" icon={<Instagram size={20} />} />
             </div>
           </div>
 
@@ -61,7 +59,7 @@ export default function Footer() {
                 </div>
                 <div className="flex items-center gap-3">
                   <Phone className="text-secondary-500" size={18} />
-                  <span className="text-neutral-600 text-sm">(123) 456-7890</span>
+                  <span className="text-neutral-600 text-sm">322 5283206</span>
                 </div>
                 <div className="flex items-center gap-3">
                   <Mail className="text-secondary-500" size={18} />

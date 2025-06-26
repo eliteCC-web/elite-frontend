@@ -54,7 +54,7 @@ export default function HomePage() {
         {/* Imagen de fondo con overlay oscuro */}
         <div className="absolute inset-0 z-0">
           <Image
-            src={assets.hero_img}
+            src={getPublicUrl('elitecc-web//hero%20HD.jpg')}
             alt="Elite Centro Comercial"
             fill
             className="object-cover"
@@ -70,7 +70,7 @@ export default function HomePage() {
             <div className="mb-8 flex justify-center">
               <div className="relative">
                 <Image
-                  src={getPublicUrl('elitecc-web/upscalemedia-transformed.png')}
+                  src={getPublicUrl('elitecc-web//isotipo.png')}
                   alt="Logo Elite"
                   width={120}
                   height={120}
@@ -81,7 +81,7 @@ export default function HomePage() {
             </div>
             
             <h1 className="text-5xl md:text-7xl lg:text-8xl font-bold text-white mb-6 tracking-tight">
-              Elite
+              elite
             </h1>
             <p className="text-xl md:text-2xl lg:text-3xl text-white/90 font-light mb-8 tracking-wide">
               Centro Comercial

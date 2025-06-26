@@ -107,10 +107,6 @@ export default function StoreCard({ store, isFeatured = false }: StoreCardProps)
         
         <div className="space-y-3 mb-4">
           <div className="flex items-center gap-2 text-sm text-neutral-500">
-            <MapPin size={16} />
-            <span>{details.location}</span>
-          </div>
-          <div className="flex items-center gap-2 text-sm text-neutral-500">
             <Clock size={16} />
             <span>{details.hours}</span>
           </div>
