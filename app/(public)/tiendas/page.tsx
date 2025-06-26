@@ -131,7 +131,7 @@ export default function StoresPage() {
       <section className="hero relative h-[50vh] flex items-center justify-center overflow-hidden">
         <div className="absolute inset-0 z-0">
           <Image
-            src={getPublicUrl('elitecc-web//claro.png')}
+            src={getPublicUrl('elitecc-web//bannr.png')}
             alt="Tiendas Centro Comercial Elite"
             fill
             className="object-cover"

@@ -15,9 +15,15 @@ interface EditStoreModalProps {
 }
 
 export default function EditStoreModal({ store, isOpen, onClose, onUpdate }: EditStoreModalProps) {
+  // Validación de seguridad
+  if (!store) {
+    console.warn('EditStoreModal: store prop is undefined');
+    return null;
+  }
+
   const [formData, setFormData] = useState({
-    name: store.name,
-    phone: store.phone,
+    name: store.name || '',
+    phone: store.phone || '',
     description: store.description || '',
     category: store.category || '',
     floor: store.floor || '',

@@ -1,120 +1,229 @@
 /* eslint-disable */
 'use client';
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { Store, Users, ShoppingBag, CalendarDays, ArrowRight, Clock, TrendingUp, Activity } from 'lucide-react';
 import Link from 'next/link';
+import StoreService from '@/services/store.service';
+import UserService from '@/services/user.service';
+import EventService from '@/services/event.service';
+import { ScheduleService } from '@/services/schedule.service';
+
+interface DashboardStats {
+  stores: { total: number; change: string };
+  users: { total: number; change: string };
+  events: { total: number; change: string };
+  schedules: { total: number; change: string };
+}
+
+interface RecentActivity {
+  id: number;
+  type: 'store' | 'user' | 'event' | 'schedule';
+  action: string;
+  description: string;
+  time: string;
+  icon: React.ReactNode;
+  iconColor: string;
+}
 
 export default function DashboardPage() {
   const router = useRouter();
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [stats, setStats] = useState<DashboardStats>({
+    stores: { total: 0, change: '+0' },
+    users: { total: 0, change: '+0' },
+    events: { total: 0, change: '+0' },
+    schedules: { total: 0, change: '+0' }
+  });
+  const [recentActivity, setRecentActivity] = useState<RecentActivity[]>([]);
+
+  const generateRecentActivity = (stores: any[], users: any[], events: any[]) => {
+    const activities: RecentActivity[] = [];
+    
+    // Actividad de tiendas
+    if (stores.length > 0) {
+      const latestStore = stores[0];
+      activities.push({
+        id: 1,
+        type: 'store',
+        action: 'creado',
+        description: `Se creó el local ${latestStore.name}`,
+        time: 'Hace 1 hora',
+        icon: <Store size={16} />,
+        iconColor: 'text-red-600'
+      });
+    }
+    
+    // Actividad de usuarios
+    if (users.length > 0) {
+      const latestUser = users[0];
+      activities.push({
+        id: 2,
+        type: 'user',
+        action: 'registrado',
+        description: `Se registró nuevo usuario ${latestUser.name || latestUser.email}`,
+        time: 'Hace 2 horas',
+        icon: <Users size={16} />,
+        iconColor: 'text-blue-600'
+      });
+    }
+    
+    // Actividad de eventos
+    if (events.length > 0) {
+      const latestEvent = events[0];
+      activities.push({
+        id: 3,
+        type: 'event',
+        action: 'creado',
+        description: `Se creó el evento ${latestEvent.title}`,
+        time: 'Hace 1 día',
+        icon: <CalendarDays size={16} />,
+        iconColor: 'text-purple-600'
+      });
+    }
+    
+    setRecentActivity(activities);
+  };
+
+  const fetchDashboardData = async () => {
+    try {
+      setLoading(true);
+      setError(null);
+      console.log('🔄 Iniciando fetch de datos del dashboard...');
+      
+      // Verificar si el backend está disponible
+      console.log('🔍 Verificando conectividad con el backend...');
+      try {
+        await fetch('http://localhost:3001/api/stores?page=1&limit=1');
+        console.log('✅ Backend está disponible');
+      } catch (backendError) {
+        console.error('❌ Backend no está disponible:', backendError);
+        setError('El backend no está disponible. Verifica que esté ejecutándose en http://localhost:3001');
+        return;
+      }
+      
+      // Obtener datos de tiendas
+      console.log('📊 Obteniendo datos de tiendas...');
+      const storesResponse = await StoreService.getAllStores(1, 1);
+      console.log('✅ Datos de tiendas obtenidos:', storesResponse);
+      const storesTotal = storesResponse.meta.total;
+      
+      // Obtener datos de usuarios
+      console.log('👥 Obteniendo datos de usuarios...');
+      const users = await UserService.getAllUsers();
+      console.log('✅ Datos de usuarios obtenidos:', users);
+      const usersTotal = users.length;
+      
+      // Obtener datos de eventos
+      console.log('📅 Obteniendo datos de eventos...');
+      const eventsResponse = await EventService.getAllEvents(1, 1);
+      console.log('✅ Datos de eventos obtenidos:', eventsResponse);
+      const eventsTotal = eventsResponse.meta.total;
+      
+      // Obtener datos de horarios (colaboradores)
+      console.log('⏰ Obteniendo datos de colaboradores...');
+      const colaboradores = await ScheduleService.getColaboradores();
+      console.log('✅ Datos de colaboradores obtenidos:', colaboradores);
+      const schedulesTotal = colaboradores.length;
+      
+      console.log('📈 Resumen de datos obtenidos:', {
+        stores: storesTotal,
+        users: usersTotal,
+        events: eventsTotal,
+        schedules: schedulesTotal
+      });
+      
+      // Calcular cambios (simulado por ahora)
+      const storesChange = storesTotal > 0 ? `+${Math.floor(Math.random() * 5) + 1}` : '+0';
+      const usersChange = usersTotal > 0 ? `+${Math.floor(Math.random() * 3) + 1}` : '+0';
+      const eventsChange = eventsTotal > 0 ? `+${Math.floor(Math.random() * 2) + 1}` : '+0';
+      const schedulesChange = schedulesTotal > 0 ? `+${Math.floor(Math.random() * 3) + 1}` : '+0';
+      
+      setStats({
+        stores: { total: storesTotal, change: storesChange },
+        users: { total: usersTotal, change: usersChange },
+        events: { total: eventsTotal, change: eventsChange },
+        schedules: { total: schedulesTotal, change: schedulesChange }
+      });
+
+      // Generar actividad reciente basada en datos reales
+      generateRecentActivity(storesResponse.data, users, eventsResponse.data);
+      
+    } catch (error: any) {
+      console.error('❌ Error fetching dashboard data:', error);
+      console.error('Error details:', {
+        message: error.message,
+        stack: error.stack,
+        response: error.response?.data
+      });
+      
+      setError(`Error al cargar los datos: ${error.message}`);
+      
+      // En caso de error, usar datos por defecto
+      setStats({
+        stores: { total: 0, change: '+0' },
+        users: { total: 0, change: '+0' },
+        events: { total: 0, change: '+0' },
+        schedules: { total: 0, change: '+0' }
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchDashboardData();
+  }, []);
 
   // En una aplicación real, estos valores vendrían de una API
-  const stats = [
+  const statsData = [
     {
       id: 1,
       name: 'Locales',
-      value: '32',
+      value: stats.stores.total.toString(),
       icon: <Store size={24} />,
       iconBg: 'bg-red-100',
       iconColor: 'text-red-600',
       link: '/admin/stores',
-      change: '+2',
-      changeType: 'positive'
+      change: stats.stores.change,
+      changeType: stats.stores.change.startsWith('+') ? 'positive' : 'negative'
     },
     {
       id: 2,
       name: 'Usuarios',
-      value: '120',
+      value: stats.users.total.toString(),
       icon: <Users size={24} />,
       iconBg: 'bg-blue-100',
       iconColor: 'text-blue-600',
       link: '/admin/users',
-      change: '+8',
-      changeType: 'positive'
+      change: stats.users.change,
+      changeType: stats.users.change.startsWith('+') ? 'positive' : 'negative'
     },
     {
       id: 3,
       name: 'Eventos',
-      value: '15',
+      value: stats.events.total.toString(),
       icon: <CalendarDays size={24} />,
       iconBg: 'bg-purple-100',
       iconColor: 'text-purple-600',
       link: '/admin/events',
-      change: '+3',
-      changeType: 'positive'
+      change: stats.events.change,
+      changeType: stats.events.change.startsWith('+') ? 'positive' : 'negative'
     },
     {
       id: 4,
       name: 'Turnos Activos',
-      value: '45',
+      value: stats.schedules.total.toString(),
       icon: <Clock size={24} />,
       iconBg: 'bg-green-100',
       iconColor: 'text-green-600',
       link: '/admin/schedules',
-      change: '+5',
-      changeType: 'positive'
+      change: stats.schedules.change,
+      changeType: stats.schedules.change.startsWith('+') ? 'positive' : 'negative'
     },
   ];
-
-  // Lista de actividades recientes (simuladas)
-  const recentActivity = [
-    {
-      id: 1,
-      action: 'Se creó el local',
-      entity: 'Nike Store',
-      user: 'Admin',
-      time: 'Hace 1 hora',
-      type: 'store'
-    },
-    {
-      id: 2,
-      action: 'Se asignaron turnos',
-      entity: 'Semana del 15-21 Dic',
-      user: 'Admin',
-      time: 'Hace 3 horas',
-      type: 'schedule'
-    },
-    {
-      id: 3,
-      action: 'Se actualizó el local',
-      entity: 'Starbucks',
-      user: 'Admin',
-      time: 'Hace 5 horas',
-      type: 'store'
-    },
-    {
-      id: 4,
-      action: 'Se creó el evento',
-      entity: 'Fiesta de Verano',
-      user: 'Admin',
-      time: 'Hace 1 día',
-      type: 'event'
-    },
-    {
-      id: 5,
-      action: 'Se registró nuevo usuario',
-      entity: 'María González',
-      user: 'Sistema',
-      time: 'Hace 2 días',
-      type: 'user'
-    },
-  ];
-
-  const getActivityIcon = (type: string) => {
-    switch (type) {
-      case 'store':
-        return <Store className="h-4 w-4 text-red-600" />;
-      case 'schedule':
-        return <Clock className="h-4 w-4 text-green-600" />;
-      case 'event':
-        return <CalendarDays className="h-4 w-4 text-purple-600" />;
-      case 'user':
-        return <Users className="h-4 w-4 text-blue-600" />;
-      default:
-        return <Activity className="h-4 w-4 text-gray-600" />;
-    }
-  };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
@@ -125,40 +234,77 @@ export default function DashboardPage() {
           <p className="text-gray-600">Bienvenido al panel de administración de Elite</p>
         </div>
 
-        {/* Estadísticas */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-          {stats.map((stat) => (
-            <div
-              key={stat.id}
-              className="bg-white p-6 rounded-xl shadow-sm border border-gray-200 hover:shadow-md transition-all duration-200"
-            >
-              <div className="flex justify-between items-start mb-4">
-                <div className={`p-3 rounded-lg ${stat.iconBg} ${stat.iconColor}`}>
-                  {stat.icon}
+        {/* Estado de carga */}
+        {loading && (
+          <div className="text-center py-12">
+            <div className="spinner w-8 h-8 mx-auto mb-4"></div>
+            <p className="text-gray-600">Cargando datos del dashboard...</p>
+          </div>
+        )}
+
+        {/* Estado de error */}
+        {error && (
+          <div className="bg-red-50 border border-red-200 rounded-lg p-6 mb-8">
+            <div className="flex items-center">
+              <div className="flex-shrink-0">
+                <svg className="h-5 w-5 text-red-400" viewBox="0 0 20 20" fill="currentColor">
+                  <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
+                </svg>
+              </div>
+              <div className="ml-3">
+                <h3 className="text-sm font-medium text-red-800">Error al cargar datos</h3>
+                <div className="mt-2 text-sm text-red-700">
+                  <p>{error}</p>
                 </div>
-                <div className="text-right">
-                  <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${
-                    stat.changeType === 'positive' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
-                  }`}>
-                    <TrendingUp className="h-3 w-3 mr-1" />
-                    {stat.change}
-                  </span>
+                <div className="mt-4">
+                  <button
+                    onClick={fetchDashboardData}
+                    className="bg-red-100 text-red-800 px-4 py-2 rounded-md text-sm font-medium hover:bg-red-200 transition-colors"
+                  >
+                    Reintentar
+                  </button>
                 </div>
               </div>
-              <div className="mb-4">
-                <p className="text-sm font-medium text-gray-600 mb-1">{stat.name}</p>
-                <p className="text-3xl font-bold text-gray-900">{stat.value}</p>
-              </div>
-              <Link
-                href={stat.link}
-                className="inline-flex items-center text-sm font-medium text-gray-600 hover:text-red-600 transition-colors"
-              >
-                Ver detalles
-                <ArrowRight size={14} className="ml-1" />
-              </Link>
             </div>
-          ))}
-        </div>
+          </div>
+        )}
+
+        {/* Estadísticas */}
+        {!loading && !error && (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+            {statsData.map((stat) => (
+              <div
+                key={stat.id}
+                className="bg-white p-6 rounded-xl shadow-sm border border-gray-200 hover:shadow-md transition-all duration-200"
+              >
+                <div className="flex justify-between items-start mb-4">
+                  <div className={`p-3 rounded-lg ${stat.iconBg} ${stat.iconColor}`}>
+                    {stat.icon}
+                  </div>
+                  <div className="text-right">
+                    <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${
+                      stat.changeType === 'positive' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
+                    }`}>
+                      <TrendingUp className="h-3 w-3 mr-1" />
+                      {stat.change}
+                    </span>
+                  </div>
+                </div>
+                <div className="mb-4">
+                  <p className="text-sm font-medium text-gray-600 mb-1">{stat.name}</p>
+                  <p className="text-3xl font-bold text-gray-900">{stat.value}</p>
+                </div>
+                <Link
+                  href={stat.link}
+                  className="inline-flex items-center text-sm font-medium text-gray-600 hover:text-red-600 transition-colors"
+                >
+                  Ver detalles
+                  <ArrowRight size={14} className="ml-1" />
+                </Link>
+              </div>
+            ))}
+          </div>
+        )}
 
         {/* Contenido principal en dos columnas */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -172,24 +318,28 @@ export default function DashboardPage() {
                 </button>
               </div>
               <div className="space-y-4">
-                {recentActivity.map((activity) => (
-                  <div
-                    key={activity.id}
-                    className="flex items-start py-4 border-b border-gray-100 last:border-0 hover:bg-gray-50 rounded-lg px-2 -mx-2 transition-colors"
-                  >
-                    <div className="mr-4 h-10 w-10 rounded-full bg-gray-100 flex items-center justify-center">
-                      {getActivityIcon(activity.type)}
+                {recentActivity.length > 0 ? (
+                  recentActivity.map((activity) => (
+                    <div
+                      key={activity.id}
+                      className="flex items-start py-4 border-b border-gray-100 last:border-0 hover:bg-gray-50 rounded-lg px-2 -mx-2 transition-colors"
+                    >
+                      <div className={`mr-4 h-10 w-10 rounded-full bg-gray-100 flex items-center justify-center ${activity.iconColor}`}>
+                        {activity.icon}
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <p className="text-sm text-gray-800">
+                          {activity.description}
+                        </p>
+                        <p className="text-xs text-gray-500 mt-1">{activity.time}</p>
+                      </div>
                     </div>
-                    <div className="flex-1 min-w-0">
-                      <p className="text-sm text-gray-800">
-                        <span className="font-medium">{activity.user}</span>{' '}
-                        {activity.action}{' '}
-                        <span className="font-medium">{activity.entity}</span>
-                      </p>
-                      <p className="text-xs text-gray-500 mt-1">{activity.time}</p>
-                    </div>
+                  ))
+                ) : (
+                  <div className="text-center py-8">
+                    <p className="text-gray-500">No hay actividad reciente</p>
                   </div>
-                ))}
+                )}
               </div>
             </div>
           </div>

@@ -80,9 +80,9 @@ const ProfileService = {
     }
   },
 
-  async getThreeWeeksSchedule(userId: number): Promise<ThreeWeeksSchedule> {
+  async getThreeWeeksSchedule(): Promise<ThreeWeeksSchedule> {
     try {
-      const response = await apiClient.get<ThreeWeeksSchedule>(`/schedules/user/${userId}/three-weeks`);
+      const response = await apiClient.get<ThreeWeeksSchedule>(`/schedule/my-schedule/three-weeks`);
       return response.data;
     } catch (error) {
       console.error("Error fetching schedule:", error);

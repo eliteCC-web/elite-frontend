@@ -119,7 +119,7 @@ export default function Navbar() {
                   : "opacity-100 transform translate-x-0"
               )}>
                 <span className="text-display text-xl text-neutral-900 font-bold">
-                  Elite
+                  elite
                 </span>
                 <span className="block text-xs text-neutral-500 font-medium">
                   Centro Comercial
@@ -288,7 +288,7 @@ export default function Navbar() {
                   />
                 </div>
                 <div>
-                  <span className="text-lg font-bold text-neutral-900">Elite</span>
+                  <span className="text-lg font-bold text-neutral-900">elite</span>
                   <span className="block text-xs text-neutral-500">Centro Comercial</span>
                 </div>
               </div>

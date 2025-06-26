@@ -43,7 +43,7 @@ export default function ProfilePage() {
 
   const fetchProfile = async () => {
     if (!user) return;
-    
+
     try {
       const profileData = await ProfileService.getCurrentUserProfile();
       setProfile(profileData);
@@ -59,7 +59,8 @@ export default function ProfilePage() {
     if (!user) return;
     
     try {
-      const scheduleData = await ProfileService.getThreeWeeksSchedule(user.id);
+      // El endpoint /schedule/my-schedule/three-weeks obtiene automáticamente el usuario autenticado
+      const scheduleData = await ProfileService.getThreeWeeksSchedule();
       setSchedule(scheduleData);
     } catch (err: any) {
       console.error('Error fetching schedule:', err);
@@ -331,7 +332,7 @@ export default function ProfilePage() {
             onUpdate={handleProfileUpdate}
           />
           
-          {profile.ownedStores && (
+          {profile.ownedStores && profile.ownedStores.length > 0 && (
             <EditStoreModal
               store={profile.ownedStores[0]}
               isOpen={editStoreModalOpen}

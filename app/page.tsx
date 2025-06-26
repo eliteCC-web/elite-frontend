@@ -15,6 +15,7 @@ import StoreService, { type Store } from "@/services/store.service"
 import StoreCard from '@/components/StoreCard';
 import EventService, { type Event as EventType } from "@/services/event.service"
 import { default as EventCardComponent } from '@/components/EventCard';
+import { FeaturesCarousel } from '@/components/FeaturesCarousel';
 
 export default function HomePage() {
   const [featuredStores, setFeaturedStores] = useState<Store[]>([]);
@@ -225,69 +226,8 @@ export default function HomePage() {
           </div>
         </section>
 
-        {/* Por Qué Elegir Elite */}
-        <section className="py-20">
-          <div className="container-modern">
-            <div className="text-center mb-16">
-              <h2 className="text-4xl md:text-5xl font-bold text-neutral-900 mb-6">
-                ¿Por qué elegir Elite?
-              </h2>
-              <p className="text-xl text-neutral-600 max-w-3xl mx-auto">
-                Descubre lo que hace único a nuestro centro comercial
-              </p>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-              <div className="text-center group">
-                <div className="w-20 h-20 bg-gradient-to-br from-primary-500 to-secondary-500 rounded-3xl flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform duration-300 shadow-lg">
-                  <ShoppingBag size={32} className="text-white" />
-                </div>
-                <h3 className="text-xl font-semibold text-neutral-900 mb-3">
-                  Variedad de Tiendas
-                </h3>
-                <p className="text-neutral-600">
-                  Más de 100 tiendas con las mejores marcas nacionales e internacionales
-                </p>
-              </div>
-
-              <div className="text-center group">
-                <div className="w-20 h-20 bg-gradient-to-br from-primary-500 to-secondary-500 rounded-3xl flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform duration-300 shadow-lg">
-                  <Calendar size={32} className="text-white" />
-                </div>
-                <h3 className="text-xl font-semibold text-neutral-900 mb-3">
-                  Eventos Constantes
-                </h3>
-                <p className="text-neutral-600">
-                  Actividades y eventos especiales para toda la familia
-                </p>
-              </div>
-
-              <div className="text-center group">
-                <div className="w-20 h-20 bg-gradient-to-br from-primary-500 to-secondary-500 rounded-3xl flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform duration-300 shadow-lg">
-                  <MapPin size={32} className="text-white" />
-                </div>
-                <h3 className="text-xl font-semibold text-neutral-900 mb-3">
-                  Ubicación Privilegiada
-                </h3>
-                <p className="text-neutral-600">
-                  Fácil acceso y estacionamiento gratuito para tu comodidad
-                </p>
-              </div>
-
-              <div className="text-center group">
-                <div className="w-20 h-20 bg-gradient-to-br from-primary-500 to-secondary-500 rounded-3xl flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform duration-300 shadow-lg">
-                  <Users size={32} className="text-white" />
-                </div>
-                <h3 className="text-xl font-semibold text-neutral-900 mb-3">
-                  Atención Personalizada
-                </h3>
-                <p className="text-neutral-600">
-                  Nuestro equipo está siempre disponible para ayudarte
-                </p>
-              </div>
-            </div>
-          </div>
-        </section>
+        {/* Características del Centro Comercial 
+        <FeaturesCarousel />*/}
 
         {/* Footer */}
         <Footer />
