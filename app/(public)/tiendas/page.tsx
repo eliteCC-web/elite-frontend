@@ -163,21 +163,7 @@ export default function StoresPage() {
               />
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-neutral-400" size={18} />
             </div>
-            <div className="flex items-center gap-4 w-full lg:w-auto">
-              <div className="relative w-full lg:w-auto">
-                <select
-                  value={sortOrder}
-                  onChange={(e) => setSortOrder(e.target.value)}
-                  className="input pr-10"
-                >
-                  <option value="">Ordenar por</option>
-                  <option value="asc">A-Z</option>
-                  <option value="desc">Z-A</option>
-                  <option value="numero">Número de local</option>
-                </select>
-                <ArrowRight className="absolute right-3 top-1/2 transform -translate-y-1/2 text-neutral-400 rotate-90" size={18} />
-              </div>
-            </div>
+            
           </div>
         </div>
       </section>
@@ -289,9 +275,6 @@ export default function StoresPage() {
             <Link href="/contacto" className="btn-primary btn-lg">
               <Building size={24} />
               Solicitar Local
-            </Link>
-            <Link href="/nosotros" className="btn-danger btn-lg">
-              Conocer Más
             </Link>
           </div>
         </div>

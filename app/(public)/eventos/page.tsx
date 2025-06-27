@@ -98,9 +98,31 @@ export default function EventosPage() {
           </div>
         </section>
 
+        
+
         {/* Eventos Destacados */}
         <section className="py-20">
           <div className="container-modern">
+            {/* Filtros y Búsqueda */}{/* Filtros y Búsqueda */}
+            <div className="mb-12">
+              <div className="flex flex-col lg:flex-row gap-6 items-center justify-between">
+                <div className="flex flex-col sm:flex-row gap-4 w-full lg:w-auto">
+                  <div className="relative">
+                    <Search size={20} className="absolute left-3 top-1/2 transform -translate-y-1/2 text-neutral-400" />
+                    <input
+                      type="text"
+                      placeholder="Buscar eventos..."
+                      value={searchTerm}
+                      onChange={(e) => setSearchTerm(e.target.value)}
+                      className="pl-10 pr-4 py-3 border border-neutral-200 rounded-2xl focus:ring-2 focus:ring-primary-500 focus:border-transparent w-full sm:w-80"
+                    />
+                  </div>
+                </div>
+                
+              </div>
+            </div>
+            
+
             <div className="text-center mb-16">
               <h2 className="text-4xl md:text-5xl font-bold text-neutral-900 mb-6">
                 Eventos Destacados
@@ -149,38 +171,6 @@ export default function EventosPage() {
               </p>
             </div>
 
-            {/* Filtros y Búsqueda */}
-            <div className="mb-12">
-              <div className="flex flex-col lg:flex-row gap-6 items-center justify-between">
-                <div className="flex flex-col sm:flex-row gap-4 w-full lg:w-auto">
-                  <div className="relative">
-                    <Search size={20} className="absolute left-3 top-1/2 transform -translate-y-1/2 text-neutral-400" />
-                    <input
-                      type="text"
-                      placeholder="Buscar eventos..."
-                      value={searchTerm}
-                      onChange={(e) => setSearchTerm(e.target.value)}
-                      className="pl-10 pr-4 py-3 border border-neutral-200 rounded-2xl focus:ring-2 focus:ring-primary-500 focus:border-transparent w-full sm:w-80"
-                    />
-                  </div>
-                </div>
-                <div className="flex items-center gap-2">
-                  <Filter size={20} className="text-neutral-400" />
-                  <select
-                    value={sortBy}
-                    onChange={(e) => setSortBy(e.target.value)}
-                    className="px-4 py-3 border border-neutral-200 rounded-2xl focus:ring-2 focus:ring-primary-500 focus:border-transparent"
-                  >
-                    <option value="">Ordenar por</option>
-                    <option value="fecha">Fecha</option>
-                    <option value="precio-asc">Precio: Menor a Mayor</option>
-                    <option value="precio-desc">Precio: Mayor a Menor</option>
-                    <option value="cupos">Cupos Disponibles</option>
-                  </select>
-                </div>
-              </div>
-            </div>
-
             {/* Lista de Eventos */}
             {loading ? (
               <div className="text-center py-12">
@@ -207,8 +197,6 @@ export default function EventosPage() {
           </div>
         </section>
       </main>
-
-      <Footer />
     </div>
   );
 }

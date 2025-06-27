@@ -1,3 +1,5 @@
+/* eslint-disable */
+
 // components/navbar.tsx - ACTUALIZACIÓN con barra móvil mejorada
 'use client';
 
@@ -146,10 +148,12 @@ export default function Navbar() {
                 <Users size={18} />
                 Nosotros
               </NavLink>
+              {/*
               <NavLink href="/chatbot">
                 <MessageCircle size={18} />
                 Eli Chat
               </NavLink>
+              */}
             </nav>
 
             {/* Desktop Auth Section */}
@@ -315,10 +319,12 @@ export default function Navbar() {
                   <Users size={20} />
                   Nosotros
                 </MobileNavLink>
+                {/*
                 <MobileNavLink href="/chatbot" onClick={() => setIsMenuOpen(false)}>
                   <MessageCircle size={20} />
                   Eli Chat
                 </MobileNavLink>
+                */}
               </nav>
               
               {isAuthenticated && user ? (

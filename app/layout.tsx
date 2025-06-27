@@ -4,6 +4,8 @@ import "./globals.css"
 import { Poppins } from "next/font/google"
 import type { Metadata } from "next"
 import { AuthProvider } from "@/contexts/AuthContext"
+import { ChatWithEli } from "@/components/ChatWithEli"
+import { ThemeProvider } from "@/components/theme-provider"
 
 const poppins = Poppins({
   subsets: ["latin"],
@@ -13,7 +15,7 @@ const poppins = Poppins({
 
 export const metadata: Metadata = {
   title: "Elite Centro Comercial",
-  description: "Tu destino favorito para compras, gastronomía y entretenimiento",
+  description: "Descubre una experiencia de compra única donde la elegancia se encuentra con la innovación",
 }
 
 export default function RootLayout({
@@ -22,11 +24,19 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html lang="es">
+    <html lang="es" suppressHydrationWarning>
       <body className={poppins.className}>
-        <AuthProvider>
-          {children}
-        </AuthProvider>
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="light"
+          enableSystem
+          disableTransitionOnChange
+        >
+          <AuthProvider>
+            {children}
+            <ChatWithEli />
+          </AuthProvider>
+        </ThemeProvider>
       </body>
     </html>
   )

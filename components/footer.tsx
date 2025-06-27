@@ -41,9 +41,12 @@ export default function Footer() {
               <FooterLink href="/tiendas">Tiendas</FooterLink>
               <FooterLink href="/eventos">Eventos</FooterLink>
               <FooterLink href="/nosotros">Nosotros</FooterLink>
-              <FooterLink href="/chatbot">Eli Chat</FooterLink>
-              <FooterLink href="/mapa">Mapa del CC</FooterLink>
-              <FooterLink href="/contacto">Contacto</FooterLink>
+              {/*<FooterLink href="/chatbot">Eli Chat</FooterLink>
+              */}
+              {/*<FooterLink href="/mapa">Mapa del CC</FooterLink>
+              */}
+              {/*<FooterLink href="/contacto">Contacto</FooterLink>
+              */}
             </ul>
           </div>
 
