@@ -8,7 +8,7 @@ import Image from 'next/image';
 import { useState, useEffect } from 'react';
 import { Menu, X, ShoppingBag, Calendar, User, LogOut, Shield, Users, MessageCircle, ChevronDown } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
-import { cn } from '@/lib/utils';
+import { cn, getPublicUrl } from '@/lib/utils';
 import assets from '@/public/assets';
 import { usePathname } from 'next/navigation';
 
@@ -106,7 +106,7 @@ export default function Navbar() {
                     : "bg-white/20 backdrop-blur-sm rounded-2xl border border-white/30"
                 )}>
                   <Image
-                    src={assets.logo_png}
+                    src={getPublicUrl('elitecc-web//hero%20HD.jpg')}
                     alt="Elite"
                     width={32}
                     height={32}

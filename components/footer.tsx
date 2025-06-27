@@ -2,6 +2,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { Facebook, Instagram, Mail, Phone, MapPin, Clock, ArrowRight, Heart } from 'lucide-react';
 import assets from "@/public/assets";
+import { getPublicUrl } from "@/lib/utils";
 
 export default function Footer() {
   return (
@@ -13,14 +14,14 @@ export default function Footer() {
           <div className="lg:col-span-2">
             <div className="flex items-center gap-3 mb-6">
               <Image
-                src={assets.logo_png}
+                src={getPublicUrl('elitecc-web//hero%20HD.jpg')}
                 alt="Elite"
                 width={50}
                 height={50}
                 className="drop-shadow-lg"
               />
               <div>
-                <span className="text-display text-2xl font-bold text-neutral-900">Elite</span>
+                <span className="text-display text-2xl font-bold text-neutral-900">elite</span>
                 <span className="block text-sm text-neutral-500">Centro Comercial</span>
               </div>
             </div>
