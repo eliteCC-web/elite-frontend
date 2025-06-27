@@ -108,8 +108,8 @@ export default function Navbar() {
                   <Image
                     src={getPublicUrl('elitecc-web//isotipo.png')}
                     alt="Elite"
-                    width={32}
-                    height={32}
+                    width={25}
+                    height={25}
                     className="drop-shadow-lg"
                   />
                 </div>

@@ -17,8 +17,8 @@ export default function Footer() {
               <Image
                 src={getPublicUrl('elitecc-web//isotipo.png')}
                 alt="Elite"
-                width={50}
-                height={50}
+                width={40}
+                height={40}
                 className="drop-shadow-lg"
               />
               <div>
