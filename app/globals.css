@@ -389,6 +389,61 @@
   .spinner {
     @apply animate-spin rounded-full border-2 border-neutral-200 border-t-primary-500;
   }
+
+  .animate-scroll {
+    animation: scroll var(--animation-duration, 20s) linear infinite;
+  }
+
+  /* Estilos para el slider de video personalizado */
+  .slider {
+    -webkit-appearance: none;
+    appearance: none;
+    background: transparent;
+    cursor: pointer;
+  }
+
+  .slider::-webkit-slider-track {
+    background: rgba(255, 255, 255, 0.3);
+    height: 4px;
+    border-radius: 2px;
+  }
+
+  .slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    background: #3b82f6;
+    height: 12px;
+    width: 12px;
+    border-radius: 50%;
+    cursor: pointer;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  }
+
+  .slider::-webkit-slider-thumb:hover {
+    background: #2563eb;
+    transform: scale(1.1);
+  }
+
+  .slider::-moz-range-track {
+    background: rgba(255, 255, 255, 0.3);
+    height: 4px;
+    border-radius: 2px;
+    border: none;
+  }
+
+  .slider::-moz-range-thumb {
+    background: #3b82f6;
+    height: 12px;
+    width: 12px;
+    border-radius: 50%;
+    cursor: pointer;
+    border: none;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  }
+
+  .slider::-moz-range-thumb:hover {
+    background: #2563eb;
+  }
 }
 
 @keyframes animateIn {
@@ -481,8 +536,4 @@ main {
   to {
     transform: translate(calc(-50% - 0.5rem));
   }
-}
-
-.animate-scroll {
-  animation: scroll var(--animation-duration, 40s) var(--animation-direction, forwards) linear infinite;
 }

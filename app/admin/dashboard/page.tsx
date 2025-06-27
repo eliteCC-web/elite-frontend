@@ -95,12 +95,13 @@ export default function DashboardPage() {
       
       // Verificar si el backend está disponible
       console.log('🔍 Verificando conectividad con el backend...');
+      const backendUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001/api';
       try {
-        await fetch('http://localhost:3001/api/stores?page=1&limit=1');
+        await fetch(`${backendUrl}/stores?page=1&limit=1`);
         console.log('✅ Backend está disponible');
       } catch (backendError) {
         console.error('❌ Backend no está disponible:', backendError);
-        setError('El backend no está disponible. Verifica que esté ejecutándose en http://localhost:3001');
+        setError(`El backend no está disponible. Verifica que esté ejecutándose en ${backendUrl}`);
         return;
       }
       

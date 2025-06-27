@@ -16,6 +16,8 @@ import StoreCard from '@/components/StoreCard';
 import EventService, { type Event as EventType } from "@/services/event.service"
 import { default as EventCardComponent } from '@/components/EventCard';
 import { FeaturesCarousel } from '@/components/FeaturesCarousel';
+import { VideoSection } from '@/components/VideoSection';
+import { MapSection } from '@/components/MapSection';
 
 export default function HomePage() {
   const [featuredStores, setFeaturedStores] = useState<Store[]>([]);
@@ -128,6 +130,23 @@ export default function HomePage() {
 
       {/* Resto de secciones en blanco */}
       <div className="bg-white">
+
+        {/* Características del Centro Comercial */}
+        <FeaturesCarousel />
+
+        {/* Sección de Video */}
+        <VideoSection
+          videoSrc={getPublicUrl('elitecc-web//videos/present_paneles_solares%20(1).mp4')}
+          posterSrc={getPublicUrl('elitecc-web//hero%20HD.jpg')}
+          title="Vive la Experiencia Elite"
+          description="Sumérgete en la atmósfera única de nuestro centro comercial a través de este recorrido virtual"
+          stats={[
+            { value: "8", label: "Pisos de Experiencias" },
+            { value: "200+", label: "Locales Únicos" },
+            { value: "24/7", label: "Seguridad Garantizada" }
+          ]}
+        />
+
         {/* Eventos Destacados */}
         <section className="py-20">
           <div className="container-modern">
@@ -226,8 +245,8 @@ export default function HomePage() {
           </div>
         </section>
 
-        {/* Características del Centro Comercial 
-        <FeaturesCarousel />*/}
+        {/* Sección de Mapa */}
+        <MapSection />
 
         {/* Footer */}
         <Footer />

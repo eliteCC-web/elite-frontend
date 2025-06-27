@@ -2,48 +2,33 @@
 
 import React from "react";
 import { InfiniteMovingCards } from "./ui/infinite-moving-cards";
-
+import { getPublicUrl } from "@/lib/utils";
 export function FeaturesCarousel() {
   const features = [
     {
-      title: "Somos Pet Friendly",
-      image: "https://images.unsplash.com/photo-1450778869180-41d0601e046e?w=400&h=300&fit=crop",
+      title: "Pet Friendly",
+      image: getPublicUrl('elitecc-web//mascotad.png'),
       description: "Trae a tu mascota y disfruta juntos"
     },
     {
       title: "Zona Coworking",
-      image: "https://images.unsplash.com/photo-1497366216548-37526070297c?w=400&h=300&fit=crop",
+      image: getPublicUrl('elitecc-web//internet.png'),
       description: "Espacios de trabajo modernos y cómodos"
     },
     {
-      title: "8 Pisos de Experiencias",
-      image: "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=400&h=300&fit=crop",
-      description: "Descubre cada nivel de diversión"
+      title: "Restaurantes",
+      image: getPublicUrl('elitecc-web//bannr.png'),
+      description: "Gastronomía de primera calidad"
     },
     {
-      title: "Estacionamiento Gratuito",
-      image: "https://images.unsplash.com/photo-1549924231-f129b911e442?w=400&h=300&fit=crop",
-      description: "Comodidad para todos nuestros visitantes"
-    },
-    {
-      title: "WiFi de Alta Velocidad",
-      image: "https://images.unsplash.com/photo-1563013544-824ae1b704d3?w=400&h=300&fit=crop",
+      title: "WiFi Gratuito",
+      image: getPublicUrl('elitecc-web//internet.png'),
       description: "Conectividad en todo el centro"
     },
     {
-      title: "Seguridad 24/7",
-      image: "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=400&h=300&fit=crop",
-      description: "Tu seguridad es nuestra prioridad"
-    },
-    {
-      title: "Accesibilidad Total",
-      image: "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=400&h=300&fit=crop",
-      description: "Diseñado para todos"
-    },
-    {
-      title: "Eventos Especiales",
-      image: "https://images.unsplash.com/photo-1511795409834-ef04bbd61622?w=400&h=300&fit=crop",
-      description: "Actividades únicas cada semana"
+      title: "Marcas Propias",
+      image: getPublicUrl('elitecc-web//marcas.png'),
+      description: "Exclusividad y calidad garantizada"
     }
   ];
 
@@ -59,7 +44,7 @@ export function FeaturesCarousel() {
           </p>
         </div>
         
-        <div className="h-[400px] rounded-md flex flex-col antialiased items-center justify-center relative overflow-hidden">
+        <div className="h-[500px] rounded-md flex flex-col antialiased items-center justify-center relative overflow-hidden">
           <InfiniteMovingCards
             items={features}
             direction="right"
