@@ -106,7 +106,7 @@ export default function Navbar() {
                     : "bg-white/20 backdrop-blur-sm rounded-2xl border border-white/30"
                 )}>
                   <Image
-                    src={getPublicUrl('elitecc-web//hero%20HD.jpg')}
+                    src={getPublicUrl('elitecc-web//isotipo.png')}
                     alt="Elite"
                     width={32}
                     height={32}

@@ -15,7 +15,7 @@ export default function Footer() {
           <div className="lg:col-span-2">
             <div className="flex items-center gap-3 mb-6">
               <Image
-                src={getPublicUrl('elitecc-web//hero%20HD.jpg')}
+                src={getPublicUrl('elitecc-web//isotipo.png')}
                 alt="Elite"
                 width={50}
                 height={50}
