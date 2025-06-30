@@ -101,15 +101,15 @@ export default function StoresPage() {
       {/* Encabezado */}
       <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-6 gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-gray-800">Locales</h1>
-          <p className="text-gray-600">Gestión de locales comerciales</p>
+          <h1 className="text-2xl font-bold text-gray-800">Tiendas y Servicios</h1>
+          <p className="text-gray-600">Gestión de locales comerciales y servicios</p>
         </div>
         <Link
           href="/admin/stores/new"
           className="inline-flex items-center gap-2 bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-md transition-colors"
         >
           <Plus size={18} />
-          <span>Nuevo Local</span>
+          <span>Nuevo Local/Servicio</span>
         </Link>
       </div>
 
@@ -205,6 +205,12 @@ export default function StoresPage() {
                       scope="col"
                       className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
                     >
+                      Tipo
+                    </th>
+                    <th
+                      scope="col"
+                      className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                    >
                       Acciones
                     </th>
                   </tr>
@@ -220,6 +226,15 @@ export default function StoresPage() {
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
                         {store.phone}
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
+                        <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
+                          store.isService 
+                            ? 'bg-blue-100 text-blue-800' 
+                            : 'bg-green-100 text-green-800'
+                        }`}>
+                          {store.isService ? 'Servicio' : 'Tienda'}
+                        </span>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                         <div className="flex space-x-2">

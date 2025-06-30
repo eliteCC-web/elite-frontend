@@ -1,5 +1,12 @@
 import apiClient from './api-client';
 
+export interface StoreSchedule {
+  day: string;
+  openTime: string;
+  closeTime: string;
+  isOpen: boolean;
+}
+
 export interface Store {
   id: number;
   storeNumber: string;
@@ -7,11 +14,12 @@ export interface Store {
   phone: string;
   description?: string;
   images?: string[];
-  schedule?: any;
+  schedule?: StoreSchedule[];
   category?: string;
   floor?: string;
   monthlyRent?: number;
   isActive: boolean;
+  isService?: boolean;
   ownerId?: number;
   createdAt?: Date;
   updatedAt?: Date;
@@ -24,10 +32,8 @@ export interface CreateStoreDto {
   phone: string;
   description?: string;
   images?: string[];
-  schedule?: any;
-  category?: string;
-  floor?: string;
-  monthlyRent?: number;
+  schedule?: StoreSchedule[];
+  isService?: boolean;
 }
 
 // La actualización permite campos opcionales
@@ -42,6 +48,7 @@ export interface UpdateStoreDto {
   floor?: string;
   monthlyRent?: number;
   isActive?: boolean;
+  isService?: boolean;
 }
 
 export interface PaginationMeta {
@@ -89,6 +96,7 @@ const StoreService = {
           floor: "1",
           monthlyRent: 2500000,
           isActive: true,
+          isService: false,
           createdAt: new Date(),
           updatedAt: new Date()
         }
@@ -110,6 +118,30 @@ const StoreService = {
           hasPrevPage: page > 1,
         }
       };
+    }
+  },
+
+  async getStores(page = 1, limit = 10): Promise<PaginatedResponse<Store>> {
+    try {
+      const response = await apiClient.get<PaginatedResponse<Store>>('/stores/tiendas', {
+        params: { page, limit }
+      });
+      return response.data;
+    } catch (error) {
+      console.error("Error fetching stores:", error);
+      throw error;
+    }
+  },
+
+  async getServices(page = 1, limit = 10): Promise<PaginatedResponse<Store>> {
+    try {
+      const response = await apiClient.get<PaginatedResponse<Store>>('/stores/servicios', {
+        params: { page, limit }
+      });
+      return response.data;
+    } catch (error) {
+      console.error("Error fetching services:", error);
+      throw error;
     }
   },
 
@@ -141,6 +173,7 @@ const StoreService = {
           floor: "1",
           monthlyRent: 2500000,
           isActive: true,
+          isService: false,
         createdAt: new Date(),
         updatedAt: new Date()
         }

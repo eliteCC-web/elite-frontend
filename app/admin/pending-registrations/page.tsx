@@ -52,7 +52,7 @@ export default function PendingRegistrationsPage() {
 
   const fetchPendingRegistrations = async () => {
     try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001/api'}/auth/pending-registrations`, {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'https://localhost:3001/api'}/auth/pending-registrations`, {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('token')}`,
@@ -81,7 +81,7 @@ export default function PendingRegistrationsPage() {
 
   const fetchRegistrationHistory = async () => {
     try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001/api'}/auth/registration-history`, {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'https://localhost:3001/api'}/auth/registration-history`, {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('token')}`,
@@ -107,7 +107,7 @@ export default function PendingRegistrationsPage() {
 
   const handleApprove = async (registrationId: number) => {
     try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001/api'}/auth/approve-registration/${registrationId}`, {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'https://localhost:3001/api'}/auth/approve-registration/${registrationId}`, {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('token')}`,
@@ -137,7 +137,7 @@ export default function PendingRegistrationsPage() {
 
   const handleReject = async (registrationId: number) => {
     try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001/api'}/auth/reject-registration/${registrationId}`, {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'https://localhost:3001/api'}/auth/reject-registration/${registrationId}`, {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('token')}`,

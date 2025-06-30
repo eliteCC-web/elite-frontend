@@ -32,7 +32,7 @@ export default function Footer() {
             </p>
             <div className="flex gap-4">
               <SocialLink href="https://www.facebook.com/CentroComercialElite" icon={<Facebook size={20} />} />
-              <SocialLink href="https://www.instagram.com/centrocomercialelite" icon={<Instagram size={20} />} />
+              <SocialLink href="https://www.instagram.com/elitecentrocomercial/" icon={<Instagram size={20} />} />
             </div>
           </div>
 

@@ -14,9 +14,9 @@ import ConfirmDialog from "@/components/admin/ConfirmDialog"
 import { getPublicUrl } from "@/lib/utils"
 import StoreCard from "@/components/StoreCard"
 
-export default function StoresPage() {
+export default function ServicesPage() {
   const router = useRouter()
-  const [stores, setStores] = useState<Store[]>([])
+  const [services, setServices] = useState<Store[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [searchTerm, setSearchTerm] = useState("")
@@ -27,15 +27,15 @@ export default function StoresPage() {
     totalPages: 0,
   })
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
-  const [storeToDelete, setStoreToDelete] = useState<Store | null>(null)
+  const [serviceToDelete, setServiceToDelete] = useState<Store | null>(null)
   const [isDeleting, setIsDeleting] = useState(false)
   const [sortOrder, setSortOrder] = useState("")
 
-  const fetchStores = async (page = 1, limit = 12) => {
+  const fetchServices = async (page = 1, limit = 12) => {
     try {
       setLoading(true)
-      const response = await StoreService.getStores(page, limit)
-      setStores(response.data)
+      const response = await StoreService.getServices(page, limit)
+      setServices(response.data)
       setPagination({
         page: response.meta.page,
         limit: response.meta.limit,
@@ -43,63 +43,63 @@ export default function StoresPage() {
         totalPages: response.meta.totalPages,
       })
     } catch (err: any) {
-      console.error("Error fetching stores:", err)
-      setError("Error al cargar las tiendas. Inténtelo de nuevo más tarde.")
+      console.error("Error fetching services:", err)
+      setError("Error al cargar los servicios. Inténtelo de nuevo más tarde.")
     } finally {
       setLoading(false)
     }
   }
 
   useEffect(() => {
-    fetchStores(pagination.page, pagination.limit)
+    fetchServices(pagination.page, pagination.limit)
   }, [])
 
   const handlePageChange = (newPage: number) => {
     if (newPage > 0 && newPage <= pagination.totalPages) {
-      fetchStores(newPage, pagination.limit)
+      fetchServices(newPage, pagination.limit)
     }
   }
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault()
     console.log("Searching for:", searchTerm)
-    fetchStores(1, pagination.limit)
+    fetchServices(1, pagination.limit)
   }
 
-  const openDeleteDialog = (store: Store) => {
-    setStoreToDelete(store)
+  const openDeleteDialog = (service: Store) => {
+    setServiceToDelete(service)
     setDeleteDialogOpen(true)
   }
 
   const closeDeleteDialog = () => {
     setDeleteDialogOpen(false)
-    setStoreToDelete(null)
+    setServiceToDelete(null)
   }
 
   const handleDelete = async () => {
-    if (!storeToDelete) return
+    if (!serviceToDelete) return
 
     try {
       setIsDeleting(true)
-      await StoreService.deleteStore(storeToDelete.id)
-      fetchStores(pagination.page, pagination.limit)
+      await StoreService.deleteStore(serviceToDelete.id)
+      fetchServices(pagination.page, pagination.limit)
       closeDeleteDialog()
     } catch (err: any) {
-      console.error("Error deleting store:", err)
-      setError("Error al eliminar el local. Inténtelo de nuevo más tarde.")
+      console.error("Error deleting service:", err)
+      setError("Error al eliminar el servicio. Inténtelo de nuevo más tarde.")
     } finally {
       setIsDeleting(false)
     }
   }
 
-  const filteredStores = stores.filter(store => {
-    const matchesSearch = store.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         store.storeNumber.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         store.description?.toLowerCase().includes(searchTerm.toLowerCase())
+  const filteredServices = services.filter(service => {
+    const matchesSearch = service.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                         service.storeNumber.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                         service.description?.toLowerCase().includes(searchTerm.toLowerCase())
     return matchesSearch
   })
 
-  const sortedStores = [...filteredStores].sort((a, b) => {
+  const sortedServices = [...filteredServices].sort((a, b) => {
     switch (sortOrder) {
       case "asc":
         return a.name.localeCompare(b.name)
@@ -118,7 +118,7 @@ export default function StoresPage() {
         <div className="container-modern py-20">
           <div className="text-center">
             <div className="spinner w-8 h-8 mx-auto mb-4"></div>
-            <p className="text-neutral-600">Cargando tiendas...</p>
+            <p className="text-neutral-600">Cargando servicios...</p>
           </div>
         </div>
       </main>
@@ -132,7 +132,7 @@ export default function StoresPage() {
         <div className="absolute inset-0 z-0">
           <Image
             src={getPublicUrl('elitecc-web//MARCAS%20(2).png')}
-            alt="Tiendas Centro Comercial Elite"
+            alt="Servicios Centro Comercial Elite"
             fill
             className="object-cover"
             priority
@@ -141,10 +141,10 @@ export default function StoresPage() {
         </div>
         <div className="hero-content text-center">
           <h1 className="text-display text-4xl md:text-6xl font-bold text-white mb-6">
-            Nuestras Tiendas
+            Nuestros Servicios
           </h1>
           <p className="text-xl text-neutral-200 max-w-3xl mx-auto">
-            Descubre todas las tiendas y locales comerciales disponibles para ti
+            Descubre todos los servicios disponibles para ti: bancos, corresponsales y más
           </p>
         </div>
       </section>
@@ -156,7 +156,7 @@ export default function StoresPage() {
             <div className="relative w-full lg:w-1/3">
               <input
                 type="text"
-                placeholder="Buscar tiendas..."
+                placeholder="Buscar servicios..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 className="input pl-10"
@@ -177,25 +177,25 @@ export default function StoresPage() {
         </div>
       )}
 
-      {/* Tiendas Destacadas */}
+      {/* Servicios Destacados */}
       <section className="section">
         <div className="container-modern">
           <div className="text-center mb-16">
             <h2 className="text-display text-4xl md:text-5xl font-bold text-neutral-900 mb-6">
-              Tiendas Destacadas
+              Servicios Destacados
             </h2>
             <p className="text-xl text-neutral-600 max-w-3xl mx-auto">
-              Las tiendas más populares y mejor valoradas por nuestros visitantes
+              Los servicios más importantes y mejor valorados por nuestros visitantes
             </p>
           </div>
 
           <div className="grid-cards">
-            {sortedStores
+            {sortedServices
               .slice(0, 3)
-              .map(store => (
+              .map(service => (
                 <StoreCard
-                  key={store.id}
-                  store={store}
+                  key={service.id}
+                  store={service}
                   isFeatured={true}
                 />
               ))}
@@ -203,101 +203,82 @@ export default function StoresPage() {
         </div>
       </section>
 
-      {/* Todas las Tiendas */}
+      {/* Todos los Servicios */}
       <section className="section bg-white">
         <div className="container-modern">
           <div className="text-center mb-16">
             <h2 className="text-display text-4xl md:text-5xl font-bold text-neutral-900 mb-6">
-              Todas las Tiendas
+              Todos los Servicios
             </h2>
             <p className="text-xl text-neutral-600 max-w-3xl mx-auto">
-              Explora nuestra completa colección de tiendas y servicios
+              Explora todos los servicios disponibles en nuestro centro comercial
             </p>
           </div>
 
-          <div className="grid-cards">
-            {sortedStores.map(store => (
-              <StoreCard
-                key={store.id}
-                store={store}
-                isFeatured={false}
-              />
-            ))}
-          </div>
-
-          {/* Paginación */}
-          {pagination.totalPages > 1 && (
-            <div className="flex justify-center items-center gap-2 mt-12">
-              <button
-                onClick={() => handlePageChange(pagination.page - 1)}
-                disabled={pagination.page === 1}
-                className="btn-outline btn-sm disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                Anterior
-              </button>
-              
-              {Array.from({ length: pagination.totalPages }, (_, i) => i + 1).map(page => (
-                <button
-                  key={page}
-                  onClick={() => handlePageChange(page)}
-                  className={`btn-sm ${
-                    page === pagination.page 
-                      ? 'btn-primary' 
-                      : 'btn-outline'
-                  }`}
-                >
-                  {page}
-                </button>
-              ))}
-              
-              <button
-                onClick={() => handlePageChange(pagination.page + 1)}
-                disabled={pagination.page === pagination.totalPages}
-                className="btn-outline btn-sm disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                Siguiente
-              </button>
+          {sortedServices.length === 0 ? (
+            <div className="text-center py-20">
+              <div className="w-24 h-24 mx-auto mb-6 bg-neutral-100 rounded-full flex items-center justify-center">
+                <StoreIcon size={48} className="text-neutral-400" />
+              </div>
+              <h3 className="text-2xl font-semibold text-neutral-900 mb-2">
+                No se encontraron servicios
+              </h3>
+              <p className="text-neutral-600">
+                No hay servicios disponibles en este momento.
+              </p>
             </div>
+          ) : (
+            <>
+              <div className="grid-cards">
+                {sortedServices.map(service => (
+                  <StoreCard
+                    key={service.id}
+                    store={service}
+                    isFeatured={false}
+                  />
+                ))}
+              </div>
+
+              {/* Paginación */}
+              {pagination.totalPages > 1 && (
+                <div className="flex justify-center items-center gap-2 mt-12">
+                  <button
+                    onClick={() => handlePageChange(pagination.page - 1)}
+                    disabled={pagination.page === 1}
+                    className="btn btn-sm btn-outline disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    Anterior
+                  </button>
+                  
+                  <span className="text-sm text-neutral-600">
+                    Página {pagination.page} de {pagination.totalPages}
+                  </span>
+                  
+                  <button
+                    onClick={() => handlePageChange(pagination.page + 1)}
+                    disabled={pagination.page === pagination.totalPages}
+                    className="btn btn-sm btn-outline disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    Siguiente
+                  </button>
+                </div>
+              )}
+            </>
           )}
         </div>
       </section>
 
-      {/* CTA Section */}
-      <section className="section bg-white">
-        <div className="container-modern text-center">
-          <h2 className="text-display text-4xl md:text-5xl font-bold text-neutral-900 mb-6">
-            ¿Eres comerciante?
-          </h2>
-          <p className="text-xl text-neutral-600 mb-8 max-w-2xl mx-auto">
-            Únete a nuestra comunidad de comerciantes y forma parte del centro comercial más moderno de la ciudad
-          </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <a 
-              href="https://wa.me/573177207287?text=Soy%20comerciante,%20estoy%20interesado%20en%20algún%20local%20para%20mi%20negocio"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="btn-primary btn-lg inline-flex items-center gap-2"
-            >
-              <Building size={24} />
-              Solicitar Local
-            </a>
-          </div>
-        </div>
-      </section>
-
-      {/* Diálogo de confirmación de eliminación */}
+      {/* Confirmación de eliminación */}
       <ConfirmDialog
         isOpen={deleteDialogOpen}
-        title="Eliminar Local"
-        message={`¿Estás seguro de que deseas eliminar el local "${storeToDelete?.name}"? Esta acción no se puede deshacer.`}
+        onClose={closeDeleteDialog}
+        onConfirm={handleDelete}
+        title="Eliminar Servicio"
+        message={`¿Estás seguro de que quieres eliminar el servicio "${serviceToDelete?.name}"? Esta acción no se puede deshacer.`}
         confirmText="Eliminar"
         cancelText="Cancelar"
-        onConfirm={handleDelete}
-        onCancel={closeDeleteDialog}
-        onClose={closeDeleteDialog}
         loading={isDeleting}
-        variant="danger"
       />
     </main>
   )
-}
+} 

@@ -15,10 +15,13 @@ export default function NewStorePage() {
   const [error, setError] = useState<string | null>(null);
 
   const handleSubmit = async (data: CreateStoreDto) => {
+    console.log('handleSubmit called with data:', data);
     try {
       setIsSubmitting(true);
       setError(null);
+      console.log('Calling StoreService.createStore...');
       await StoreService.createStore(data);
+      console.log('Store created successfully');
 
       router.push('/admin/stores');
     } catch (err: any) {

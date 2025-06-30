@@ -6,7 +6,7 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import { useState, useEffect } from 'react';
-import { Menu, X, ShoppingBag, Calendar, User, LogOut, Shield, Users, MessageCircle, ChevronDown } from 'lucide-react';
+import { Menu, X, ShoppingBag, Calendar, User, LogOut, Shield, Users, MessageCircle, ChevronDown, Building } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 import { cn, getPublicUrl } from '@/lib/utils';
 import assets from '@/public/assets';
@@ -139,6 +139,10 @@ export default function Navbar() {
               <NavLink href="/tiendas">
                 <ShoppingBag size={18} />
                 Tiendas
+              </NavLink>
+              <NavLink href="/servicios">
+                <Building size={18} />
+                Servicios
               </NavLink>
               <NavLink href="/eventos">
                 <Calendar size={18} />
@@ -310,6 +314,10 @@ export default function Navbar() {
                 <MobileNavLink href="/tiendas" onClick={() => setIsMenuOpen(false)}>
                   <ShoppingBag size={20} />
                   Tiendas
+                </MobileNavLink>
+                <MobileNavLink href="/servicios" onClick={() => setIsMenuOpen(false)}>
+                  <Building size={20} />
+                  Servicios
                 </MobileNavLink>
                 <MobileNavLink href="/eventos" onClick={() => setIsMenuOpen(false)}>
                   <Calendar size={20} />

@@ -13,7 +13,7 @@ export function FeaturesCarousel() {
     {
       title: "Zona Coworking",
       image: getPublicUrl('elitecc-web//internet.png'),
-      description: "Espacios de trabajo modernos y cómodos"
+      description: "WiFi Gratuito y espacios de trabajo modernos y cómodos"
     },
     {
       title: "Restaurantes",
@@ -21,9 +21,9 @@ export function FeaturesCarousel() {
       description: "Gastronomía de primera calidad"
     },
     {
-      title: "WiFi Gratuito",
-      image: getPublicUrl('elitecc-web//internet.png'),
-      description: "Conectividad en todo el centro"
+      title: "Parking Robotizado",
+      image: getPublicUrl('elitecc-web//PARKING%20(1).png'),
+      description: "Parqueadero automatizado y seguro"
     },
     {
       title: "Marcas Propias",
