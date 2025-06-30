@@ -100,7 +100,7 @@ export function MapSection() {
                 style={{ border: 0 }}
                 allowFullScreen
                 loading="lazy"
-                referrerPolicy="no-referrer-when-downgrade"
+                referrerPolicy="strict-origin-when-cross-origin"
                 title="Centro Comercial Elite - Calle 14 con Carrera 7, Cali"
                 className="w-full h-full"
               ></iframe>
