@@ -22,11 +22,26 @@ export const InfiniteMovingCards = ({
 }) => {
   const containerRef = React.useRef<HTMLDivElement>(null);
   const scrollerRef = React.useRef<HTMLUListElement>(null);
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    // Detectar si es dispositivo móvil
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+    
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
 
   useEffect(() => {
     addAnimation();
-  }, []);
+  }, [isMobile]); // Re-ejecutar cuando cambie el estado móvil
+
   const [start, setStart] = useState(false);
+  
   function addAnimation() {
     if (containerRef.current && scrollerRef.current) {
       const scrollerContent = Array.from(scrollerRef.current.children);
@@ -43,6 +58,7 @@ export const InfiniteMovingCards = ({
       setStart(true);
     }
   }
+  
   const getDirection = () => {
     if (containerRef.current) {
       if (direction === "left") {
@@ -58,21 +74,26 @@ export const InfiniteMovingCards = ({
       }
     }
   };
+  
   const getSpeed = () => {
     if (containerRef.current) {
-      if (speed === "fast") {
+      // En móviles, usar velocidad "fast" sin importar el prop speed
+      const effectiveSpeed = isMobile ? "fast" : speed;
+      
+      if (effectiveSpeed === "fast") {
         containerRef.current.style.setProperty("--animation-duration", "40s");
-      } else if (speed === "normal") {
+      } else if (effectiveSpeed === "normal") {
         containerRef.current.style.setProperty("--animation-duration", "60s");
-      } else if (speed === "slow") {
+      } else if (effectiveSpeed === "slow") {
         containerRef.current.style.setProperty("--animation-duration", "120s");
-      } else if (speed === "very-slow") {
+      } else if (effectiveSpeed === "very-slow") {
         containerRef.current.style.setProperty("--animation-duration", "180s");
       } else {
         containerRef.current.style.setProperty("--animation-duration", "300s");
       }
     }
   };
+  
   return (
     <div
       ref={containerRef}
