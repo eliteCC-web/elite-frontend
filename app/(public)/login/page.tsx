@@ -104,15 +104,6 @@ export default function LoginPage() {
               </p>
             </div>
 
-            {/* Credenciales de prueba */}
-            <div className="mb-6 bg-blue-50 border border-blue-200 rounded-lg p-4">
-              <h3 className="text-sm font-medium text-blue-800 mb-2">Credenciales de prueba:</h3>
-              <div className="text-sm text-blue-700 space-y-1">
-                <p><strong>Admin:</strong> admin@elitecc.com / Admin123</p>
-                <p><strong>Colaborador:</strong> colaborador1@elitecc.com / Elite123</p>
-              </div>
-            </div>
-
             {/* Mensaje de error */}
             {error && (
               <div className="mb-6 bg-red-50 text-red-700 p-3 rounded-md flex items-center gap-2 text-sm">
