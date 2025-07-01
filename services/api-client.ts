@@ -1,10 +1,11 @@
 import axios from 'axios';
 
 const apiClient = axios.create({
-  baseURL: process.env.NEXT_PUBLIC_API_URL || 'https://localhost:3001/api',
+  baseURL: process.env.NEXT_PUBLIC_API_URL || 'https://elite-backend-production.up.railway.app/api',
   headers: {
     'Content-Type': 'application/json',
   },
+  withCredentials: true,
 });
 
 // Interceptor para añadir el token de autenticación en cada petición

@@ -44,6 +44,16 @@ export interface AssignRandomShiftsDto {
   shiftPattern?: 'ROTATING' | 'FIXED' | 'CUSTOM';
 }
 
+export interface AssignShiftDto {
+  userIds: number[];
+  date: string;
+  startTime: string;
+  endTime: string;
+  shiftType?: 'MORNING' | 'AFTERNOON' | 'NIGHT' | 'FULL_DAY';
+  position?: string;
+  notes?: string;
+}
+
 export interface ThreeWeeksSchedule {
   lastWeek: Schedule[];
   currentWeek: Schedule[];
@@ -96,6 +106,12 @@ export class ScheduleService {
   // Asignar turnos aleatorios
   static async assignRandomShifts(assignData: AssignRandomShiftsDto): Promise<Schedule[]> {
     const response = await apiClient.post('/schedule/assign-random', assignData);
+    return response.data;
+  }
+
+  // Asignar turno individual
+  static async assignShift(assignData: AssignShiftDto): Promise<Schedule[]> {
+    const response = await apiClient.post('/schedule/assign-shift', assignData);
     return response.data;
   }
 

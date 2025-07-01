@@ -200,37 +200,37 @@ export default function MiHorarioPage() {
         {/* Navegación entre semanas */}
         <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 mb-8">
           <div className="flex items-center justify-between mb-6">
-            <h2 className="text-lg font-semibold text-gray-900">Navegación de Semanas</h2>
+            <h2 className="text-lg font-semibold text-gray-900">Mis Turnos - Vista de 3 Semanas</h2>
             <div className="flex items-center space-x-2">
               <button
                 onClick={() => setSelectedWeek('last')}
-                className={`px-3 py-1.5 rounded-md text-sm font-medium transition-colors ${
+                className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
                   selectedWeek === 'last'
-                    ? 'bg-red-100 text-red-700'
-                    : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                    ? 'bg-red-100 text-red-700 border border-red-200'
+                    : 'bg-gray-100 text-gray-600 hover:bg-gray-200 border border-gray-200'
                 }`}
               >
-                Semana Anterior
+                ← Semana Anterior
               </button>
               <button
                 onClick={() => setSelectedWeek('current')}
-                className={`px-3 py-1.5 rounded-md text-sm font-medium transition-colors ${
+                className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
                   selectedWeek === 'current'
-                    ? 'bg-red-100 text-red-700'
-                    : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                    ? 'bg-red-100 text-red-700 border border-red-200'
+                    : 'bg-gray-100 text-gray-600 hover:bg-gray-200 border border-gray-200'
                 }`}
               >
                 Esta Semana
               </button>
               <button
                 onClick={() => setSelectedWeek('next')}
-                className={`px-3 py-1.5 rounded-md text-sm font-medium transition-colors ${
+                className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
                   selectedWeek === 'next'
-                    ? 'bg-red-100 text-red-700'
-                    : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                    ? 'bg-red-100 text-red-700 border border-red-200'
+                    : 'bg-gray-100 text-gray-600 hover:bg-gray-200 border border-gray-200'
                 }`}
               >
-                Próxima Semana
+                Próxima Semana →
               </button>
             </div>
           </div>

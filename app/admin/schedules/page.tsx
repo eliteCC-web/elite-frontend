@@ -1,9 +1,10 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { Calendar, Clock, Plus, RefreshCw, Settings, ChevronLeft, ChevronRight } from 'lucide-react';
 import { ScheduleService, Schedule, AssignRandomShiftsDto } from '../../../services/schedule.service';
 import { User } from '../../../services/user.service';
+import AssignShiftModal from '../../../components/admin/AssignShiftModal';
 
 export default function SchedulesPage() {
   const [schedules, setSchedules] = useState<Schedule[]>([]);
@@ -13,16 +14,13 @@ export default function SchedulesPage() {
   const [assigning, setAssigning] = useState(false);
   const [selectedUsers, setSelectedUsers] = useState<number[]>([]);
   const [shiftPattern, setShiftPattern] = useState<'ROTATING' | 'FIXED' | 'CUSTOM'>('ROTATING');
+  const [assignModalOpen, setAssignModalOpen] = useState(false);
 
   const weekStart = ScheduleService.getWeekStart(selectedWeek);
 
   const daysOfWeek = ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'];
 
-  useEffect(() => {
-    loadData();
-  }, [selectedWeek]);
-
-  const loadData = async () => {
+  const loadData = useCallback(async () => {
     setLoading(true);
     try {
       const [schedulesData, colaboradoresData] = await Promise.all([
@@ -36,7 +34,11 @@ export default function SchedulesPage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [weekStart]);
+
+  useEffect(() => {
+    loadData();
+  }, [loadData]);
 
   const handleAssignRandomShifts = async () => {
     if (selectedUsers.length === 0) {
@@ -64,8 +66,8 @@ export default function SchedulesPage() {
     }
   };
 
-  const getScheduleForUserAndDay = (userId: number, date: string) => {
-    return schedules.find(s => s.userId === userId && s.date === date);
+  const getSchedulesForDay = (date: string) => {
+    return schedules.filter(s => s.date === date);
   };
 
   const navigateWeek = (direction: 'prev' | 'next') => {
@@ -111,6 +113,13 @@ export default function SchedulesPage() {
           </div>
           
           <div className="flex items-center space-x-3">
+            <button
+              onClick={() => setAssignModalOpen(true)}
+              className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-lg text-white bg-red-600 hover:bg-red-700 transition-colors"
+            >
+              <Plus className="h-4 w-4 mr-2" />
+              Asignar Turno
+            </button>
             <button
               onClick={() => loadData()}
               className="inline-flex items-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-lg text-gray-700 bg-white hover:bg-gray-50 transition-colors"
@@ -259,15 +268,36 @@ export default function SchedulesPage() {
                     {daysOfWeek.map((day, index) => {
                       const date = new Date(weekStart);
                       date.setDate(weekStart.getDate() + index);
-                      const schedule = getScheduleForUserAndDay(user.id, ScheduleService.formatDate(date));
+                      const dateStr = ScheduleService.formatDate(date);
+                      const daySchedules = getSchedulesForDay(dateStr);
                       const isToday = date.toDateString() === new Date().toDateString();
+                      const isWeekend = date.getDay() === 0; // Domingo
                       
                       return (
                         <td key={day} className="px-3 py-4 whitespace-nowrap text-center">
-                          {schedule ? (
-                            <div className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium border ${ScheduleService.getShiftTypeColor(schedule.shiftType)} ${isToday ? 'ring-2 ring-red-300' : ''}`}>
-                              <Clock className="h-3 w-3 mr-1" />
-                              {ScheduleService.formatTime(schedule.startTime)} - {ScheduleService.formatTime(schedule.endTime)}
+                          {isWeekend ? (
+                            <div className="text-xs text-gray-300">
+                              <div className="text-lg">🏖️</div>
+                              <div>Descanso</div>
+                            </div>
+                          ) : daySchedules.length > 0 ? (
+                            <div className="space-y-1">
+                              {daySchedules.map((schedule) => {
+                                const user = colaboradores.find(c => c.id === schedule.userId);
+                                return (
+                                  <div key={schedule.id} className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium border ${ScheduleService.getShiftTypeColor(schedule.shiftType)} ${isToday ? 'ring-2 ring-red-300' : ''}`}>
+                                    <Clock className="h-3 w-3 mr-1" />
+                                    <span className="mr-1">
+                                      {ScheduleService.formatTime(schedule.startTime)} - {ScheduleService.formatTime(schedule.endTime)}
+                                    </span>
+                                    {user && (
+                                      <span className="text-xs opacity-75">
+                                        ({user.firstName})
+                                      </span>
+                                    )}
+                                  </div>
+                                );
+                              })}
                             </div>
                           ) : (
                             <div className={`text-xs text-gray-400 ${isToday ? 'bg-red-50 text-red-600 rounded-md px-2 py-1' : ''}`}>
@@ -284,6 +314,16 @@ export default function SchedulesPage() {
           </div>
         </div>
       </div>
+
+      {/* Modal de asignación de turnos */}
+      <AssignShiftModal
+        isOpen={assignModalOpen}
+        onClose={() => setAssignModalOpen(false)}
+        onSuccess={() => {
+          loadData();
+          setAssignModalOpen(false);
+        }}
+      />
     </div>
   );
 } 
