@@ -46,7 +46,8 @@ export default function StoreDetailPage() {
         const firstImage = store.images[0];
         console.log('First image from array (details):', firstImage);
         
-        if (typeof firstImage === 'string') {
+        // Validar que firstImage sea un string válido
+        if (typeof firstImage === 'string' && firstImage) {
           const cleanUrl = firstImage.replace(/^"|"$/g, '');
           console.log('Clean URL from array (details):', cleanUrl);
           if (cleanUrl && cleanUrl.startsWith('http')) {
@@ -55,15 +56,18 @@ export default function StoreDetailPage() {
         }
       }
       // Si es un string (caso donde llegó como string en lugar de array)
-      else if (typeof store.images === 'string') {
+      else if (typeof store.images === 'string' && store.images) {
         console.log('Images as string (details):', store.images);
         try {
           const parsedImages = JSON.parse(store.images);
           if (Array.isArray(parsedImages) && parsedImages.length > 0) {
-            const cleanUrl = parsedImages[0].replace(/^"|"$/g, '');
-            console.log('Clean URL from parsed string (details):', cleanUrl);
-            if (cleanUrl && cleanUrl.startsWith('http')) {
-              return cleanUrl;
+            const firstParsedImage = parsedImages[0];
+            if (typeof firstParsedImage === 'string' && firstParsedImage) {
+              const cleanUrl = firstParsedImage.replace(/^"|"$/g, '');
+              console.log('Clean URL from parsed string (details):', cleanUrl);
+              if (cleanUrl && cleanUrl.startsWith('http')) {
+                return cleanUrl;
+              }
             }
           }
         } catch (e) {
@@ -222,7 +226,18 @@ export default function StoreDetailPage() {
                 {store.images && store.images.length > 1 && (
                   <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
                     {store.images.slice(1).map((image, index) => {
+                      // Validar que image sea un string válido
+                      if (typeof image !== 'string' || !image) {
+                        return null;
+                      }
+                      
                       const cleanUrl = image.replace(/^"|"$/g, '');
+                      
+                      // Validar que la URL sea válida
+                      if (!cleanUrl || !cleanUrl.startsWith('http')) {
+                        return null;
+                      }
+                      
                       return (
                         <div key={index} className="relative overflow-hidden rounded-xl">
                           <Image
@@ -234,7 +249,7 @@ export default function StoreDetailPage() {
                           />
                         </div>
                       );
-                    })}
+                    }).filter(Boolean)}
                   </div>
                 )}
               </div>
