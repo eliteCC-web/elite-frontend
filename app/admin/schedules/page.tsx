@@ -38,7 +38,9 @@ export default function SchedulesPage() {
 
   useEffect(() => {
     loadData();
-  }, [loadData]);
+  }, [selectedWeek]);
+
+
 
   const handleAssignRandomShifts = async () => {
     if (selectedUsers.length === 0) {

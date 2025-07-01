@@ -240,6 +240,8 @@ export default function AssignShiftModal({
             </label>
             <input
               type="date"
+              id="shift-date"
+              name="date"
               value={date}
               onChange={(e) => setDate(e.target.value)}
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500"
@@ -284,6 +286,8 @@ export default function AssignShiftModal({
               </label>
               <input
                 type="time"
+                id="start-time"
+                name="startTime"
                 value={startTime}
                 onChange={(e) => setStartTime(e.target.value)}
                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500"
@@ -296,6 +300,8 @@ export default function AssignShiftModal({
               </label>
               <input
                 type="time"
+                id="end-time"
+                name="endTime"
                 value={endTime}
                 onChange={(e) => setEndTime(e.target.value)}
                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500"
@@ -311,6 +317,8 @@ export default function AssignShiftModal({
             </label>
             <input
               type="text"
+              id="position"
+              name="position"
               value={position}
               onChange={(e) => setPosition(e.target.value)}
               placeholder="Ej: Cajero, Vendedor, Supervisor..."
@@ -325,6 +333,8 @@ export default function AssignShiftModal({
               Notas (opcional)
             </label>
             <textarea
+              id="notes"
+              name="notes"
               value={notes}
               onChange={(e) => setNotes(e.target.value)}
               placeholder="Información adicional sobre el turno..."

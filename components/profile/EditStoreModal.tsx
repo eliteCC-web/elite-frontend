@@ -25,8 +25,6 @@ export default function EditStoreModal({ store, isOpen, onClose, onUpdate }: Edi
     name: store.name || '',
     phone: store.phone || '',
     description: store.description || '',
-    category: store.category || '',
-    floor: store.floor || '',
     images: (store as any).images || []
   });
   const [loading, setLoading] = useState(false);
@@ -144,39 +142,7 @@ export default function EditStoreModal({ store, isOpen, onClose, onUpdate }: Edi
               </div>
             </div>
 
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Categoría
-              </label>
-              <div className="relative">
-                <Tag size={16} className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
-                <input
-                  type="text"
-                  name="category"
-                  value={formData.category}
-                  onChange={handleChange}
-                  className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
-                  placeholder="Ej: Ropa, Calzado, etc."
-                />
-              </div>
-            </div>
 
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Piso
-              </label>
-              <div className="relative">
-                <MapPin size={16} className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
-                <input
-                  type="text"
-                  name="floor"
-                  value={formData.floor}
-                  onChange={handleChange}
-                  className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
-                  placeholder="Ej: Piso 1, Piso 2, etc."
-                />
-              </div>
-            </div>
           </div>
 
           <div>
