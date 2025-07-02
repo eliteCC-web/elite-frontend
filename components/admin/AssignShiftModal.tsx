@@ -1,174 +1,107 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { X, Calendar, Clock, Users, FileText } from 'lucide-react';
-import { ScheduleService, AssignShiftDto } from '../../services/schedule.service';
-import { User } from '../../services/user.service';
+import { X, Clock, User, Calendar, Save, Loader2 } from 'lucide-react';
+import { ScheduleService } from '../../services/schedule.service';
+import { User as UserType } from '../../services/user.service';
 
 interface AssignShiftModalProps {
   isOpen: boolean;
   onClose: () => void;
   onSuccess: () => void;
-  selectedDate?: string;
-  selectedTime?: { start: string; end: string };
 }
 
-export default function AssignShiftModal({
-  isOpen,
-  onClose,
-  onSuccess,
-  selectedDate,
-  selectedTime
-}: AssignShiftModalProps) {
-  const [colaboradores, setColaboradores] = useState<User[]>([]);
-  const [selectedUsers, setSelectedUsers] = useState<number[]>([]);
-  const [date, setDate] = useState(selectedDate || '');
-  const [startTime, setStartTime] = useState(selectedTime?.start || '08:00');
-  const [endTime, setEndTime] = useState(selectedTime?.end || '18:00');
-  const [shiftType, setShiftType] = useState<'MORNING' | 'AFTERNOON' | 'NIGHT' | 'FULL_DAY'>('FULL_DAY');
-  const [position, setPosition] = useState('');
-  const [notes, setNotes] = useState('');
+export default function AssignShiftModal({ isOpen, onClose, onSuccess }: AssignShiftModalProps) {
+  const [users, setUsers] = useState<UserType[]>([]);
+  const [selectedUser, setSelectedUser] = useState<number | ''>('');
+  const [selectedDate, setSelectedDate] = useState('');
+  const [startTime, setStartTime] = useState('09:00');
+  const [endTime, setEndTime] = useState('17:00');
+  const [shiftType, setShiftType] = useState<'MORNING' | 'AFTERNOON' | 'NIGHT'>('MORNING');
   const [loading, setLoading] = useState(false);
-  const [loadingColaboradores, setLoadingColaboradores] = useState(false);
+  const [usersLoading, setUsersLoading] = useState(true);
 
   useEffect(() => {
     if (isOpen) {
-      loadColaboradores();
+      loadUsers();
+      // Set default date to today
+      const today = new Date().toISOString().split('T')[0];
+      setSelectedDate(today);
     }
   }, [isOpen]);
 
-  useEffect(() => {
-    if (selectedDate) {
-      setDate(selectedDate);
-    }
-    if (selectedTime) {
-      setStartTime(selectedTime.start);
-      setEndTime(selectedTime.end);
-    }
-  }, [selectedDate, selectedTime]);
-
-  const loadColaboradores = async () => {
-    setLoadingColaboradores(true);
+  const loadUsers = async () => {
     try {
-      const data = await ScheduleService.getColaboradores();
-      setColaboradores(data);
+      setUsersLoading(true);
+      const usersData = await ScheduleService.getColaboradores();
+      setUsers(usersData);
     } catch (error) {
-      console.error('Error loading colaboradores:', error);
+      console.error('Error loading users:', error);
     } finally {
-      setLoadingColaboradores(false);
+      setUsersLoading(false);
     }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (selectedUsers.length === 0) {
-      alert('Selecciona al menos un colaborador');
-      return;
-    }
-
-    if (!date) {
-      alert('Selecciona una fecha');
-      return;
-    }
-
-    if (startTime >= endTime) {
-      alert('La hora de inicio debe ser anterior a la hora de fin');
+    if (!selectedUser || !selectedDate) {
+      alert('Por favor completa todos los campos requeridos');
       return;
     }
 
     setLoading(true);
     try {
-      const assignData: AssignShiftDto = {
-        userIds: selectedUsers,
-        date,
+      const scheduleData = {
+        userId: selectedUser as number,
+        date: selectedDate,
         startTime,
         endTime,
-        shiftType,
-        position: position || undefined,
-        notes: notes || undefined
+        shiftType
       };
 
-      await ScheduleService.assignShift(assignData);
+      await ScheduleService.createSchedule(scheduleData);
       onSuccess();
-      onClose();
       resetForm();
     } catch (error) {
-      console.error('Error assigning shift:', error);
-      alert('Error al asignar el turno');
+      console.error('Error creating schedule:', error);
+      alert('Error al crear el turno');
     } finally {
       setLoading(false);
     }
   };
 
   const resetForm = () => {
-    setSelectedUsers([]);
-    setDate('');
-    setStartTime('08:00');
-    setEndTime('18:00');
-    setShiftType('FULL_DAY');
-    setPosition('');
-    setNotes('');
+    setSelectedUser('');
+    setSelectedDate('');
+    setStartTime('09:00');
+    setEndTime('17:00');
+    setShiftType('MORNING');
   };
 
-  const toggleUserSelection = (userId: number) => {
-    setSelectedUsers(prev => 
-      prev.includes(userId) 
-        ? prev.filter(id => id !== userId)
-        : [...prev, userId]
-    );
-  };
-
-  const selectAllUsers = () => {
-    setSelectedUsers(colaboradores.map(user => user.id));
-  };
-
-  const deselectAllUsers = () => {
-    setSelectedUsers([]);
-  };
-
-  const updateShiftType = (newShiftType: 'MORNING' | 'AFTERNOON' | 'NIGHT' | 'FULL_DAY') => {
-    setShiftType(newShiftType);
-    
-    // Actualizar horarios según el tipo de turno
-    switch (newShiftType) {
-      case 'MORNING':
-        setStartTime('08:00');
-        setEndTime('16:00');
-        break;
-      case 'AFTERNOON':
-        setStartTime('16:00');
-        setEndTime('00:00');
-        break;
-      case 'NIGHT':
-        setStartTime('00:00');
-        setEndTime('08:00');
-        break;
-      case 'FULL_DAY':
-        setStartTime('08:00');
-        setEndTime('18:00');
-        break;
-    }
+  const handleClose = () => {
+    resetForm();
+    onClose();
   };
 
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-      <div className="bg-white rounded-xl shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+      <div className="bg-white rounded-lg shadow-xl max-w-md w-full mx-4 max-h-[90vh] overflow-y-auto">
         {/* Header */}
         <div className="flex items-center justify-between p-6 border-b border-gray-200">
           <div className="flex items-center space-x-3">
             <div className="p-2 bg-red-100 rounded-lg">
-              <Calendar className="h-6 w-6 text-red-600" />
+              <Clock className="h-5 w-5 text-red-600" />
             </div>
             <div>
-              <h2 className="text-xl font-bold text-gray-900">Asignar Turno</h2>
-              <p className="text-sm text-gray-600">Selecciona colaboradores y configura el horario</p>
+              <h2 className="text-lg font-semibold text-gray-900">Asignar Turno</h2>
+              <p className="text-sm text-gray-500">Crear un nuevo horario</p>
             </div>
           </div>
           <button
-            onClick={onClose}
+            onClick={handleClose}
             className="p-2 text-gray-400 hover:text-gray-600 rounded-lg hover:bg-gray-100"
           >
             <X className="h-5 w-5" />
@@ -177,108 +110,50 @@ export default function AssignShiftModal({
 
         {/* Form */}
         <form onSubmit={handleSubmit} className="p-6 space-y-6">
-          {/* Colaboradores */}
+          {/* Colaborador */}
           <div>
-                                      <div className="flex items-center justify-between mb-3">
-               <div className="block text-sm font-medium text-gray-700 flex items-center gap-2">
-                 <Users className="h-4 w-4" />
-                 Colaboradores
-               </div>
-               <div className="flex gap-2">
-                 <button
-                   type="button"
-                   onClick={selectAllUsers}
-                   className="text-xs px-2 py-1 bg-blue-100 text-blue-700 rounded hover:bg-blue-200"
-                 >
-                   Seleccionar todos
-                 </button>
-                 <button
-                   type="button"
-                   onClick={deselectAllUsers}
-                   className="text-xs px-2 py-1 bg-gray-100 text-gray-700 rounded hover:bg-gray-200"
-                 >
-                   Deseleccionar
-                 </button>
-               </div>
-             </div>
-            
-            {loadingColaboradores ? (
-              <div className="text-center py-4">
-                <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-red-600 mx-auto"></div>
-                <p className="text-sm text-gray-500 mt-2">Cargando colaboradores...</p>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              <User className="h-4 w-4 inline mr-1" />
+              Colaborador *
+            </label>
+            {usersLoading ? (
+              <div className="flex items-center space-x-2 text-sm text-gray-500">
+                <Loader2 className="h-4 w-4 animate-spin" />
+                <span>Cargando colaboradores...</span>
               </div>
             ) : (
-              <div className="grid grid-cols-2 gap-2 max-h-40 overflow-y-auto border border-gray-200 rounded-lg p-3">
-                {colaboradores.map((user) => (
-                  <label
-                    key={user.id}
-                    className={`flex items-center space-x-2 p-2 rounded cursor-pointer transition-colors ${
-                      selectedUsers.includes(user.id)
-                        ? 'bg-red-50 border border-red-200'
-                        : 'bg-gray-50 border border-gray-200 hover:bg-gray-100'
-                    }`}
-                  >
-                    <input
-                      type="checkbox"
-                      checked={selectedUsers.includes(user.id)}
-                      onChange={() => toggleUserSelection(user.id)}
-                      className="rounded border-gray-300 text-red-600 focus:ring-red-500"
-                    />
-                    <span className="text-sm font-medium text-gray-700">
-                      {user.firstName} {user.lastName}
-                    </span>
-                  </label>
+              <select
+                value={selectedUser}
+                onChange={(e) => setSelectedUser(e.target.value ? Number(e.target.value) : '')}
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500"
+                required
+              >
+                <option value="">Seleccionar colaborador</option>
+                {users.map((user) => (
+                  <option key={user.id} value={user.id}>
+                    {user.firstName} {user.lastName}
+                  </option>
                 ))}
-              </div>
+              </select>
             )}
           </div>
 
           {/* Fecha */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
-              Fecha
+              <Calendar className="h-4 w-4 inline mr-1" />
+              Fecha *
             </label>
             <input
               type="date"
-              id="shift-date"
-              name="date"
-              value={date}
-              onChange={(e) => setDate(e.target.value)}
+              value={selectedDate}
+              onChange={(e) => setSelectedDate(e.target.value)}
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500"
               required
             />
           </div>
 
-          {/* Tipo de Turno */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Tipo de Turno
-            </label>
-            <div className="grid grid-cols-2 gap-2">
-              {[
-                { value: 'MORNING', label: 'Mañana', time: '08:00 - 16:00' },
-                { value: 'AFTERNOON', label: 'Tarde', time: '16:00 - 00:00' },
-                { value: 'NIGHT', label: 'Noche', time: '00:00 - 08:00' },
-                { value: 'FULL_DAY', label: 'Día completo', time: '08:00 - 18:00' }
-              ].map((type) => (
-                <button
-                  key={type.value}
-                  type="button"
-                  onClick={() => updateShiftType(type.value as 'MORNING' | 'AFTERNOON' | 'NIGHT' | 'FULL_DAY')}
-                  className={`p-3 rounded-lg border text-left transition-colors ${
-                    shiftType === type.value
-                      ? 'border-red-500 bg-red-50 text-red-700'
-                      : 'border-gray-200 bg-white hover:bg-gray-50'
-                  }`}
-                >
-                  <div className="font-medium">{type.label}</div>
-                  <div className="text-xs text-gray-500">{type.time}</div>
-                </button>
-              ))}
-            </div>
-          </div>
-
-          {/* Horarios personalizados */}
+          {/* Horario */}
           <div className="grid grid-cols-2 gap-4">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -286,8 +161,6 @@ export default function AssignShiftModal({
               </label>
               <input
                 type="time"
-                id="start-time"
-                name="startTime"
                 value={startTime}
                 onChange={(e) => setStartTime(e.target.value)}
                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500"
@@ -300,8 +173,6 @@ export default function AssignShiftModal({
               </label>
               <input
                 type="time"
-                id="end-time"
-                name="endTime"
                 value={endTime}
                 onChange={(e) => setEndTime(e.target.value)}
                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500"
@@ -310,62 +181,45 @@ export default function AssignShiftModal({
             </div>
           </div>
 
-          {/* Posición */}
+          {/* Tipo de turno */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
-              Posición (opcional)
+              Tipo de turno
             </label>
-            <input
-              type="text"
-              id="position"
-              name="position"
-              value={position}
-              onChange={(e) => setPosition(e.target.value)}
-              placeholder="Ej: Cajero, Vendedor, Supervisor..."
+            <select
+              value={shiftType}
+              onChange={(e) => setShiftType(e.target.value as 'MORNING' | 'AFTERNOON' | 'NIGHT')}
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500"
-            />
-          </div>
-
-          {/* Notas */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2 flex items-center gap-2">
-              <FileText className="h-4 w-4" />
-              Notas (opcional)
-            </label>
-            <textarea
-              id="notes"
-              name="notes"
-              value={notes}
-              onChange={(e) => setNotes(e.target.value)}
-              placeholder="Información adicional sobre el turno..."
-              rows={3}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500"
-            />
+            >
+              <option value="MORNING">Mañana</option>
+              <option value="AFTERNOON">Tarde</option>
+              <option value="NIGHT">Noche</option>
+            </select>
           </div>
 
           {/* Actions */}
           <div className="flex items-center justify-end space-x-3 pt-4 border-t border-gray-200">
             <button
               type="button"
-              onClick={onClose}
-              className="px-4 py-2 text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors"
+              onClick={handleClose}
+              className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
             >
               Cancelar
             </button>
             <button
               type="submit"
-              disabled={loading || selectedUsers.length === 0}
-              className="px-6 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center gap-2"
+              disabled={loading}
+              className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {loading ? (
                 <>
-                  <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
-                  Asignando...
+                  <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                  Guardando...
                 </>
               ) : (
                 <>
-                  <Clock className="h-4 w-4" />
-                  Asignar Turno
+                  <Save className="h-4 w-4 mr-2" />
+                  Guardar Turno
                 </>
               )}
             </button>

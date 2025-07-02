@@ -63,7 +63,7 @@ export default function HomePage() {
             className="object-cover"
             priority
           />
-          <div className="absolute inset-0 bg-black/60"></div>
+          <div className="absolute inset-0 bg-black/50"></div>
         </div>
 
         {/* Contenido central */}
@@ -99,24 +99,6 @@ export default function HomePage() {
                 duration={0.8}
               />
             </div>
-            
-            {/*
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Link 
-                href="/tiendas" 
-                className="btn-primary btn-lg rounded-2xl group"
-              >
-                Explorar Tiendas
-                <ArrowRight size={20} className="group-hover:translate-x-1 transition-transform duration-200" />
-              </Link>
-              <Link 
-                href="/eventos" 
-                className="btn-outline btn-lg rounded-2xl group border-white/30 text-white hover:bg-white hover:text-neutral-900"
-              >
-                Ver Eventos
-                <Calendar size={20} className="group-hover:scale-110 transition-transform duration-200" />
-              </Link>
-            </div>*/}
           </div>
         </div>
 

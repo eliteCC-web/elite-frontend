@@ -6,7 +6,7 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import { useState, useEffect } from 'react';
-import { Menu, X, ShoppingBag, Calendar, User, LogOut, Shield, Users, MessageCircle, ChevronDown, Building } from 'lucide-react';
+import { Menu, X, ShoppingBag, Calendar, User, LogOut, Shield, Users, MessageCircle, ChevronDown, Building, Facebook, Instagram } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 import { cn, getPublicUrl } from '@/lib/utils';
 import assets from '@/public/assets';
@@ -128,6 +128,18 @@ export default function Navbar() {
                 </span>
               </div>
             </Link>
+
+            {/* Social Media Icons */}
+            <div className={cn(
+              "hidden md:flex items-center gap-2 transition-all duration-500 ease-in-out",
+              isHomePage 
+                ? (isScrolled ? "opacity-100 transform translate-y-0" : "opacity-0 transform translate-y-2 pointer-events-none")
+                : "opacity-100 transform translate-y-0"
+            )}>
+              <SocialLink href="https://www.facebook.com/CentroComercialElite" icon={<Facebook size={16} />} isScrolled={isScrolled} />
+              <SocialLink href="https://www.instagram.com/elitecentrocomercial/" icon={<Instagram size={16} />} isScrolled={isScrolled} />
+              <SocialLink href="https://www.tiktok.com/@elitecali?_t=ZS-8xgMvJe8Nlq&_r=1" icon={<TikTokIcon />} isScrolled={isScrolled} />
+            </div>
 
             {/* Desktop Navigation */}
             <nav className={cn(
@@ -427,5 +439,31 @@ function MobileNavLink({ href, children, onClick }: { href: string; children: Re
     >
       {children}
     </Link>
+  );
+}
+
+function SocialLink({ href, icon, isScrolled }: { href: string; icon: React.ReactNode; isScrolled: boolean }) {
+  return (
+    <a 
+      href={href} 
+      target="_blank" 
+      rel="noopener noreferrer"
+      className={cn(
+        "w-8 h-8 rounded-xl flex items-center justify-center transition-all duration-200 hover:scale-110",
+        isScrolled 
+          ? "bg-neutral-100 hover:bg-neutral-200 text-neutral-600 hover:text-neutral-900" 
+          : "bg-white/20 backdrop-blur-sm border border-white/30 text-white hover:bg-white/30"
+      )}
+    >
+      {icon}
+    </a>
+  );
+}
+
+function TikTokIcon() {
+  return (
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+      <path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.2 1.74 2.89 2.89 0 0 1 2.31-4.64 2.93 2.93 0 0 1 .88.13V9.4a6.84 6.84 0 0 0-1-.05A6.33 6.33 0 0 0 5 20.1a6.34 6.34 0 0 0 10.86-4.43v-7a8.16 8.16 0 0 0 4.77 1.52v-3.4a4.85 4.85 0 0 1-1-.1z"/>
+    </svg>
   );
 }

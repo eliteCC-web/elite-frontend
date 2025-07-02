@@ -7,7 +7,7 @@ import { useEffect, useState } from "react"
 import Image from "next/image"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
-import { ChevronLeft, Phone, MapPin, Clock, Star, Heart, Share2, ArrowRight, Building, Calendar, Users, Tag } from "lucide-react"
+import { ChevronLeft, Phone, MapPin, Clock, Star, Heart, Share2, ArrowRight, Building, Calendar, Users, Tag, MessageCircle } from "lucide-react"
 import StoreService from "@/services/store.service"
 import type { Store } from "@/services/store.service"
 import { getPublicUrl } from "@/lib/utils"
@@ -33,7 +33,7 @@ export default async function ServiceDetailPage({ params }: { params: Promise<{ 
     }
   }
 
-  useEffect(() => {
+    useEffect(() => {
     fetchService()
   }, [id])
 
@@ -54,6 +54,8 @@ export default async function ServiceDetailPage({ params }: { params: Promise<{ 
       alert('Enlace copiado al portapapeles')
     }
   }
+
+  
 
   const formatSchedule = (schedule: any) => {
     if (!schedule || !Array.isArray(schedule)) return "Horario no disponible"
@@ -318,10 +320,15 @@ export default async function ServiceDetailPage({ params }: { params: Promise<{ 
                 </div>
                 
                 <div className="mt-6 pt-6 border-t border-neutral-100">
-                  <button className="btn btn-primary w-full">
-                    <Phone size={16} />
-                    Llamar Ahora
-                  </button>
+                  <a 
+                    href={`https://wa.me/+57${service.phone?.replace(/\D/g, '')}?text=Hola, me interesa saber más sobre ${service.name}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="btn btn-primary w-full inline-flex items-center justify-center"
+                  >
+                    <MessageCircle size={16} />
+                    Mandar mensaje
+                  </a>
                 </div>
               </div>
               

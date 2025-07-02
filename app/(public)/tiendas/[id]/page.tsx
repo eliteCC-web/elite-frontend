@@ -5,7 +5,7 @@ import { useEffect, useState } from "react"
 import { useParams } from "next/navigation"
 import Image from "next/image"
 import Link from "next/link"
-import { ArrowLeft, Phone, MapPin, Clock, Star, Heart, Share2, Calendar } from "lucide-react"
+import { ArrowLeft, Phone, MapPin, Clock, Star, Heart, Share2, Calendar, MessageCircle } from "lucide-react"
 import StoreService from "@/services/store.service"
 import type { Store } from "@/services/store.service"
 
@@ -329,14 +329,15 @@ export default function StoreDetailPage() {
                   Acciones
                 </h3>
                 <div className="space-y-3">
-                  <button className="w-full btn-primary">
-                    <Phone size={16} className="mr-2" />
-                    Llamar
-                  </button>
-                  <button className="w-full btn-outline">
-                    <MapPin size={16} className="mr-2" />
-                    Ver en Mapa
-                  </button>
+                  <a 
+                    href={`https://wa.me/+57${details.phone.replace(/\D/g, '')}?text=Hola, me interesa saber más sobre ${store.name}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="w-full btn-primary inline-flex items-center justify-center"
+                  >
+                    <MessageCircle size={16} className="mr-2" />
+                    Mandar mensaje
+                  </a>
                   <button className="w-full btn-outline">
                     <Share2 size={16} className="mr-2" />
                     Compartir
