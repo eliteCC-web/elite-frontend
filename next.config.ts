@@ -1,13 +1,14 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
-  // Configuración simplificada para Railway
+  // Configuración optimizada para Railway
   experimental: {
     optimizeCss: true,
   },
   images: {
     domains: ['res.cloudinary.com', 'images.unsplash.com', 'pmulriauzstmyeslfvpn.supabase.co'],
   },
+  // Configuración para manejar SSL en Railway
   async headers() {
     return [
       {
@@ -15,11 +16,11 @@ const nextConfig = {
         headers: [
           {
             key: 'Strict-Transport-Security',
-            value: 'max-age=31536000; includeSubDomains'
+            value: 'max-age=31536000; includeSubDomains; preload'
           },
           {
             key: 'Content-Security-Policy',
-            value: "upgrade-insecure-requests; default-src 'self' https:; script-src 'self' 'unsafe-eval' 'unsafe-inline' https:; style-src 'self' 'unsafe-inline' https:; font-src 'self' https:; img-src 'self' data: https: http:; connect-src 'self' https: wss:; frame-src 'self' https:; object-src 'none'; base-uri 'self'; form-action 'self';"
+            value: "default-src 'self'; script-src 'self' 'unsafe-eval' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data: https: http:; connect-src 'self' https: wss:; frame-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self';"
           },
           {
             key: 'X-Content-Type-Options',
@@ -27,16 +28,23 @@ const nextConfig = {
           },
           {
             key: 'X-Frame-Options',
-            value: 'DENY'
+            value: 'SAMEORIGIN'
           },
           {
             key: 'X-XSS-Protection',
             value: '1; mode=block'
+          },
+          {
+            key: 'Referrer-Policy',
+            value: 'strict-origin-when-cross-origin'
           }
         ],
       },
     ]
-  }
+  },
+  // Configuración para Railway
+  output: 'standalone',
+  poweredByHeader: false,
 };
 
 export default nextConfig;
