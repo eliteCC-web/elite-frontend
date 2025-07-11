@@ -74,7 +74,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       console.log('Usuario logueado:', response.user);
       
       // Redirigir según el rol
-      if (hasUserRole(response.user, 'ADMIN') || hasUserRole(response.user, 'COLABORADOR')) {
+      if (hasUserRole(response.user, 'ADMIN')) {
         router.push('/admin/dashboard');
       } else {
         router.push('/');
