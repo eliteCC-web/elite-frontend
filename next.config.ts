@@ -9,7 +9,6 @@ const nextConfig = {
     domains: ['res.cloudinary.com', 'images.unsplash.com', 'pmulriauzstmyeslfvpn.supabase.co'],
   },
   // Configuración para Railway
-  output: 'standalone',
   poweredByHeader: false,
   // Configuración para manejar SSL en Railway
   async headers() {

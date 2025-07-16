@@ -7,6 +7,7 @@ export function middleware(request: NextRequest) {
     const hostname = request.headers.get('host')
     const protocol = request.headers.get('x-forwarded-proto')
     
+    // Only redirect if we're not already on HTTPS
     if (protocol === 'http') {
       const url = request.nextUrl.clone()
       url.protocol = 'https'

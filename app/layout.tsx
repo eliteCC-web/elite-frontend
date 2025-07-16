@@ -13,6 +13,14 @@ const poppins = Poppins({
   display: "swap",
 })
 
+// Get the base URL dynamically
+const getBaseUrl = () => {
+  if (process.env.VERCEL_URL) return `https://${process.env.VERCEL_URL}`
+  if (process.env.RAILWAY_STATIC_URL) return `https://${process.env.RAILWAY_STATIC_URL}`
+  if (process.env.NEXT_PUBLIC_BASE_URL) return process.env.NEXT_PUBLIC_BASE_URL
+  return 'https://elite-frontend-production.up.railway.app'
+}
+
 export const metadata: Metadata = {
   title: "elite Centro Comercial",
   description: "Descubre una experiencia de compra única donde la elegancia se encuentra con la innovación",
@@ -25,14 +33,14 @@ export const metadata: Metadata = {
     address: false,
     telephone: false,
   },
-  metadataBase: new URL('https://elite-frontend-production.up.railway.app'),
+  metadataBase: new URL(getBaseUrl()),
   alternates: {
     canonical: '/',
   },
   openGraph: {
     title: "elite Centro Comercial",
     description: "Descubre una experiencia de compra única donde la elegancia se encuentra con la innovación",
-    url: 'https://elite-frontend-production.up.railway.app',
+    url: getBaseUrl(),
     siteName: 'elite Centro Comercial',
     locale: 'es_CO',
     type: 'website',

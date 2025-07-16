@@ -16,7 +16,8 @@
     "production": {
       "variables": {
         "PORT": "3000",
-        "NODE_ENV": "production"
+        "NODE_ENV": "production",
+        "NEXT_PUBLIC_BASE_URL": "https://elite-frontend-production.up.railway.app"
       }
     }
   }

@@ -23,6 +23,17 @@ app.prepare().then(() => {
 
       console.log(`Request: ${req.method} ${pathname}`);
       
+      // Add security headers for Railway
+      res.setHeader('X-Content-Type-Options', 'nosniff');
+      res.setHeader('X-Frame-Options', 'SAMEORIGIN');
+      res.setHeader('X-XSS-Protection', '1; mode=block');
+      res.setHeader('Referrer-Policy', 'strict-origin-when-cross-origin');
+      
+      // Handle Railway's proxy headers
+      if (req.headers['x-forwarded-proto'] === 'https') {
+        res.setHeader('Strict-Transport-Security', 'max-age=31536000; includeSubDomains; preload');
+      }
+      
       await handle(req, res, parsedUrl);
     } catch (err) {
       console.error('Error occurred handling', req.url, err);
@@ -37,5 +48,7 @@ app.prepare().then(() => {
     .listen(port, hostname, () => {
       console.log(`> Ready on http://${hostname}:${port}`);
       console.log(`> Health check available at http://${hostname}:${port}/api/health`);
+      console.log(`> Environment: ${process.env.NODE_ENV || 'development'}`);
+      console.log(`> Port: ${port}`);
     });
 }); 
