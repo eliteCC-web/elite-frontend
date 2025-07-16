@@ -52,6 +52,9 @@ export default function AssignShiftModal({ isOpen, onClose, onSuccess }: AssignS
 
     setLoading(true);
     try {
+      console.log('Selected date:', selectedDate);
+      console.log('Date object:', new Date(selectedDate));
+      
       const scheduleData = {
         userId: selectedUser as number,
         date: selectedDate,
@@ -60,6 +63,7 @@ export default function AssignShiftModal({ isOpen, onClose, onSuccess }: AssignS
         shiftType
       };
 
+      console.log('Sending schedule data:', scheduleData);
       await ScheduleService.createSchedule(scheduleData);
       onSuccess();
       resetForm();

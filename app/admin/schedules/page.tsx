@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { Calendar, Clock, Plus, RefreshCw, ChevronLeft, ChevronRight, Bell, Users } from 'lucide-react';
+import { Calendar, Clock, Plus, RefreshCw, ChevronLeft, ChevronRight, Bell, Users, Trash2 } from 'lucide-react';
 import { ScheduleService, Schedule } from '../../../services/schedule.service';
 import { User as UserType } from '../../../services/user.service';
 import AssignShiftModal from '../../../components/admin/AssignShiftModal';
@@ -62,9 +62,24 @@ export default function SchedulesPage() {
     setSelectedWeek(newDate);
   };
 
+  const handleDeleteSchedule = async (scheduleId: number) => {
+    if (!confirm('¿Estás seguro de que quieres eliminar este turno?')) {
+      return;
+    }
+
+    try {
+      await ScheduleService.deleteSchedule(scheduleId);
+      // Recargar los datos
+      window.location.reload();
+    } catch (error) {
+      console.error('Error deleting schedule:', error);
+      alert('Error al eliminar el turno');
+    }
+  };
+
   const normalizeDate = (dateString: string) => {
-    // Asegurar que la fecha esté en formato YYYY-MM-DD
-    const date = new Date(dateString);
+    // Asegurar que la fecha esté en formato YYYY-MM-DD sin problemas de zona horaria
+    const date = new Date(dateString + 'T00:00:00');
     return date.toISOString().split('T')[0];
   };
 
@@ -310,9 +325,16 @@ export default function SchedulesPage() {
                         daySchedules.map((schedule) => (
                           <div
                             key={schedule.id}
-                            className={`p-2 rounded-md border text-xs ${getShiftTypeColor(schedule.shiftType)}`}
+                            className={`p-2 rounded-md border text-xs ${getShiftTypeColor(schedule.shiftType)} relative group`}
                           >
-                            <div className="flex items-center justify-between mb-1">
+                            <button
+                              onClick={() => handleDeleteSchedule(schedule.id)}
+                              className="absolute top-1 right-1 p-1 text-red-600 hover:text-red-800 hover:bg-red-100 rounded opacity-0 group-hover:opacity-100 transition-opacity"
+                              title="Eliminar turno"
+                            >
+                              <Trash2 className="h-3 w-3" />
+                            </button>
+                            <div className="flex items-center justify-between mb-1 pr-6">
                               <span className="font-medium">
                                 {schedule.user?.firstName} {schedule.user?.lastName}
                               </span>
