@@ -1,10 +1,11 @@
 'use client';
 
 import React, { useState, useEffect, useCallback } from 'react';
-import { Calendar, Clock, Plus, RefreshCw, Settings, ChevronLeft, ChevronRight } from 'lucide-react';
+import { Calendar, Clock, Plus, RefreshCw, Settings, ChevronLeft, ChevronRight, Bell } from 'lucide-react';
 import { ScheduleService, Schedule, AssignRandomShiftsDto } from '../../../services/schedule.service';
 import { User } from '../../../services/user.service';
 import AssignShiftModal from '../../../components/admin/AssignShiftModal';
+import ScheduleNotificationModal from '../../../components/admin/ScheduleNotificationModal';
 
 export default function SchedulesPage() {
   const [schedules, setSchedules] = useState<Schedule[]>([]);
@@ -15,6 +16,7 @@ export default function SchedulesPage() {
   const [selectedUsers, setSelectedUsers] = useState<number[]>([]);
   const [shiftPattern, setShiftPattern] = useState<'ROTATING' | 'FIXED' | 'CUSTOM'>('ROTATING');
   const [assignModalOpen, setAssignModalOpen] = useState(false);
+  const [notificationModalOpen, setNotificationModalOpen] = useState(false);
 
   const weekStart = ScheduleService.getWeekStart(selectedWeek);
 
@@ -38,9 +40,7 @@ export default function SchedulesPage() {
 
   useEffect(() => {
     loadData();
-  }, [selectedWeek]);
-
-
+  }, [loadData]);
 
   const handleAssignRandomShifts = async () => {
     if (selectedUsers.length === 0) {
@@ -115,6 +115,13 @@ export default function SchedulesPage() {
           </div>
           
           <div className="flex items-center space-x-3">
+            <button
+              onClick={() => setNotificationModalOpen(true)}
+              className="inline-flex items-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-lg text-gray-700 bg-white hover:bg-gray-50 transition-colors"
+            >
+              <Bell className="h-4 w-4 mr-2" />
+              Notificaciones
+            </button>
             <button
               onClick={() => setAssignModalOpen(true)}
               className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-lg text-white bg-red-600 hover:bg-red-700 transition-colors"
@@ -324,6 +331,17 @@ export default function SchedulesPage() {
         onSuccess={() => {
           loadData();
           setAssignModalOpen(false);
+        }}
+      />
+
+      {/* Modal de notificaciones */}
+      <ScheduleNotificationModal
+        isOpen={notificationModalOpen}
+        onClose={() => setNotificationModalOpen(false)}
+        schedules={schedules}
+        onSuccess={() => {
+          loadData();
+          setNotificationModalOpen(false);
         }}
       />
     </div>

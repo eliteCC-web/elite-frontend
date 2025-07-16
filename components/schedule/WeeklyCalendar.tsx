@@ -43,6 +43,21 @@ export default function WeeklyCalendar({
     }
   };
 
+  const getShiftTypeLabel = (shiftType: string): string => {
+    switch (shiftType) {
+      case 'MORNING':
+        return 'Mañana';
+      case 'AFTERNOON':
+        return 'Tarde';
+      case 'NIGHT':
+        return 'Noche';
+      case 'FULL_DAY':
+        return 'Día completo';
+      default:
+        return 'Sin definir';
+    }
+  };
+
   const formatWeekRange = () => {
     const weekEnd = new Date(weekStart);
     weekEnd.setDate(weekStart.getDate() + 6);
@@ -149,7 +164,7 @@ export default function WeeklyCalendar({
                       {ScheduleService.formatTime(schedule.startTime)} - {ScheduleService.formatTime(schedule.endTime)}
                     </div>
                     <div className="text-xs text-gray-600 text-center">
-                      {ScheduleService.getShiftTypeLabel(schedule.shiftType)}
+                      {getShiftTypeLabel(schedule.shiftType)}
                     </div>
                     {schedule.position && (
                       <div className="text-xs text-gray-500 text-center">

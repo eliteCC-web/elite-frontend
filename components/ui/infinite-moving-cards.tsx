@@ -38,7 +38,7 @@ export const InfiniteMovingCards = ({
 
   useEffect(() => {
     addAnimation();
-  }, [isMobile]); // Re-ejecutar cuando cambie el estado móvil
+  }, [addAnimation]);
 
   const [start, setStart] = useState(false);
   

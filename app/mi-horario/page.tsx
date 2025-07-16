@@ -1,10 +1,16 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { Calendar, Clock, User, CalendarDays, TrendingUp, AlertCircle } from 'lucide-react';
-import { ScheduleService, ThreeWeeksSchedule } from '../../services/schedule.service';
+import { ScheduleService } from '../../services/schedule.service';
 import { useAuth } from '../../hooks/useAuth';
 import WeeklyCalendar from '../../components/schedule/WeeklyCalendar';
+
+interface ThreeWeeksSchedule {
+  lastWeek: any[];
+  currentWeek: any[];
+  nextWeek: any[];
+}
 
 export default function MiHorarioPage() {
   const { user } = useAuth();
@@ -13,14 +19,10 @@ export default function MiHorarioPage() {
   const [selectedWeek, setSelectedWeek] = useState<'last' | 'current' | 'next'>('current');
   const [currentWeekStart, setCurrentWeekStart] = useState<Date>(new Date());
 
-  useEffect(() => {
-    loadSchedule();
-  }, []);
-
-  const loadSchedule = async () => {
+  const loadSchedule = useCallback(async () => {
     setLoading(true);
     try {
-      const data = await ScheduleService.getMyThreeWeeksSchedule();
+      const data = await ScheduleService.getUserThreeWeeksSchedule(user?.id || 0);
       setScheduleData(data);
       setCurrentWeekStart(ScheduleService.getWeekStart(new Date()));
     } catch (error) {
@@ -28,7 +30,11 @@ export default function MiHorarioPage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [user?.id]);
+
+  useEffect(() => {
+    loadSchedule();
+  }, [loadSchedule]);
 
   const getCurrentWeekSchedules = () => {
     if (!scheduleData) return [];
@@ -80,6 +86,21 @@ export default function MiHorarioPage() {
     }
   };
 
+  const getShiftTypeLabel = (shiftType: string): string => {
+    switch (shiftType) {
+      case 'MORNING':
+        return 'Mañana';
+      case 'AFTERNOON':
+        return 'Tarde';
+      case 'NIGHT':
+        return 'Noche';
+      case 'FULL_DAY':
+        return 'Día completo';
+      default:
+        return 'Sin definir';
+    }
+  };
+
   const handleWeekChange = (direction: 'prev' | 'next') => {
     const newDate = new Date(currentWeekStart);
     if (direction === 'prev') {
@@ -97,7 +118,7 @@ export default function MiHorarioPage() {
   const getStats = () => {
     const currentSchedules = getCurrentWeekSchedules();
     const totalShifts = currentSchedules.length;
-    const totalHours = currentSchedules.reduce((total, schedule) => {
+    const totalHours = currentSchedules.reduce((total: number, schedule: any) => {
       const start = new Date(`2000-01-01T${schedule.startTime}`);
       const end = new Date(`2000-01-01T${schedule.endTime}`);
       const hours = (end.getTime() - start.getTime()) / (1000 * 60 * 60);
@@ -260,7 +281,7 @@ export default function MiHorarioPage() {
                         )}
                       </div>
                       <div className="text-sm text-gray-600">
-                        {ScheduleService.getShiftTypeLabel(schedule.shiftType)}
+                        {getShiftTypeLabel(schedule.shiftType)}
                       </div>
                     </div>
                   </div>

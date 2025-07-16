@@ -54,52 +54,55 @@ export interface AssignShiftDto {
   notes?: string;
 }
 
-export interface ThreeWeeksSchedule {
-  lastWeek: Schedule[];
-  currentWeek: Schedule[];
-  nextWeek: Schedule[];
-}
-
 export class ScheduleService {
-  // Obtener horarios del usuario actual
-  static async getMySchedule(): Promise<Schedule[]> {
-    const response = await apiClient.get('/schedule/my-schedule');
+  // Obtener todos los horarios
+  static async getAllSchedules(): Promise<Schedule[]> {
+    const response = await apiClient.get('/schedule');
     return response.data;
   }
 
-  // Obtener horarios de 3 semanas del usuario actual
-  static async getMyThreeWeeksSchedule(): Promise<ThreeWeeksSchedule> {
-    const response = await apiClient.get('/schedule/my-schedule/three-weeks');
+  // Crear un horario
+  static async createSchedule(scheduleData: CreateScheduleDto): Promise<Schedule> {
+    const response = await apiClient.post('/schedule', scheduleData);
     return response.data;
   }
 
-  // Obtener horarios de un usuario específico (admin)
-  static async getUserSchedule(userId: number): Promise<Schedule[]> {
+  // Obtener horarios de un usuario
+  static async getUserSchedules(userId: number): Promise<Schedule[]> {
     const response = await apiClient.get(`/schedule/user/${userId}`);
     return response.data;
   }
 
-  // Obtener todos los colaboradores
-  static async getColaboradores(): Promise<any[]> {
-    const response = await apiClient.get('/schedule/colaboradores');
+  // Obtener horarios de tres semanas para un usuario
+  static async getUserThreeWeeksSchedule(userId: number): Promise<{
+    lastWeek: Schedule[];
+    currentWeek: Schedule[];
+    nextWeek: Schedule[];
+  }> {
+    const response = await apiClient.get(`/schedule/user/${userId}/three-weeks`);
     return response.data;
   }
 
-  // Obtener horario semanal (admin)
+  // Obtener horarios semanales
   static async getWeeklySchedule(weekStart: string): Promise<Schedule[]> {
     const response = await apiClient.get(`/schedule/weekly?weekStart=${weekStart}`);
     return response.data;
   }
 
-  // Crear un horario
-  static async createSchedule(schedule: CreateScheduleDto): Promise<Schedule> {
-    const response = await apiClient.post('/schedule', schedule);
+  // Actualizar un horario
+  static async updateSchedule(id: number, scheduleData: Partial<CreateScheduleDto>): Promise<Schedule> {
+    const response = await apiClient.patch(`/schedule/${id}`, scheduleData);
     return response.data;
   }
 
-  // Crear horarios en lote
-  static async bulkCreateSchedules(bulkData: BulkCreateScheduleDto): Promise<Schedule[]> {
-    const response = await apiClient.post('/schedule/bulk', bulkData);
+  // Eliminar un horario
+  static async deleteSchedule(id: number): Promise<void> {
+    await apiClient.delete(`/schedule/${id}`);
+  }
+
+  // Obtener todos los colaboradores
+  static async getColaboradores(): Promise<any[]> {
+    const response = await apiClient.get('/schedule/colaboradores');
     return response.data;
   }
 
@@ -115,30 +118,30 @@ export class ScheduleService {
     return response.data;
   }
 
-  // Actualizar un horario
-  static async updateSchedule(id: number, schedule: Partial<CreateScheduleDto>): Promise<Schedule> {
-    const response = await apiClient.patch(`/schedule/${id}`, schedule);
+  // Nuevos métodos para notificaciones
+  static async sendScheduleNotification(scheduleId: number): Promise<void> {
+    await apiClient.post(`/schedule/notifications/send/${scheduleId}`);
+  }
+
+  static async sendBulkNotifications(scheduleIds: number[]): Promise<void> {
+    await apiClient.post('/schedule/notifications/send-bulk', { scheduleIds });
+  }
+
+  static async sendScheduleReminder(scheduleId: number): Promise<void> {
+    await apiClient.post(`/schedule/notifications/reminder/${scheduleId}`);
+  }
+
+  static async getPendingNotifications(userId: number): Promise<Schedule[]> {
+    const response = await apiClient.get(`/schedule/notifications/pending/${userId}`);
     return response.data;
   }
 
-  // Eliminar un horario
-  static async deleteSchedule(id: number): Promise<void> {
-    await apiClient.delete(`/schedule/${id}`);
-  }
-
-  // Utilidades para fechas
-  static getWeekStart(date: Date = new Date()): Date {
+  // Utilidades
+  static getWeekStart(date: Date): Date {
     const d = new Date(date);
     const day = d.getDay();
-    const diff = d.getDate() - day;
+    const diff = d.getDate() - day + (day === 0 ? -6 : 1); // Ajustar para que la semana empiece en lunes
     return new Date(d.setDate(diff));
-  }
-
-  static getWeekEnd(date: Date = new Date()): Date {
-    const weekStart = this.getWeekStart(date);
-    const weekEnd = new Date(weekStart);
-    weekEnd.setDate(weekEnd.getDate() + 6);
-    return weekEnd;
   }
 
   static formatDate(date: Date): string {
@@ -146,36 +149,21 @@ export class ScheduleService {
   }
 
   static formatTime(time: string): string {
-    return time.substring(0, 5);
+    return time.substring(0, 5); // Formato HH:MM
   }
 
   static getShiftTypeColor(shiftType: string): string {
     switch (shiftType) {
       case 'MORNING':
-        return 'bg-yellow-100 text-yellow-800 border-yellow-200';
+        return 'bg-blue-100 text-blue-800 border-blue-200';
       case 'AFTERNOON':
         return 'bg-orange-100 text-orange-800 border-orange-200';
       case 'NIGHT':
-        return 'bg-blue-100 text-blue-800 border-blue-200';
+        return 'bg-purple-100 text-purple-800 border-purple-200';
       case 'FULL_DAY':
         return 'bg-green-100 text-green-800 border-green-200';
       default:
         return 'bg-gray-100 text-gray-800 border-gray-200';
-    }
-  }
-
-  static getShiftTypeLabel(shiftType: string): string {
-    switch (shiftType) {
-      case 'MORNING':
-        return 'Mañana';
-      case 'AFTERNOON':
-        return 'Tarde';
-      case 'NIGHT':
-        return 'Noche';
-      case 'FULL_DAY':
-        return 'Día completo';
-      default:
-        return 'Sin definir';
     }
   }
 } 
