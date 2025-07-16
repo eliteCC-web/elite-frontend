@@ -38,6 +38,7 @@ export default function SchedulesPage() {
         // Log para diagnosticar el problema de los turnos
         console.log('Total schedules received:', schedulesData.length);
         console.log('Week start:', weekStartFormatted);
+        console.log('Sample schedule dates:', schedulesData.slice(0, 3).map(s => ({ id: s.id, date: s.date, dateType: typeof s.date })));
         
         setSchedules(schedulesData);
         setColaboradores(colaboradoresData);
@@ -79,14 +80,31 @@ export default function SchedulesPage() {
 
   const normalizeDate = (dateString: string) => {
     // Asegurar que la fecha esté en formato YYYY-MM-DD sin problemas de zona horaria
-    const date = new Date(dateString + 'T00:00:00');
-    return date.toISOString().split('T')[0];
+    try {
+      // Si la fecha ya está en formato YYYY-MM-DD, devolverla tal como está
+      if (/^\d{4}-\d{2}-\d{2}$/.test(dateString)) {
+        return dateString;
+      }
+      
+      // Si no, intentar parsear la fecha
+      const date = new Date(dateString);
+      if (isNaN(date.getTime())) {
+        console.error('Invalid date:', dateString);
+        return dateString; // Devolver la original si no se puede parsear
+      }
+      
+      return date.toISOString().split('T')[0];
+    } catch (error) {
+      console.error('Error normalizing date:', dateString, error);
+      return dateString; // Devolver la original si hay error
+    }
   };
 
   const getSchedulesForDay = (date: string) => {
     const normalizedTargetDate = normalizeDate(date);
     const daySchedules = schedules.filter(s => {
       const normalizedScheduleDate = normalizeDate(s.date);
+      console.log(`Comparing: "${normalizedScheduleDate}" with "${normalizedTargetDate}"`);
       return normalizedScheduleDate === normalizedTargetDate;
     });
     

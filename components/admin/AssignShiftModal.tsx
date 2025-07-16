@@ -53,11 +53,17 @@ export default function AssignShiftModal({ isOpen, onClose, onSuccess }: AssignS
     setLoading(true);
     try {
       console.log('Selected date:', selectedDate);
-      console.log('Date object:', new Date(selectedDate));
+      
+      // Agregar un día a la fecha seleccionada para compensar el problema de zona horaria
+      const selectedDateObj = new Date(selectedDate);
+      selectedDateObj.setDate(selectedDateObj.getDate() + 1);
+      const adjustedDate = selectedDateObj.toISOString().split('T')[0];
+      
+      console.log('Adjusted date (added 1 day):', adjustedDate);
       
       const scheduleData = {
         userId: selectedUser as number,
-        date: selectedDate,
+        date: adjustedDate,
         startTime,
         endTime,
         shiftType
