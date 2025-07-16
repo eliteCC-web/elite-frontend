@@ -7,10 +7,12 @@
     "dev:clean": "npm run clean && next dev",
     "build": "next build",
     "build:clean": "npm run clean && next build",
-    "start": "next start",
+    "start": "next start -p $PORT",
+    "start:railway": "node server.js",
     "lint": "next lint",
     "clean": "if exist .next rmdir /s /q .next && if exist node_modules\\.cache rmdir /s /q node_modules\\.cache",
-    "clean:all": "if exist .next rmdir /s /q .next && if exist node_modules\\.cache rmdir /s /q node_modules\\.cache && if exist node_modules rmdir /s /q node_modules && npm install"
+    "clean:all": "if exist .next rmdir /s /q .next && if exist node_modules\\.cache rmdir /s /q node_modules\\.cache && if exist node_modules rmdir /s /q node_modules && npm install",
+    "check-deploy": "node scripts/check-deploy.js"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.50.1",

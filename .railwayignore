@@ -1,6 +1,5 @@
 # Archivos a ignorar en Railway
 node_modules/
-.next/
 .git/
 *.log
 .env.local
