@@ -35,6 +35,10 @@ export default function SchedulesPage() {
         console.log('Schedules data:', schedulesData);
         console.log('Colaboradores data:', colaboradoresData);
         
+        // Log para diagnosticar el problema de los turnos
+        console.log('Total schedules received:', schedulesData.length);
+        console.log('Week start:', weekStartFormatted);
+        
         setSchedules(schedulesData);
         setColaboradores(colaboradoresData);
       } catch (error) {
@@ -58,14 +62,31 @@ export default function SchedulesPage() {
     setSelectedWeek(newDate);
   };
 
+  const normalizeDate = (dateString: string) => {
+    // Asegurar que la fecha esté en formato YYYY-MM-DD
+    const date = new Date(dateString);
+    return date.toISOString().split('T')[0];
+  };
+
   const getSchedulesForDay = (date: string) => {
-    return schedules.filter(s => s.date === date);
+    const normalizedTargetDate = normalizeDate(date);
+    const daySchedules = schedules.filter(s => {
+      const normalizedScheduleDate = normalizeDate(s.date);
+      return normalizedScheduleDate === normalizedTargetDate;
+    });
+    
+    if (daySchedules.length > 0) {
+      console.log(`Found ${daySchedules.length} schedules for ${normalizedTargetDate}`);
+    }
+    return daySchedules;
   };
 
   const getDayDate = (dayIndex: number) => {
     const date = new Date(weekStart);
     date.setDate(weekStart.getDate() + dayIndex);
-    return ScheduleService.formatDate(date);
+    const formattedDate = ScheduleService.formatDate(date);
+    console.log(`Day ${dayIndex} (${daysOfWeek[dayIndex]}): ${formattedDate}`);
+    return formattedDate;
   };
 
   const getShiftTypeColor = (shiftType: string) => {

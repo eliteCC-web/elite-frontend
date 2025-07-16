@@ -156,7 +156,7 @@ export default function ScheduleNotificationModal({
           {/* Lista de turnos */}
           <div className="max-h-96 overflow-y-auto border border-gray-200 rounded-lg">
             <div className="bg-gray-50 px-4 py-3 border-b border-gray-200">
-              <div className="grid grid-cols-12 gap-4 text-sm font-medium text-gray-700">
+              <div className="grid grid-cols-1 sm:grid-cols-12 gap-2 sm:gap-4 text-sm font-medium text-gray-700">
                 <div className="col-span-1">✓</div>
                 <div className="col-span-3">Colaborador</div>
                 <div className="col-span-2">Fecha</div>
@@ -169,7 +169,7 @@ export default function ScheduleNotificationModal({
             <div className="divide-y divide-gray-200">
               {schedules.map((schedule) => (
                 <div key={schedule.id} className="px-4 py-3 hover:bg-gray-50">
-                  <div className="grid grid-cols-12 gap-4 items-center">
+                  <div className="grid grid-cols-1 sm:grid-cols-12 gap-2 sm:gap-4 items-center">
                     <div className="col-span-1">
                       <input
                         type="checkbox"
@@ -183,9 +183,12 @@ export default function ScheduleNotificationModal({
                         <div className="h-8 w-8 rounded-full bg-gray-200 flex items-center justify-center text-sm font-medium">
                           {schedule.user?.firstName?.charAt(0)}{schedule.user?.lastName?.charAt(0)}
                         </div>
-                        <div>
-                          <div className="text-sm font-medium text-gray-900">
+                        <div className="min-w-0 flex-1">
+                          <div className="text-sm font-medium text-gray-900 truncate">
                             {schedule.user?.firstName} {schedule.user?.lastName}
+                          </div>
+                          <div className="text-xs text-gray-500 truncate">
+                            {schedule.user?.email}
                           </div>
                         </div>
                       </div>
@@ -198,11 +201,14 @@ export default function ScheduleNotificationModal({
                     </div>
                     <div className="col-span-2">
                       <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${ScheduleService.getShiftTypeColor(schedule.shiftType)}`}>
-                        {schedule.shiftType}
+                        {schedule.shiftType === 'MORNING' && '🌅 Mañana'}
+                        {schedule.shiftType === 'AFTERNOON' && '🌆 Tarde'}
+                        {schedule.shiftType === 'NIGHT' && '🌙 Noche'}
+                        {schedule.shiftType === 'FULL_DAY' && '☀️ Completo'}
                       </span>
                     </div>
-                    <div className="col-span-2 text-sm text-gray-600">
-                      {schedule.user?.email || 'No disponible'}
+                    <div className="col-span-2 text-xs text-gray-500 truncate">
+                      {schedule.user?.email}
                     </div>
                   </div>
                 </div>
