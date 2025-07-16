@@ -25,8 +25,10 @@ export default function SchedulesPage() {
   const loadData = useCallback(async () => {
     setLoading(true);
     try {
+      const currentWeekStart = ScheduleService.getWeekStart(selectedWeek);
+      const weekStartFormatted = ScheduleService.formatDate(currentWeekStart);
       const [schedulesData, colaboradoresData] = await Promise.all([
-        ScheduleService.getWeeklySchedule(ScheduleService.formatDate(weekStart)),
+        ScheduleService.getWeeklySchedule(weekStartFormatted),
         ScheduleService.getColaboradores()
       ]);
       setSchedules(schedulesData);
@@ -36,11 +38,38 @@ export default function SchedulesPage() {
     } finally {
       setLoading(false);
     }
-  }, [weekStart]);
+  }, [selectedWeek]);
 
   useEffect(() => {
-    loadData();
-  }, [loadData]);
+    const fetchData = async () => {
+      setLoading(true);
+      try {
+        console.log('Fetching data for week:', selectedWeek);
+        const currentWeekStart = ScheduleService.getWeekStart(selectedWeek);
+        const weekStartFormatted = ScheduleService.formatDate(currentWeekStart);
+        console.log('Week start formatted:', weekStartFormatted);
+        
+        const [schedulesData, colaboradoresData] = await Promise.all([
+          ScheduleService.getWeeklySchedule(weekStartFormatted),
+          ScheduleService.getColaboradores()
+        ]);
+        
+        console.log('Schedules data:', schedulesData);
+        console.log('Colaboradores data:', colaboradoresData);
+        
+        setSchedules(schedulesData);
+        setColaboradores(colaboradoresData);
+      } catch (error) {
+        console.error('Error loading data:', error);
+        // Mostrar error al usuario
+        alert('Error al cargar los datos. Por favor, intenta de nuevo.');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, [selectedWeek]);
 
   const handleAssignRandomShifts = async () => {
     if (selectedUsers.length === 0) {
