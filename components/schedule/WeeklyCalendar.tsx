@@ -122,7 +122,6 @@ export default function WeeklyCalendar({
             currentDate.setDate(weekStart.getDate() + index);
             const dateString = ScheduleService.formatDate(currentDate);
             const isCurrentDay = isToday ? isToday(dateString) : false;
-            const isWeekend = index === 0 || index === 6; // Domingo o Sábado
 
             return (
               <div
@@ -130,8 +129,6 @@ export default function WeeklyCalendar({
                 className={`relative p-4 rounded-lg border-2 transition-all duration-200 ${
                   schedule
                     ? 'bg-gradient-to-br from-red-50 to-red-100 border-red-200 shadow-sm'
-                    : isWeekend
-                    ? 'bg-gray-50 border-gray-200'
                     : 'bg-white border-gray-200'
                 } ${isCurrentDay ? 'ring-2 ring-red-300 shadow-md' : ''}`}
               >
@@ -144,14 +141,10 @@ export default function WeeklyCalendar({
 
                 {/* Header del día */}
                 <div className="text-center mb-3">
-                  <div className={`text-xs font-medium mb-1 ${
-                    isWeekend ? 'text-gray-500' : 'text-gray-700'
-                  }`}>
+                  <div className="text-xs font-medium mb-1 text-gray-700">
                     {day}
                   </div>
-                  <div className={`text-lg font-bold ${
-                    isWeekend ? 'text-gray-400' : 'text-gray-900'
-                  }`}>
+                  <div className="text-lg font-bold text-gray-900">
                     {currentDate.getDate()}
                   </div>
                 </div>
@@ -174,18 +167,11 @@ export default function WeeklyCalendar({
                   </div>
                 ) : (
                   <div className="text-center">
-                    <div className={`text-gray-400 ${isWeekend ? 'text-gray-300' : ''}`}>
-                      {isWeekend ? (
-                        <div className="space-y-1">
-                          <div className="text-lg">🏖️</div>
-                          <div className="text-xs">Descanso</div>
-                        </div>
-                      ) : (
-                        <div className="space-y-1">
-                          <Clock className="h-4 w-4 mx-auto text-gray-300" />
-                          <div className="text-xs">Sin turno</div>
-                        </div>
-                      )}
+                    <div className="text-gray-400">
+                      <div className="space-y-1">
+                        <Clock className="h-4 w-4 mx-auto text-gray-300" />
+                        <div className="text-xs">Sin turno</div>
+                      </div>
                     </div>
                   </div>
                 )}
