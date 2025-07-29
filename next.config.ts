@@ -24,7 +24,7 @@ const nextConfig = {
             },
             {
               key: 'Content-Security-Policy',
-              value: "default-src 'self'; script-src 'self' 'unsafe-eval' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com https://fonts.googleapis.com; img-src 'self' data: https: http:; connect-src 'self' https: wss:; frame-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self';"
+              value: "default-src 'self'; script-src 'self' 'unsafe-eval' 'unsafe-inline' https://maps.googleapis.com https://maps.gstatic.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com https://fonts.googleapis.com; img-src 'self' data: https: http: https://maps.googleapis.com https://maps.gstatic.com; connect-src 'self' https: wss: https://maps.googleapis.com; frame-src 'self' https://www.google.com https://maps.googleapis.com; media-src 'self' https://pmulriauzstmyeslfvpn.supabase.co; object-src 'none'; base-uri 'self'; form-action 'self';"
             },
             {
               key: 'X-Content-Type-Options',

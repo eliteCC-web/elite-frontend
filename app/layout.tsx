@@ -22,7 +22,7 @@ const getBaseUrl = () => {
 }
 
 export const metadata: Metadata = {
-  title: "elite Centro Comercial",
+  title: "elite Cali Centro Comercial",
   description: "Descubre una experiencia de compra única donde la elegancia se encuentra con la innovación",
   keywords: ["centro comercial", "cali", "elite", "shopping", "tiendas", "servicios"],
   authors: [{ name: "elite Centro Comercial" }],

@@ -124,7 +124,7 @@ export default function Navbar() {
                   elite
                 </span>
                 <span className="block text-xs text-neutral-500 font-medium">
-                  Centro Comercial
+                  Centro Comercial - Cali
                 </span>
               </div>
             </Link>
@@ -309,7 +309,7 @@ export default function Navbar() {
                 </div>
                 <div>
                   <span className="text-lg font-bold text-neutral-900">elite</span>
-                  <span className="block text-xs text-neutral-500">Centro Comercial</span>
+                  <span className="block text-xs text-neutral-500">Centro Comercial - Cali</span>
                 </div>
               </div>
               <button
