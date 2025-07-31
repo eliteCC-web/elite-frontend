@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { Upload, X, Video, Play } from 'lucide-react';
+import { X, Video } from 'lucide-react';
 import SupabaseService from '@/services/supabase.service';
 
 interface SupabaseVideoUploadProps {
@@ -62,9 +62,10 @@ export default function SupabaseVideoUpload({
       const newVideos = [...uploadedVideos, result.url];
       setUploadedVideos(newVideos);
       onVideoUploaded(result.url);
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('Error uploading video:', err);
-      setError(err.message || 'Error al subir el video. Inténtelo de nuevo.');
+      const errorMessage = err instanceof Error ? err.message : 'Error al subir el video. Inténtelo de nuevo.';
+      setError(errorMessage);
     } finally {
       setIsUploading(false);
     }
