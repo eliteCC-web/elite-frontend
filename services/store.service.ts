@@ -14,6 +14,7 @@ export interface Store {
   phone: string;
   description?: string;
   images?: string[];
+  videos?: string[];
   schedule?: StoreSchedule[];
   category?: string;
   floor?: string;
@@ -32,6 +33,7 @@ export interface CreateStoreDto {
   phone: string;
   description?: string;
   images?: string[];
+  videos?: string[];
   schedule?: StoreSchedule[];
   isService?: boolean;
 }
@@ -43,6 +45,7 @@ export interface UpdateStoreDto {
   phone?: string;
   description?: string;
   images?: string[];
+  videos?: string[];
   schedule?: any;
   category?: string;
   floor?: string;

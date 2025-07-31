@@ -5,7 +5,7 @@ import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import Link from 'next/link';
-import { User, Lock, AlertCircle, Mail, Phone, UserIcon, Building, Camera, X, Upload, Briefcase, Clock } from 'lucide-react';
+import { User, Lock, AlertCircle, Mail, Phone, UserIcon, Building, Camera, X, Upload, Briefcase, Clock, Video } from 'lucide-react';
 import AuthService from '@/services/auth.service';
 import SupabaseService from '@/services/supabase.service';
 import assets from '@/public/assets';
@@ -31,6 +31,7 @@ interface RegisterInternalData {
   storePhone?: string;
   storeSchedule?: StoreSchedule[];
   storeImages?: File[]; // Cambiado a File[] para subir solo al enviar
+  storeVideos?: File[]; // Videos de la tienda
 }
 
 const DAYS_OF_WEEK = [
@@ -62,7 +63,8 @@ export default function RegisterInternalPage() {
       closeTime: '18:00',
       isOpen: true
     })),
-    storeImages: []
+    storeImages: [],
+    storeVideos: []
   });
   const [confirmPassword, setConfirmPassword] = useState('');
   const [error, setError] = useState('');
@@ -73,6 +75,8 @@ export default function RegisterInternalPage() {
   const [uploadProgress, setUploadProgress] = useState<{current: number, total: number} | null>(null);
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
   const [previewUrls, setPreviewUrls] = useState<string[]>([]);
+  const [selectedVideos, setSelectedVideos] = useState<File[]>([]);
+  const [videoPreviewUrls, setVideoPreviewUrls] = useState<string[]>([]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
@@ -149,6 +153,59 @@ export default function RegisterInternalPage() {
     return uploadedUrls;
   };
 
+  const handleVideoSelection = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (!files) return;
+
+    if (selectedVideos.length + files.length > 2) {
+      setError('Máximo 2 videos permitidos');
+      return;
+    }
+
+    const newFiles = Array.from(files);
+    setSelectedVideos(prev => [...prev, ...newFiles]);
+
+    // Crear URLs de vista previa
+    const newPreviewUrls = newFiles.map(file => URL.createObjectURL(file));
+    setVideoPreviewUrls(prev => [...prev, ...newPreviewUrls]);
+  };
+
+  const removeSelectedVideo = (index: number) => {
+    setSelectedVideos(prev => prev.filter((_, i) => i !== index));
+    setVideoPreviewUrls(prev => {
+      URL.revokeObjectURL(prev[index]); // Liberar memoria
+      return prev.filter((_, i) => i !== index);
+    });
+  };
+
+  const uploadVideosToSupabase = async (files: File[]): Promise<string[]> => {
+    const uploadedUrls: string[] = [];
+    
+    for (let i = 0; i < files.length; i++) {
+      const file = files[i];
+      
+      if (!file.type.startsWith('video/')) {
+        throw new Error('Solo se permiten archivos de video');
+      }
+
+      if (file.size > 50 * 1024 * 1024) {
+        throw new Error('Cada video debe ser menor a 50MB');
+      }
+
+      setUploadProgress({ current: i + 1, total: files.length });
+
+      const result = await SupabaseService.uploadVideo(file, 'store-videos');
+      
+      if (result.error) {
+        throw new Error(result.error);
+      }
+      
+      uploadedUrls.push(result.url);
+    }
+
+    return uploadedUrls;
+  };
+
   const validateForm = (): boolean => {
     const newErrors: Record<string, string> = {};
     
@@ -213,14 +270,20 @@ export default function RegisterInternalPage() {
     }
 
     setLoading(true);
-    setUploadingImages(selectedFiles.length > 0);
+    setUploadingImages(selectedFiles.length > 0 || selectedVideos.length > 0);
 
     try {
       let storeImagesUrls: string[] = [];
+      let storeVideosUrls: string[] = [];
 
       // Subir imágenes solo si hay archivos seleccionados
       if (selectedFiles.length > 0) {
         storeImagesUrls = await uploadImagesToSupabase(selectedFiles);
+      }
+
+      // Subir videos solo si hay archivos seleccionados
+      if (selectedVideos.length > 0) {
+        storeVideosUrls = await uploadVideosToSupabase(selectedVideos);
       }
 
       // Preparar datos para enviar al backend
@@ -238,7 +301,8 @@ export default function RegisterInternalPage() {
           address: formData.storeAddress,
           phone: formData.storePhone,
           schedule: formData.storeSchedule || [],
-          images: storeImagesUrls
+          images: storeImagesUrls,
+          videos: storeVideosUrls
         } : undefined
       };
 
@@ -695,6 +759,77 @@ export default function RegisterInternalPage() {
                             </div>
                           </div>
                         )}
+
+                        {/* Selección de videos */}
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700 mb-2">
+                            Videos del Local (máximo 2)
+                          </label>
+                          <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center">
+                            <input
+                              type="file"
+                              multiple
+                              accept="video/*"
+                              onChange={handleVideoSelection}
+                              disabled={selectedVideos.length >= 2}
+                              className="hidden"
+                              id="store-videos"
+                            />
+                            <label
+                              htmlFor="store-videos"
+                              className={`cursor-pointer flex flex-col items-center ${
+                                selectedVideos.length >= 2 
+                                  ? 'opacity-50 cursor-not-allowed' 
+                                  : 'hover:text-secondary-600'
+                              }`}
+                            >
+                              <Video size={24} className="mb-2" />
+                              <span className="text-sm">
+                                {selectedVideos.length >= 2 
+                                  ? 'Máximo de videos alcanzado'
+                                  : 'Haz clic para seleccionar videos'
+                                }
+                              </span>
+                              <span className="text-xs text-gray-500 mt-1">
+                                {selectedVideos.length}/2 videos
+                              </span>
+                            </label>
+                          </div>
+
+                          {/* Vista previa de videos seleccionados */}
+                          {selectedVideos.length > 0 && (
+                            <div className="mt-4">
+                              <h4 className="text-sm font-medium text-gray-700 mb-2">
+                                Videos seleccionados ({selectedVideos.length}):
+                              </h4>
+                              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                {selectedVideos.map((file, index) => (
+                                  <div key={index} className="relative group">
+                                    <div className="relative rounded-lg overflow-hidden bg-gray-100 aspect-video">
+                                      <video
+                                        src={videoPreviewUrls[index]}
+                                        className="w-full h-full object-cover"
+                                        controls
+                                        preload="metadata"
+                                      />
+                                      <button
+                                        type="button"
+                                        onClick={() => removeSelectedVideo(index)}
+                                        className="absolute top-2 right-2 bg-red-500 text-white rounded-full p-1 hover:bg-red-600 opacity-0 group-hover:opacity-100 transition-opacity"
+                                        title="Eliminar video"
+                                      >
+                                        <X size={12} />
+                                      </button>
+                                      <div className="absolute bottom-2 left-2 bg-black bg-opacity-50 text-white text-xs px-2 py-1 rounded">
+                                        Video {index + 1}
+                                      </div>
+                                    </div>
+                                  </div>
+                                ))}
+                              </div>
+                            </div>
+                          )}
+                        </div>
                       </div>
                     </div>
                   </div>

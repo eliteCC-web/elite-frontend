@@ -2,10 +2,11 @@
 'use client';
 
 import React, { useState } from 'react';
-import { X, Save, Store, Phone, MapPin, Tag, Building, Image as ImageIcon } from 'lucide-react';
+import { X, Save, Store, Phone, MapPin, Tag, Building, Image as ImageIcon, Video } from 'lucide-react';
 import { Store as StoreType } from '@/services/profile.service';
 import ProfileService from '@/services/profile.service';
 import CloudinaryService from '@/services/cloudinary.service';
+import SupabaseService from '@/services/supabase.service';
 
 interface EditStoreModalProps {
   store: StoreType;
@@ -25,7 +26,8 @@ export default function EditStoreModal({ store, isOpen, onClose, onUpdate }: Edi
     name: store.name || '',
     phone: store.phone || '',
     description: store.description || '',
-    images: (store as any).images || []
+    images: (store as any).images || [],
+    videos: (store as any).videos || []
   });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -76,6 +78,39 @@ export default function EditStoreModal({ store, isOpen, onClose, onUpdate }: Edi
     setFormData(prev => ({
       ...prev,
       images: prev.images.filter((_: any, i: number) => i !== index)
+    }));
+  };
+
+  const handleVideoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    if (formData.videos.length >= 2) {
+      setError('Máximo 2 videos permitidos');
+      return;
+    }
+
+    setUploadingImage(true);
+    try {
+      const videoUrl = await SupabaseService.uploadVideo(file);
+      if (videoUrl.error) {
+        throw new Error(videoUrl.error);
+      }
+      setFormData(prev => ({
+        ...prev,
+        videos: [...prev.videos, videoUrl.url]
+      }));
+    } catch (err: any) {
+      setError(err.message || 'Error al subir el video');
+    } finally {
+      setUploadingImage(false);
+    }
+  };
+
+  const removeVideo = (index: number) => {
+    setFormData(prev => ({
+      ...prev,
+      videos: prev.videos.filter((_: any, i: number) => i !== index)
     }));
   };
 
@@ -201,6 +236,57 @@ export default function EditStoreModal({ store, isOpen, onClose, onUpdate }: Edi
                     >
                       <X size={12} />
                     </button>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+
+          {/* Videos Section */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Videos del Local (máximo 2)
+            </label>
+            
+            {/* Upload Button */}
+            <div className="mb-3">
+              <label className="flex items-center justify-center w-full h-24 border-2 border-dashed border-gray-300 rounded-lg hover:border-primary-500 transition-colors cursor-pointer">
+                <div className="text-center">
+                  <Video size={20} className="mx-auto text-gray-400 mb-1" />
+                  <p className="text-sm text-gray-600">
+                    {uploadingImage ? 'Subiendo...' : 'Haz clic para subir video'}
+                  </p>
+                </div>
+                <input
+                  type="file"
+                  accept="video/*"
+                  onChange={handleVideoUpload}
+                  className="hidden"
+                  disabled={uploadingImage || formData.videos.length >= 2}
+                />
+              </label>
+            </div>
+
+            {/* Videos Grid */}
+            {formData.videos.length > 0 && (
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                {formData.videos.map((video: string, index: number) => (
+                  <div key={index} className="relative group">
+                    <div className="relative rounded-lg overflow-hidden bg-gray-100 aspect-video">
+                      <video
+                        src={video}
+                        className="w-full h-full object-cover"
+                        controls
+                        preload="metadata"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => removeVideo(index)}
+                        className="absolute top-2 right-2 bg-red-500 text-white rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity"
+                      >
+                        <X size={12} />
+                      </button>
+                    </div>
                   </div>
                 ))}
               </div>

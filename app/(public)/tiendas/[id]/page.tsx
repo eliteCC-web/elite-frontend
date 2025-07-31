@@ -254,6 +254,41 @@ export default function StoreDetailPage() {
                 )}
               </div>
 
+              {/* Galería de Videos */}
+              {store.videos && Array.isArray(store.videos) && store.videos.length > 0 && (
+                <div className="space-y-4">
+                  <h2 className="text-2xl font-bold text-neutral-900 mb-4">
+                    Videos
+                  </h2>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    {store.videos.map((video, index) => {
+                      // Validar que video sea un string válido
+                      if (typeof video !== 'string' || !video) {
+                        return null;
+                      }
+                      
+                      const cleanUrl = video.replace(/^"|"$/g, '');
+                      
+                      // Validar que la URL sea válida
+                      if (!cleanUrl || !cleanUrl.startsWith('http')) {
+                        return null;
+                      }
+                      
+                      return (
+                        <div key={index} className="relative overflow-hidden rounded-xl bg-gray-100 aspect-video">
+                          <video
+                            src={cleanUrl}
+                            className="w-full h-full object-cover"
+                            controls
+                            preload="metadata"
+                          />
+                        </div>
+                      );
+                    }).filter(Boolean)}
+                  </div>
+                </div>
+              )}
+
               {/* Descripción */}
               <div className="bg-white rounded-2xl p-8">
                 <h2 className="text-2xl font-bold text-neutral-900 mb-4">
