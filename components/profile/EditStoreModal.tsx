@@ -5,7 +5,7 @@ import React, { useState } from 'react';
 import { X, Save, Store, Phone, MapPin, Tag, Building, Image as ImageIcon, Video } from 'lucide-react';
 import { Store as StoreType } from '@/services/profile.service';
 import ProfileService from '@/services/profile.service';
-import CloudinaryService from '@/services/cloudinary.service';
+
 import SupabaseService from '@/services/supabase.service';
 
 interface EditStoreModalProps {
@@ -62,13 +62,16 @@ export default function EditStoreModal({ store, isOpen, onClose, onUpdate }: Edi
 
     setUploadingImage(true);
     try {
-      const imageUrl = await CloudinaryService.uploadImage(file);
+      const result = await SupabaseService.uploadImage(file, 'store-images');
+      if (result.error) {
+        throw new Error(result.error);
+      }
       setFormData(prev => ({
         ...prev,
-        images: [...prev.images, imageUrl]
+        images: [...prev.images, result.url]
       }));
-    } catch (err) {
-      setError('Error al subir la imagen');
+    } catch (err: any) {
+      setError(err.message || 'Error al subir la imagen');
     } finally {
       setUploadingImage(false);
     }
