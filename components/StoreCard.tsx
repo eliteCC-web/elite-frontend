@@ -1,5 +1,5 @@
 /* eslint-disable */
-import Image from "next/image"
+
 import Link from "next/link"
 import { MapPin, Clock, Phone, Star, Heart, Share2 } from "lucide-react"
 import type { Store } from "@/services/store.service"
@@ -76,17 +76,14 @@ export default function StoreCard({ store, isFeatured = false }: StoreCardProps)
   return (
     <div className="store-card group">
       <div className="relative overflow-hidden">
-        <Image
+        <img
           src={getStoreImage(store)}
           alt={store.name}
-          width={400}
-          height={300}
           className="store-image group-hover:scale-105"
         />
         {isFeatured && (
           <div className="absolute top-4 left-4 bg-accent-yellow text-neutral-900 px-3 py-1 rounded-2xl text-sm font-semibold">
             <Star size={14} className="inline mr-1" />
-            Destacada
           </div>
         )}
         <div className="absolute top-4 right-4 bg-secondary-500 text-white px-3 py-1 rounded-2xl text-sm font-semibold">

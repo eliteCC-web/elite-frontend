@@ -249,7 +249,7 @@ export default function EventDetailPage() {
                     alt={event.name}
                     width={800}
                     height={500}
-                    className="w-full h-96 object-cover"
+                    className="w-full h-[28rem] object-cover"
                   />
                   {event.isFeatured && (
                     <div className="absolute top-4 left-4 bg-accent-yellow text-neutral-900 px-3 py-1 rounded-2xl text-sm font-semibold">
@@ -280,7 +280,7 @@ export default function EventDetailPage() {
                           alt={`${event.name} - Imagen ${index + 1}`}
                           width={120}
                           height={80}
-                          className="w-24 h-16 object-cover"
+                          className="w-28 h-20 object-cover"
                         />
                         {selectedImageIndex === index && (
                           <div className="absolute inset-0 bg-primary-500/20 flex items-center justify-center">

@@ -1,10 +1,11 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { Calendar, Clock, Plus, RefreshCw, ChevronLeft, ChevronRight, Bell, Users, Trash2 } from 'lucide-react';
+import { Calendar, Clock, Plus, RefreshCw, ChevronLeft, ChevronRight, Bell, Users, Trash2, UsersRound } from 'lucide-react';
 import { ScheduleService, Schedule } from '../../../services/schedule.service';
 import { User as UserType } from '../../../services/user.service';
 import AssignShiftModal from '../../../components/admin/AssignShiftModal';
+import BulkAssignShiftModal from '../../../components/admin/BulkAssignShiftModal';
 import ScheduleNotificationModal from '../../../components/admin/ScheduleNotificationModal';
 
 export default function SchedulesPage() {
@@ -13,6 +14,7 @@ export default function SchedulesPage() {
   const [selectedWeek, setSelectedWeek] = useState<Date>(new Date());
   const [loading, setLoading] = useState(true);
   const [assignModalOpen, setAssignModalOpen] = useState(false);
+  const [bulkAssignModalOpen, setBulkAssignModalOpen] = useState(false);
   const [notificationModalOpen, setNotificationModalOpen] = useState(false);
 
   const weekStart = ScheduleService.getWeekStart(selectedWeek);
@@ -200,6 +202,13 @@ export default function SchedulesPage() {
             >
               <Bell className="h-4 w-4 mr-2" />
               <span className="hidden sm:inline">Notificaciones</span>
+            </button>
+            <button
+              onClick={() => setBulkAssignModalOpen(true)}
+              className="inline-flex items-center px-4 py-2.5 border-2 border-purple-600 text-sm font-semibold rounded-lg text-purple-700 bg-purple-50 hover:bg-purple-600 hover:text-white transition-all shadow-sm hover:shadow-md"
+            >
+              <UsersRound className="h-5 w-5 mr-2" />
+              <span className="hidden sm:inline">Asignación Masiva</span>
             </button>
             <button
               onClick={() => setAssignModalOpen(true)}
@@ -439,6 +448,15 @@ export default function SchedulesPage() {
         onClose={() => setAssignModalOpen(false)}
         onSuccess={async () => {
           setAssignModalOpen(false);
+          window.location.reload();
+        }}
+      />
+
+      <BulkAssignShiftModal
+        isOpen={bulkAssignModalOpen}
+        onClose={() => setBulkAssignModalOpen(false)}
+        onSuccess={async () => {
+          setBulkAssignModalOpen(false);
           window.location.reload();
         }}
       />

@@ -54,6 +54,16 @@ export interface AssignShiftDto {
   notes?: string;
 }
 
+export interface BulkEquitativeAssignDto {
+  userIds: number[];
+  startDate: string;
+  endDate: string;
+  startTime: string;
+  endTime: string;
+  shiftType?: 'MORNING' | 'AFTERNOON' | 'NIGHT' | 'FULL_DAY';
+  notes?: string;
+}
+
 export class ScheduleService {
   // Obtener todos los horarios
   static async getAllSchedules(): Promise<Schedule[]> {
@@ -115,6 +125,12 @@ export class ScheduleService {
   // Asignar turno individual
   static async assignShift(assignData: AssignShiftDto): Promise<Schedule[]> {
     const response = await apiClient.post('/schedule/assign-shift', assignData);
+    return response.data;
+  }
+
+  // Asignar turnos de manera equitativa y aleatoria
+  static async bulkEquitativeAssign(assignData: BulkEquitativeAssignDto): Promise<Schedule[]> {
+    const response = await apiClient.post('/schedule/bulk-equitative-assign', assignData);
     return response.data;
   }
 
