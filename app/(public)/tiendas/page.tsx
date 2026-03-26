@@ -134,6 +134,7 @@ export default function StoresPage() {
             src={getPublicUrl('elitecc-web//MARCAS%20(2).png')}
             alt="Tiendas Centro Comercial Elite"
             fill
+            unoptimized
             className="object-cover"
             priority
           />

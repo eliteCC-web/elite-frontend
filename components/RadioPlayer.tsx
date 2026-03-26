@@ -61,7 +61,7 @@ export function RadioPlayer() {
         {/* El iframe maneja todo: sonando ahora, título, controles */}
         {isExpanded && (
           <iframe
-            src="https://cloud8.vsgtech.co/cp/widgets/player/single/?p=8072&autoplay=true"
+            src="https://cloud8.vsgtech.co/cp/widgets/player/single/?p=8072"
             height="110"
             width="100%"
             scrolling="no"

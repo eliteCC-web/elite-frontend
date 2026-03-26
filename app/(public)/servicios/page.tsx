@@ -134,6 +134,7 @@ export default function ServicesPage() {
             src={getPublicUrl('elitecc-web//MARCAS%20(2).png')}
             alt="Servicios Centro Comercial Elite"
             fill
+            unoptimized
             className="object-cover"
             priority
           />

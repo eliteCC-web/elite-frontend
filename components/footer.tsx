@@ -19,6 +19,7 @@ export default function Footer() {
                   alt="Elite"
                   width={28}
                   height={28}
+                  unoptimized
                   className="drop-shadow-lg"
                 />
               </div>

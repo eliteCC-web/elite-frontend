@@ -74,6 +74,7 @@ export default function HomePage() {
             src={getPublicUrl('elitecc-web//hero%20HD.jpg')}
             alt="Elite Centro Comercial"
             fill
+            unoptimized
             className="object-cover"
             priority
           />
@@ -93,6 +94,7 @@ export default function HomePage() {
                 alt="Logo Elite"
                 width={100}
                 height={100}
+                unoptimized
                 className="drop-shadow-2xl"
                 priority
               />
@@ -341,7 +343,7 @@ export default function HomePage() {
               </div>
               <div className="w-full md:flex-1 md:max-w-2xl bg-white/10 backdrop-blur-xl rounded-2xl p-3 border border-white/20 shadow-lg">
                 <iframe
-                  src="https://cloud8.vsgtech.co/cp/widgets/player/single/?p=8072&autoplay=true"
+                  src="https://cloud8.vsgtech.co/cp/widgets/player/single/?p=8072"
                   height="110"
                   width="100%"
                   scrolling="no"

@@ -110,6 +110,7 @@ export default function Navbar() {
                     alt="Elite"
                     width={25}
                     height={25}
+                    unoptimized
                     className="drop-shadow-lg"
                   />
                 </div>
