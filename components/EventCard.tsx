@@ -58,6 +58,7 @@ export default function EventCard({ event, isFeatured = false }: EventCardProps)
         <img
           src={getEventImage(event)}
           alt={event.name}
+          loading="lazy"
           className="event-image group-hover:scale-105"
         />
         {isFeatured && (

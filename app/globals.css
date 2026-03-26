@@ -141,7 +141,7 @@
 
   /* Tarjetas mejoradas */
   .card {
-    @apply bg-white rounded-3xl shadow-soft border border-neutral-200 overflow-hidden transition-all duration-300 hover:shadow-medium hover:-translate-y-1;
+    @apply bg-white rounded-3xl shadow-soft border border-neutral-100 overflow-hidden transition-all duration-500 hover:shadow-strong hover:-translate-y-2;
   }
 
   .card-body {
@@ -162,7 +162,7 @@
   }
 
   .store-image {
-    @apply w-full h-48 object-cover transition-transform duration-300;
+    @apply w-full aspect-[4/3] object-cover transition-transform duration-500;
   }
 
   /* Tarjetas de evento mejoradas */
@@ -171,7 +171,7 @@
   }
 
   .event-image {
-    @apply w-full h-72 object-cover object-center transition-transform duration-300;
+    @apply w-full aspect-[3/2] object-cover object-center transition-transform duration-500;
   }
 
   .event-badge {
@@ -394,6 +394,26 @@
     animation: scroll var(--animation-duration, 20s) linear infinite;
   }
 
+  /* Gradient text utility */
+  .text-gradient {
+    @apply bg-clip-text text-transparent bg-gradient-to-r from-primary-500 to-secondary-500;
+  }
+
+  /* Section divider */
+  .section-divider {
+    @apply w-16 h-1 bg-gradient-to-r from-primary-500 to-secondary-500 rounded-full mx-auto;
+  }
+
+  /* Sound bars animation for radio */
+  .soundbar {
+    @apply w-[3px] rounded-full bg-white;
+    animation: soundbar 0.8s ease-in-out infinite alternate;
+  }
+  .soundbar:nth-child(1) { animation-delay: 0s; height: 8px; }
+  .soundbar:nth-child(2) { animation-delay: 0.15s; height: 14px; }
+  .soundbar:nth-child(3) { animation-delay: 0.3s; height: 6px; }
+  .soundbar:nth-child(4) { animation-delay: 0.45s; height: 12px; }
+
   /* Estilos para el slider de video personalizado */
   .slider {
     -webkit-appearance: none;
@@ -475,6 +495,11 @@
   to {
     opacity: 1;
   }
+}
+
+@keyframes soundbar {
+  0% { transform: scaleY(0.4); }
+  100% { transform: scaleY(1); }
 }
 
 /* Mejoras específicas para móviles */

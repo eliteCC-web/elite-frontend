@@ -79,6 +79,7 @@ export default function StoreCard({ store, isFeatured = false }: StoreCardProps)
         <img
           src={getStoreImage(store)}
           alt={store.name}
+          loading="lazy"
           className="store-image group-hover:scale-105"
         />
         {isFeatured && (

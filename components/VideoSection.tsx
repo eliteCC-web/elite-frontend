@@ -111,7 +111,7 @@ export function VideoSection({
   };
 
   return (
-    <section className="py-20 bg-white">
+    <section className="py-24 bg-gradient-to-b from-white via-neutral-50/50 to-white relative overflow-hidden">
       <div className="container-modern">
         <div className="text-center mb-16">
           <h2 className="text-4xl md:text-5xl font-bold text-neutral-900 mb-6">
@@ -199,7 +199,7 @@ export function VideoSection({
               <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                 {stats.map((stat, index) => (
                   <div key={index} className="text-center">
-                    <div className="text-3xl font-bold text-red-600 mb-2">{stat.value}</div>
+                    <div className="text-3xl font-bold text-secondary-500 mb-2">{stat.value}</div>
                     <div className="text-sm text-neutral-300">{stat.label}</div>
                   </div>
                 ))}
