@@ -67,5 +67,7 @@ export function validatePhone(phone: string): boolean {
 // Función para obtener URLs públicas de Supabase Storage
 export const getPublicUrl = (path: string) => {
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-  return `${supabaseUrl}/storage/v1/object/public/${path}`;
+  // Normalizar doble slash en paths (elitecc-web//file.png -> elitecc-web/file.png)
+  const cleanPath = path.replace(/\/\//g, '/');
+  return `${supabaseUrl}/storage/v1/object/public/${cleanPath}`;
 };
